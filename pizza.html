@@ -1,0 +1,509 @@
+﻿<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>قائمة طعام بيتزا هاوس</title>
+    <!-- مكتبة قراءة ملفات الإكسيل SheetJS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <!-- مكتبة Firebase للتحكم في الإعجابات والمشاهدات -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    
+    <style>
+        :root {
+            --primary: #e11d48;
+            --primary-dark: #be123c;
+            --bg-color: #f1f5f9;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --radius: 16px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); min-height: 100vh; padding-bottom: 40px; }
+
+        header {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        header h1 { font-size: 28px; font-weight: 900; margin-bottom: 8px; color: #fff; }
+        .header-meta { font-size: 13px; color: #94a3b8; font-weight: 600; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
+
+        .container { max-width: 1200px; margin: 25px auto; padding: 0 15px; }
+
+        /* شريط البحث والتصنيفات */
+        .controls-section { background: white; padding: 20px; border-radius: var(--radius); box-shadow: 0 4px 15px rgba(0,0,0,0.03); margin-bottom: 25px; display: flex; flex-direction: column; gap: 15px; }
+        .search-box { width: 100%; position: relative; }
+        .search-box input {
+            width: 100%;
+            padding: 12px 45px 12px 15px;
+            border-radius: 12px;
+            border: 2px solid var(--border-color);
+            font-size: 15px;
+            font-family: inherit;
+            outline: none;
+            transition: all 0.3s;
+        }
+        .search-box input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(225, 29, 72, 0.1); }
+        .search-box::before { content: '🔍'; position: absolute; right: 15px; top: 50%; transform: translateY(-50%); font-size: 16px; }
+
+        .categories-container { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; }
+        .categories-container::-webkit-scrollbar { display: none; }
+        .cat-btn {
+            background: #f1f5f9;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-weight: 800;
+            font-size: 13.5px;
+            color: var(--text-muted);
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+        .cat-btn.active, .cat-btn:hover { background: var(--primary); color: white; box-shadow: 0 4px 12px rgba(225, 29, 72, 0.25); }
+
+        /* شبكة الكروت الاحترافية مع بوردر أزرق مميز */
+        .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+        
+        .product-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            border: 2px solid #93c5fd; /* بوردر أزرق هادئ وواضح */
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s ease;
+        }
+        .product-card:hover { 
+            transform: translateY(-5px); 
+            box-shadow: 0 20px 35px -10px rgba(37, 99, 235, 0.15);
+            border-color: #3b82f6; /* أزرق أغمق وأبرز عند التمرير أو اللمس */
+        }
+
+        .img-container { position: relative; width: 100%; height: 190px; background: #e2e8f0; cursor: pointer; overflow: hidden; }
+        .img-container img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+        .product-card:hover .img-container img { transform: scale(1.06); }
+        .zoom-hint { position: absolute; bottom: 10px; right: 10px; background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(4px); color: white; padding: 4px 10px; font-size: 11px; font-weight: 800; border-radius: 20px; }
+
+        .product-content {
+            padding: 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 14px;
+        }
+
+        .product-title {
+            font-size: 19px;
+            font-weight: 900;
+            color: var(--text-main);
+            margin-bottom: 2px;
+            text-align: right;
+        }
+
+        .product-specs {
+            font-size: 12.5px;
+            color: var(--text-muted);
+            background: #f8fafc;
+            padding: 10px 12px;
+            border-radius: 12px;
+            border: 1px solid #f1f5f9;
+            font-weight: 600;
+            line-height: 1.5;
+        }
+
+        .sizes-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            border-top: 2px dashed #f1f5f9;
+            padding-top: 12px;
+        }
+        
+        .size-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #ffffff;
+            padding: 8px 12px;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.01);
+            transition: border-color 0.2s;
+        }
+        .size-row:hover { border-color: #3b82f6; }
+
+        .size-info { font-size: 13px; font-weight: 800; color: var(--text-main); display: flex; align-items: center; gap: 4px; }
+        .size-price-box { display: flex; align-items: baseline; gap: 5px; }
+        .size-current-price { font-size: 15px; font-weight: 900; color: var(--primary); }
+        .size-old-price { font-size: 11.5px; color: var(--text-muted); text-decoration: line-through; font-weight: 700; }
+        
+        .size-order-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 11.5px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            box-shadow: 0 2px 8px rgba(225, 29, 72, 0.2);
+        }
+        .size-order-btn:hover { background: var(--primary-dark); transform: scale(1.05); }
+
+        .interaction-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8fafc;
+            padding: 8px 12px;
+            border-radius: 10px;
+            border: 1px solid #f1f5f9;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-muted);
+        }
+
+        .like-btn {
+            background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 4px;
+            font-family: inherit; font-size: 12px; font-weight: 800; color: var(--text-muted); transition: 0.2s; padding: 2px 6px; border-radius: 6px;
+        }
+        .like-btn:hover { color: var(--primary); background: #ffe4e6; }
+        .like-btn.liked { color: var(--primary); }
+
+        /* نافذة المعاينة المنبثقة Modal */
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 1000; justify-content: center; align-items: center; padding: 20px; }
+        .modal-content { background: white; width: 100%; max-width: 450px; border-radius: var(--radius); overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); animation: modalIn 0.3s ease; }
+        @keyframes modalIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; border-bottom: 1px solid var(--border-color); }
+        .modal-body { padding: 20px; max-height: 70vh; overflow-y: auto; }
+        .close-modal { background: #f1f5f9; border: none; width: 30px; height: 30px; border-radius: 50%; font-weight: bold; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>🍕 بيتزا هاوس</h1>
+        <div class="header-meta">
+            <span>📅 تاريخ المراجعة: <strong id="current-date">--/--/----</strong></span>
+            <span>⏱️ آخر تحديث للملف: <strong id="last-update-time">--:--:--</strong></span>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="controls-section">
+            <div class="search-box">
+                <input type="text" id="search-input" placeholder="ابحث عن وجبتك المفضلة..." oninput="filterAndDisplayProducts()">
+            </div>
+            <div class="categories-container" id="categories-container">
+                <!-- أزرار التصنيفات تتولد تلقائياً -->
+            </div>
+        </div>
+
+        <div class="products-grid" id="products-grid">
+            <!-- المنتجات تتولد تلقائياً هنا -->
+        </div>
+    </div>
+
+    <!-- نافذة المعاينة (Modal) -->
+    <div class="modal" id="itemModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle" style="font-size: 18px; font-weight: 900;">تفاصيل الوجبة</h3>
+                <button class="close-modal" onclick="closeModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <img id="modalImg" src="" style="width: 100%; height: 220px; object-fit: cover; border-radius: 12px; margin-bottom: 15px;">
+                <p id="modalSpecs" style="font-size: 13.5px; color: var(--text-muted); line-height: 1.6; margin-bottom: 15px; background: #f8fafc; padding: 12px; border-radius: 10px; border: 1px solid #f1f5f9;"></p>
+                <div style="font-weight: 900; margin-bottom: 10px; font-size: 14px;">المقاسات والأسعار المتاحة:</div>
+                <div id="modalSizesContainer" style="display: flex; flex-direction: column; gap: 8px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // دالة لعرض تاريخ ووقت آخر تعديل حقيقي لملف الـ HTML
+        function updateHeaderDateTime() {
+            const lastMod = new Date(document.lastModified);
+            const optionsDate = { year: 'numeric', month: 'numeric', day: 'numeric' };
+            const optionsTime = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
+            
+            document.getElementById('current-date').innerText = lastMod.toLocaleDateString('ar-EG', optionsDate);
+            document.getElementById('last-update-time').innerText = lastMod.toLocaleTimeString('ar-EG', optionsTime);
+        }
+        updateHeaderDateTime();
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBDU3ddIiB-d2hNSGG1bAoti2qnvBohyI",
+            authDomain: "mohamed-29759.firebaseapp.com",
+            databaseURL: "https://mohamed-29759-default-rtdb.firebaseio.com",
+            projectId: "mohamed-29759",
+            storageBucket: "mohamed-29759.firebasestorage.app",
+            messagingSenderId: "1087982177559",
+            appId: "1:1087982177559:web:b134359fbd0ce2fece3b52"
+        };
+
+        let db = null;
+        try {
+            if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+            db = firebase.database();
+        } catch(e) { console.log("Firebase Error:", e); }
+
+        const phoneNumber = "201023745774";
+        let groupedProducts = [];
+        let currentCategory = "الكل";
+
+        function loadMenuData() {
+            fetch('bikes.xlsx?t=' + new Date().getTime())
+                .then(res => res.arrayBuffer())
+                .then(buffer => {
+                    const wb = XLSX.read(buffer, { type: 'array' });
+                    let targetSheetName = "بيتزا هاوس";
+                    const ws = wb.Sheets[targetSheetName] || wb.Sheets[wb.SheetNames[0]];
+                    
+                    let rawRows = [];
+                    let rowIndex = 2;
+
+                    while (true) {
+                        let cellCategory = ws[XLSX.utils.encode_cell({ r: rowIndex - 1, c: 0 })];
+                        if (!cellCategory || cellCategory.v === undefined || String(cellCategory.v).trim() === "") break;
+
+                        let cellName = ws[XLSX.utils.encode_cell({ r: rowIndex - 1, c: 1 })];
+                        let cellSize = ws[XLSX.utils.encode_cell({ r: rowIndex - 1, c: 2 })];
+                        let cellPrice = ws[XLSX.utils.encode_cell({ r: rowIndex - 1, c: 3 })];
+                        let cellOldPrice = ws[XLSX.utils.encode_cell({ r: rowIndex - 1, c: 4 })];
+                        let cellOffer = ws[XLSX.utils.encode_cell({ r: rowIndex - 1, c: 5 })];
+                        let cellSpecs = ws[XLSX.utils.encode_cell({ r: rowIndex - 1, c: 6 })];
+                        let cellStatus = ws[XLSX.utils.encode_cell({ r: rowIndex - 1, c: 7 })];
+                        let cellImage = ws[XLSX.utils.encode_cell({ r: rowIndex - 1, c: 8 })];
+
+                        let rawOffer = cellOffer ? cellOffer.v : "";
+                        let isOffer = rawOffer === true || String(rawOffer).toLowerCase() === "true" || rawOffer === "نعم";
+                        let priceVal = (cellPrice && cellPrice.v) ? parseFloat(cellPrice.v) || 0 : 0;
+                        
+                        let rawImg = (cellImage && String(cellImage.v).trim() !== "") ? String(cellImage.v).trim() : "";
+                        if (rawImg) {
+                            rawImg = rawImg.replace(/ /g, '%20');
+                        } else {
+                            rawImg = "https://via.placeholder.com/300x200?text=Meal";
+                        }
+
+                        let statusText = cellStatus && String(cellStatus.v).trim() === "متاح" ? "available" : "sold";
+
+                        rawRows.push({
+                            id: rowIndex - 1,
+                            category: String(cellCategory.v).trim(),
+                            name: cellName && cellName.v ? String(cellName.v).trim() : "وجبة جديدة",
+                            size: cellSize && cellSize.v !== undefined ? String(cellSize.v).trim() : "قياسي",
+                            priceVal: priceVal,
+                            price: priceVal + " ج.م",
+                            oldPrice: cellOldPrice && cellOldPrice.v ? cellOldPrice.v + " ج.م" : "",
+                            hasOffer: isOffer,
+                            specs: cellSpecs && cellSpecs.v ? String(cellSpecs.v).trim() : "",
+                            status: statusText,
+                            image: rawImg,
+                            fullImageUrl: rawImg.startsWith('http') ? rawImg : window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1) + rawImg
+                        });
+                        rowIndex++;
+                    }
+
+                    let map = {};
+                    rawRows.forEach(item => {
+                        let key = item.category + "_" + item.name;
+                        if (!map[key]) {
+                            map[key] = {
+                                groupKey: key,
+                                category: item.category,
+                                name: item.name,
+                                specs: item.specs,
+                                image: item.image,
+                                fullImageUrl: item.fullImageUrl,
+                                sizes: []
+                            };
+                        }
+                        map[key].sizes.push({
+                            id: item.id,
+                            size: item.size,
+                            price: item.price,
+                            oldPrice: item.oldPrice,
+                            hasOffer: item.hasOffer,
+                            status: item.status
+                        });
+                    });
+
+                    groupedProducts = Object.values(map);
+                    buildCategoriesTabs();
+                    filterAndDisplayProducts();
+                })
+                .catch(err => {
+                    console.error("خطأ:", err);
+                    document.getElementById('products-grid').innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 40px; background: white; border-radius: 12px; font-weight: 800; color: #e11d48;">تأكد من إغلاق ملف الإكسيل وأن الشيت باسم 'بيتزا هاوس' موجود!</div>`;
+                });
+        }
+
+        function buildCategoriesTabs() {
+            const container = document.getElementById('categories-container');
+            const categories = ["الكل", ...new Set(groupedProducts.map(item => item.category))];
+            
+            container.innerHTML = "";
+            categories.forEach(cat => {
+                const btn = document.createElement('button');
+                btn.className = `cat-btn ${cat === currentCategory ? 'active' : ''}`;
+                btn.innerText = cat;
+                btn.onclick = () => {
+                    currentCategory = cat;
+                    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    filterAndDisplayProducts();
+                };
+                container.appendChild(btn);
+            });
+        }
+
+        function listenToItemStats(itemId) {
+            if (!db) return;
+            db.ref('pizza_items/' + itemId).on('value', snapshot => {
+                const data = snapshot.val() || { views: 0, likes: 0 };
+                const vEl = document.getElementById('views-' + itemId);
+                const lEl = document.getElementById('likes-' + itemId);
+                if (vEl) vEl.innerText = data.views || 0;
+                if (lEl) lEl.innerText = data.likes || 0;
+            });
+        }
+
+        function incrementItemView(itemId) {
+            let deviceKey = 'pizza_viewed_device_' + itemId;
+            if (!localStorage.getItem(deviceKey)) {
+                localStorage.setItem(deviceKey, 'true');
+                if (db) db.ref('pizza_items/' + itemId + '/views').transaction(curr => (curr || 0) + 1);
+            }
+        }
+
+        function toggleLike(itemId, event) {
+            event.stopPropagation();
+            let userLikedKey = 'pizza_user_liked_' + itemId;
+            const btn = document.getElementById('like-btn-' + itemId);
+            let isLiked = localStorage.getItem(userLikedKey) === 'true';
+
+            if (!isLiked) {
+                localStorage.setItem(userLikedKey, 'true');
+                btn.classList.add('liked');
+                if (db) db.ref('pizza_items/' + itemId + '/likes').transaction(c => (c || 0) + 1);
+            } else {
+                localStorage.removeItem(userLikedKey);
+                btn.classList.remove('liked');
+                if (db) db.ref('pizza_items/' + itemId + '/likes').transaction(c => Math.max(0, (c || 0) - 1));
+            }
+        }
+
+        function filterAndDisplayProducts() {
+            const searchText = document.getElementById('search-input').value.toLowerCase().trim();
+            const grid = document.getElementById('products-grid');
+            grid.innerHTML = "";
+
+            let filtered = groupedProducts.filter(item => {
+                const matchCat = (currentCategory === "الكل" || item.category === currentCategory);
+                const matchSearch = item.name.toLowerCase().includes(searchText) || item.specs.toLowerCase().includes(searchText);
+                return matchCat && matchSearch;
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 40px; background: white; border-radius: 12px; font-weight: 800;">عذراً، لا توجد وجبات مطابقة لبحثك</div>`;
+                return;
+            }
+
+            filtered.forEach(product => {
+                let firstItem = product.sizes[0];
+                const isLiked = localStorage.getItem('pizza_user_liked_' + firstItem.id) === 'true';
+
+                let sizesHtml = '';
+                product.sizes.forEach(s => {
+                    let orderMsg = `مرحباً، أود طلب هذه الوجبة:\n🍕 *${product.name}*\n📏 المقاس: ${s.size}\n💰 السعر: ${s.price}\n🖼️ الصورة:\n${product.fullImageUrl}`;
+                    let waLink = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(orderMsg)}`;
+
+                    sizesHtml += `
+                        <div class="size-row">
+                            <div class="size-info">
+                                <span>🏷️ ${s.size}</span>
+                            </div>
+                            <div class="size-price-box">
+                                ${s.oldPrice ? `<span class="size-old-price">${s.oldPrice}</span>` : ''}
+                                <span class="size-current-price">${s.price}</span>
+                            </div>
+                            <a href="${waLink}" target="_blank" class="size-order-btn">اطلب</a>
+                        </div>
+                    `;
+                });
+
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                card.innerHTML = `
+                    <div class="img-container" onclick="openModalWindow('${product.groupKey}')">
+                        <img src="${product.image}" alt="${product.name}" onerror="this.src='https://via.placeholder.com/300x200?text=لا+توجد+صورة'">
+                        <div class="zoom-hint">🔍 اضغط للمعاينة</div>
+                    </div>
+                    <div class="product-content">
+                        <div>
+                            <div class="product-title">${product.name}</div>
+                            ${product.specs ? `<div class="product-specs"><strong>المكونات:</strong> ${product.specs}</div>` : ''}
+                            
+                            <div class="sizes-list">
+                                ${sizesHtml}
+                            </div>
+                        </div>
+
+                        <div class="interaction-bar">
+                            <span>👁️ مشاهدات: <span class="views-count" id="views-${firstItem.id}">0</span></span>
+                            <button id="like-btn-${firstItem.id}" class="like-btn ${isLiked ? 'liked' : ''}" onclick="toggleLike(${firstItem.id}, event)">
+                                ❤️ إعجاب (<span id="likes-${firstItem.id}">0</span>)
+                            </button>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+                listenToItemStats(firstItem.id);
+                incrementItemView(firstItem.id);
+            });
+        }
+
+        function openModalWindow(groupKey) {
+            const product = groupedProducts.find(p => p.groupKey === groupKey);
+            if (!product) return;
+
+            document.getElementById('modalImg').src = product.image;
+            document.getElementById('modalTitle').innerText = product.name;
+            document.getElementById('modalSpecs').innerHTML = `<strong>القسم:</strong> ${product.category}<br><strong>المكونات:</strong> ${product.specs || 'غير متوفرة'}`;
+
+            let sizesModalHtml = '';
+            product.sizes.forEach(s => {
+                let orderMsg = `مرحباً، أود طلب هذه الوجبة:\n🍕 *${product.name}*\n📏 المقاس: ${s.size}\n💰 السعر: ${s.price}\n🖼️ الصورة:\n${product.fullImageUrl}`;
+                sizesModalHtml += `
+                    <div style="display:flex; justify-content:space-between; align-items:center; background:#f8fafc; padding:10px; border-radius:8px; border:1px solid var(--border-color);">
+                        <div><strong>المقاس:</strong> ${s.size} | <span style="color:var(--primary); font-weight:900;">${s.price}</span></div>
+                        <a href="https://wa.me/${phoneNumber}?text=${encodeURIComponent(orderMsg)}" target="_blank" style="background:#10b981; color:white; padding:6px 14px; border-radius:8px; text-decoration:none; font-weight:800; font-size:12px;">اطلب الآن</a>
+                    </div>
+                `;
+            });
+            document.getElementById('modalSizesContainer').innerHTML = sizesModalHtml;
+            document.getElementById('itemModal').style.display = 'flex';
+        }
+
+        function closeModal() { document.getElementById('itemModal').style.display = 'none'; }
+
+        loadMenuData();
+    </script>
+</body>
+</html>

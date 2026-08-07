@@ -1,0 +1,700 @@
+﻿<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دليل متاجر ومعارض كفر شكر</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --border-color: #334155;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --primary: #38bdf8;
+            --primary-hover: #0ea5e9;
+            --btn-text: #0f172a;
+            --hero-gradient: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+        }
+
+        [data-theme="light"] {
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --border-color: #e9ecef;
+            --text-main: #212529;
+            --text-muted: #6c757d;
+            --primary: #0077b6;
+            --primary-hover: #023e8a;
+            --btn-text: #ffffff;
+            --hero-gradient: linear-gradient(135deg, #ffffff 0%, #f1f3f5 100%);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Cairo', sans-serif;
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 25px 15px;
+            position: relative;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        /* الهيدر العلوي */
+        .hero-banner {
+            background: var(--hero-gradient);
+            border: 1px solid var(--border-color);
+            padding: 40px 20px;
+            border-radius: 24px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.06);
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* شريط الأذكار الاحترافي */
+        .adhkar-banner {
+            background: rgba(56, 189, 248, 0.07);
+            border: 1px dashed rgba(56, 189, 248, 0.3);
+            color: var(--primary);
+            padding: 10px 18px;
+            border-radius: 16px;
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 22px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+        }
+
+        .adhkar-banner:hover {
+            background: rgba(56, 189, 248, 0.12);
+            transform: translateY(-1px);
+        }
+
+        /* أزرار التحكم في أعلى الهيدر */
+        .top-actions {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 22px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            background: rgba(56, 189, 248, 0.08);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            padding: 7px 16px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .action-btn:hover {
+            background: var(--primary);
+            color: var(--btn-text);
+            transform: translateY(-2px);
+        }
+
+        /* شريط الترحيب المنظم */
+        .welcome-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(56, 189, 248, 0.1);
+            color: var(--primary);
+            padding: 6px 18px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            border: 1px solid rgba(56, 189, 248, 0.2);
+        }
+
+        /* اللوجو أو الأيقونة العلوية الاحترافية */
+        .hero-logo-container {
+            position: relative;
+            width: 75px;
+            height: 75px;
+            margin: 0 auto 15px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hero-logo-container::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--primary);
+            opacity: 0.15;
+            border-radius: 50%;
+            filter: blur(8px);
+        }
+
+        .hero-logo-icon {
+            position: relative;
+            font-size: 32px;
+            width: 100%;
+            height: 100%;
+            background: var(--card-bg);
+            border: 2px solid var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            color: var(--primary);
+        }
+
+        .hero-banner h1 {
+            font-size: 28px;
+            font-weight: 900;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .hero-banner p {
+            color: var(--text-muted);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        /* شريط التصفية والبحث الاحترافي المدمج */
+        .controls-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .search-wrapper {
+            position: relative;
+            flex: 1;
+            min-width: 100%;
+        }
+
+        @media (min-width: 768px) {
+            .search-wrapper {
+                min-width: 300px;
+            }
+        }
+
+        .search-input {
+            width: 100%;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 14px 20px 14px 45px;
+            border-radius: 16px;
+            color: var(--text-main);
+            font-size: 15px;
+            outline: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+        }
+
+        .search-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+        }
+
+        .search-icon-pos {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 16px;
+        }
+
+        .fav-filter-btn {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 14px 22px;
+            border-radius: 16px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+            transition: all 0.2s ease;
+        }
+
+        @media (min-width: 768px) {
+            .fav-filter-btn {
+                width: auto;
+            }
+        }
+
+        .fav-filter-btn:hover {
+            border-color: var(--primary);
+        }
+
+        .fav-filter-btn.active {
+            background: var(--primary);
+            color: var(--btn-text);
+            border-color: var(--primary);
+        }
+
+        /* عنوان القسم */
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-right: 4px solid var(--primary);
+            padding-right: 12px;
+        }
+
+        /* شبكة الكروت المتجاوبة */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        @media (min-width: 576px) {
+            .cards-grid {
+                grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            }
+        }
+
+        /* تصميم الكارت */
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 25px 20px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.04);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: 0 15px 30px rgba(56, 189, 248, 0.08);
+        }
+
+        .fav-btn {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: rgba(0,0,0,0.1);
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
+            z-index: 2;
+        }
+
+        .fav-btn:hover {
+            transform: scale(1.15);
+            background: rgba(56, 189, 248, 0.2);
+        }
+
+        .card-icon {
+            width: 65px;
+            height: 65px;
+            background: rgba(56, 189, 248, 0.08);
+            border: 1px solid var(--border-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            margin-bottom: 15px;
+        }
+
+        .card h3 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .card p {
+            color: var(--text-muted);
+            font-size: 13px;
+            line-height: 1.5;
+            margin-bottom: 20px;
+            flex-grow: 1;
+        }
+
+        .btn {
+            display: inline-block;
+            background: var(--primary);
+            color: var(--btn-text);
+            text-decoration: none;
+            padding: 11px 0;
+            width: 100%;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 14px;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        .btn:hover {
+            background: var(--primary-hover);
+        }
+
+        /* رسالة الحالة الفارغة للبحث */
+        .no-results {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 40px;
+            color: var(--text-muted);
+            font-size: 15px;
+            background: var(--card-bg);
+            border: 1px dashed var(--border-color);
+            border-radius: 20px;
+            display: none;
+        }
+
+        /* زر الواتساب العائم */
+        .whatsapp-float {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            background-color: #25d366;
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 14px;
+            box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
+            z-index: 999;
+            transition: transform 0.3s ease;
+        }
+
+        .whatsapp-float:hover {
+            transform: scale(1.05);
+            background-color: #22bf5b;
+        }
+
+        .whatsapp-float i {
+            font-size: 22px;
+        }
+
+        /* نافذة الباركود */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(4px);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 15px;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 24px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            max-width: 320px;
+            width: 100%;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        .modal-content img {
+            width: 170px;
+            height: 170px;
+            margin: 15px 0;
+            background: #fff;
+            padding: 10px;
+            border-radius: 12px;
+        }
+
+        .close-modal {
+            background: #ef4444;
+            color: #fff;
+            border: none;
+            padding: 9px 24px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 15px;
+            transition: opacity 0.2s;
+        }
+
+        .close-modal:hover {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- الهيدر العلوي -->
+        <div class="hero-banner">
+            
+            <!-- شريط الأذكار والتسبيح -->
+            <div class="adhkar-banner" id="adhkarBanner" onclick="changeAdhkar()" title="اضغط لتغيير الذكر">
+                <i class="fa-solid fa-heart-pulse" style="color: #38bdf8;"></i>
+                <span id="adhkarText">سبحان الله وبحمده، سبحان الله العظيم</span>
+            </div>
+
+            <div class="top-actions">
+                <button class="action-btn" onclick="toggleTheme()" id="themeToggleBtn">☀️ فاتح</button>
+                <button class="action-btn" onclick="toggleModal(true)"><i class="fa-solid fa-qrcode"></i> باركود الموقع</button>
+            </div>
+            
+            <div class="welcome-badge" id="welcomeMessage">
+                <i class="fa-regular fa-sun"></i> أهلاً بك في منصة أهالي كفر شكر
+            </div>
+            
+            <!-- اللوجو الاحترافي -->
+            <div class="hero-logo-container">
+                <div class="hero-logo-icon">
+                    <i class="fa-solid fa-store"></i>
+                </div>
+            </div>
+
+            <h1>دليل متاجر ومعارض كفر شكر</h1>
+            <p>منصة أهالي كفر شكر - تصفح أحدث المعروضات والمنتجات من مكانك بكل سهولة</p>
+        </div>
+
+        <!-- شريط البحث وعرض المفضلة -->
+        <div class="controls-bar">
+            <div class="search-wrapper">
+                <input type="text" id="searchInput" class="search-input" placeholder="ابحث عن معرض أو مطعم..." onkeyup="filterCards()">
+                <i class="fa-solid fa-magnifying-glass search-icon-pos"></i>
+            </div>
+            <button id="favFilterBtn" class="fav-filter-btn" onclick="toggleFavFilter()">⭐ عرض المتاجر المفضلة فقط</button>
+        </div>
+
+        <!-- عنوان القسم -->
+        <div class="section-title">
+            <span>🏪</span> المحلات والمطاعم المتاحة حالياً
+        </div>
+
+        <!-- شبكة الكروت (تم ربطها بملفات HTML الخاصة بالمعارض) -->
+        <div class="cards-grid" id="cardsGrid">
+            <!-- كارت معرض الحاج عادل الحانى -->
+            <div class="card" data-id="adel-store" data-name="معرض الحاج عادل الحانى عجل دراجات">
+                <button class="fav-btn" onclick="toggleFavorite('adel-store', event)" title="إضافة للمفضلة">🤍</button>
+                <div class="card-icon">🚲</div>
+                <h3>معرض الحاج عادل الحانى</h3>
+                <p>أحدث المنتجات والعروض الخاصة بالمعرض والدراجات العادية والجبلية</p>
+                <a href="adel-store.html" class="btn">دخول المتجر</a>
+            </div>
+
+            <!-- كارت بيتزا هاوس -->
+            <div class="card" data-id="pizza-house" data-name="بيتزا هاوس مطعم فطور وجبات">
+                <button class="fav-btn" onclick="toggleFavorite('pizza-house', event)" title="إضافة للمفضلة">🤍</button>
+                <div class="card-icon">🍕</div>
+                <h3>بيتزا هاوس</h3>
+                <p>أحدث المأكولات والوجبات السريعة والعروض الخاصة بمتجر بيتزا هاوس</p>
+                <a href="pizza-house.html" class="btn">دخول المتجر</a>
+            </div>
+
+            <!-- رسالة عدم وجود نتائج -->
+            <div class="no-results" id="noResultsMsg">
+                عذراً، لا توجد نتائج مطابقة لبحثك 🔍
+            </div>
+        </div>
+    </div>
+
+    <!-- زر الواتساب العائم -->
+    <a href="https://wa.me/201023745774?text=السلام%20عليكم%2C%20أرغب%20في%20إضافة%20متجري%20أو%20محلي%20إلى%20دليل%20متاجر%20كفر%20شكر" class="whatsapp-float" target="_blank" title="أضف محلك معنا">
+        <i class="fa-brands fa-whatsapp"></i>
+        <span>أضف محلك معنا</span>
+    </a>
+
+    <!-- نافذة الباركود -->
+    <div class="modal" id="qrModal">
+        <div class="modal-content">
+            <h3>باركود الموقع</h3>
+            <p style="font-size: 12px; color: var(--text-muted); margin-top: 5px;">امسح الكود لفتح الموقع على هاتفك</p>
+            <img src="" id="qrImage" alt="QR Code">
+            <br>
+            <button class="close-modal" onclick="toggleModal(false)">إغلاق</button>
+        </div>
+    </div>
+
+    <script>
+        const adhkarList = [
+            "سبحان الله وبحمده، سبحان الله العظيم",
+            "لا إله إلا الله وحده لا شريك له، له الملك وله الحمد وهو على كل شيء قدير",
+            "استغفر الله العظيم واتوب إليه",
+            "اللهم صل وسلم على نبينا محمد",
+            "لاحول ولا قوة إلا بالله العلي العظيم",
+            "سبحان الله، والحمد لله، ولا إله إلا الله، والله أكبر",
+            "حسبنا الله ونعم الوكيل"
+        ];
+
+        function changeAdhkar() {
+            let randomIndex = Math.floor(Math.random() * adhkarList.length);
+            document.getElementById('adhkarText').innerText = adhkarList[randomIndex];
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            changeAdhkar();
+            updateFavButtonsUI();
+        });
+
+        const hour = new Date().getHours();
+        const welcomeEl = document.getElementById('welcomeMessage');
+        if (hour >= 5 && hour < 12) {
+            welcomeEl.innerHTML = '<i class="fa-regular fa-sun" style="color: #f59e0b;"></i> صباح الخير، منورين أهل كفر شكر الكرام';
+        } else if (hour >= 12 && hour < 17) {
+            welcomeEl.innerHTML = '<i class="fa-solid fa-cloud-sun" style="color: #38bdf8;"></i> أهلاً بحضرتك، نورت دليل كفر شكر';
+        } else {
+            welcomeEl.innerHTML = '<i class="fa-regular fa-moon" style="color: #818cf8;"></i> مساء الخير، أهلاً بك في منصة أهالي كفر شكر';
+        }
+
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        updateThemeButtonText(savedTheme);
+
+        function toggleTheme() {
+            let currentTheme = document.documentElement.getAttribute('data-theme');
+            let newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeButtonText(newTheme);
+        }
+
+        function updateThemeButtonText(theme) {
+            let btn = document.getElementById('themeToggleBtn');
+            btn.innerHTML = theme === 'dark' ? '☀️ فاتح' : '🌙 غامق';
+        }
+
+        let favorites = JSON.parse(localStorage.getItem('user_favorites')) || [];
+        let showOnlyFavs = false;
+
+        function toggleFavorite(storeId, event) {
+            event.stopPropagation();
+            let index = favorites.indexOf(storeId);
+            if (index > -1) {
+                favorites.splice(index, 1);
+            } else {
+                favorites.push(storeId);
+            }
+            localStorage.setItem('user_favorites', JSON.stringify(favorites));
+            updateFavButtonsUI();
+            filterCards();
+        }
+
+        function updateFavButtonsUI() {
+            let cards = document.querySelectorAll('.cards-grid .card');
+            cards.forEach(card => {
+                let storeId = card.getAttribute('data-id');
+                let favBtn = card.querySelector('.fav-btn');
+                if (favorites.includes(storeId)) {
+                    favBtn.innerHTML = '❤️';
+                    favBtn.title = 'إزالة من المفضلة';
+                } else {
+                    favBtn.innerHTML = '🤍';
+                    favBtn.title = 'إضافة للمفضلة';
+                }
+            });
+        }
+
+        function toggleFavFilter() {
+            showOnlyFavs = !showOnlyFavs;
+            let btn = document.getElementById('favFilterBtn');
+            if (showOnlyFavs) {
+                btn.classList.add('active');
+                btn.innerHTML = '⭐ عرض كل المتاجر';
+            } else {
+                btn.classList.remove('active');
+                btn.innerHTML = '⭐ عرض المتاجر المفضلة فقط';
+            }
+            filterCards();
+        }
+
+        function filterCards() {
+            let input = document.getElementById('searchInput').value.toLowerCase().trim();
+            let cards = document.querySelectorAll('.cards-grid .card');
+            let noResultsMsg = document.getElementById('noResultsMsg');
+            let visibleCount = 0;
+
+            cards.forEach(card => {
+                let storeId = card.getAttribute('data-id');
+                let name = card.getAttribute('data-name').toLowerCase();
+                
+                let matchesSearch = name.includes(input);
+                let matchesFav = !showOnlyFavs || favorites.includes(storeId);
+
+                if (matchesSearch && matchesFav) {
+                    card.style.display = "flex";
+                    visibleCount++;
+                } else {
+                    card.style.display = "none";
+                }
+            });
+
+            if (visibleCount === 0) {
+                noResultsMsg.style.display = "block";
+            } else {
+                noResultsMsg.style.display = "none";
+            }
+        }
+
+        function toggleModal(show) {
+            let modal = document.getElementById('qrModal');
+            if (show) {
+                let currentUrl = window.location.href;
+                document.getElementById('qrImage').src = "https://api.qrserver.com/v1/create-qr-code/?size=170x170&data=" + encodeURIComponent(currentUrl);
+                modal.style.display = "flex";
+            } else {
+                modal.style.display = "none";
+            }
+        }
+    </script>
+
+</body>
+</html>

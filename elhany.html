@@ -552,7 +552,7 @@
     </div>
 
     <script>
-        // --- 1. إعدادات السيرفر السحابي الخاص بك (mohamed-29759) ---
+        // --- 1. إعدادات السيرفر السحابي الخاص بك ---
         const firebaseConfig = {
             apiKey: "AIzaSyBDU3ddIiB-d2hNSGG1bAoti2qnvBohyI",
             authDomain: "mohamed-29759.firebaseapp.com",
@@ -563,7 +563,6 @@
             appId: "1:1087982177559:web:b134359fbd0ce2fece3b52"
         };
 
-        // تهيئة السيرفر
         let db = null;
         try {
             if (!firebase.apps.length) {
@@ -581,7 +580,6 @@
         let bikes = [];
 
         // --- 2. إدارة المشاهدات والإعجابات عبر Firebase ---
-
         function listenToBikeStats(bikeId) {
             if (!db) return;
             db.ref('bikes/' + bikeId).on('value', (snapshot) => {
@@ -621,8 +619,7 @@
             }
         }
 
-        // --- 3. قراءة البيانات من الشيت الخاص بك ---
-
+        // --- 3. قراءة البيانات من الشيت بدقة وتخطي الصف الأول (الهيدر) ---
         function fetchHtmlLastModified() {
             fetch(window.location.href, { method: 'HEAD' })
                 .then(response => {
@@ -631,7 +628,7 @@
                         const modDate = new Date(lastHeader);
                         document.getElementById('last-update').innerText = modDate.toLocaleDateString('ar-EG', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
                     } else {
-                        document.getElementById('last-update').innerText = new Date().toLocaleDateString('ar-EG', { month: 'short', day: 'numeric' });
+                        document.getElementById('last-update').innerText = "اليوم";
                     }
                 }).catch(() => { document.getElementById('last-update').innerText = "اليوم"; });
         }
@@ -650,40 +647,41 @@
         function loadExcelData() {
             fetchHtmlLastModified();
             
-            // رابط شيت جوجل الجديد الخاص بك (CSV المباشر)
             const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRT04pzSV40ZNYSFbS9zvSdHkXjIV8SOs12Tki7TqncA1FtH6ug_qk64zqnGFMzkRV5On28Ya5iPRQ9/pub?gid=0&single=true&output=csv";
+            const urlWithCacheBuster = sheetUrl + "&t=" + new Date().getTime();
 
-            fetch(sheetUrl)
-                .then(response => response.arrayBuffer())
-                .then(buffer => {
-                    const decoder = new TextDecoder('utf-8');
-                    const csvText = decoder.decode(buffer);
-                    
-                    const workbook = XLSX.read(csvText, { type: 'string' });
+            fetch(urlWithCacheBuster)
+                .then(response => {
+                    if (!response.ok) throw new Error("لا يمكن الوصول للشيت، تأكد من النشر على الويب.");
+                    return response.arrayBuffer();
+                })
+                .then(data => {
+                    // ترميز صحيح لفك الرموز العربية وتجنب الأخطاء
+                    const workbook = XLSX.read(data, { type: 'array', codepage: 65001 });
                     const worksheet = workbook.Sheets[workbook.SheetNames[0]];
                     
                     bikes = [];
-                    let rowIndex = 2;
+                    let rowIndex = 2; // البدء من الصف الثاني لتخطي الهيدر (العناوين)
 
                     while (true) {
                         let cellName = worksheet[XLSX.utils.encode_cell({ r: rowIndex - 1, c: 0 })];
                         if (!cellName || cellName.v === undefined || String(cellName.v).trim() === "") break;
 
-                        let cellType = worksheet[XLSX.utils.encode_cell({ r: rowIndex - 1, c: 1 })];
-                        let cellSize = worksheet[XLSX.utils.encode_cell({ r: rowIndex - 1, c: 2 })];
-                        let cellPrice = worksheet[XLSX.utils.encode_cell({ r: rowIndex - 1, c: 3 })];
-                        let cellOldPrice = worksheet[XLSX.utils.encode_cell({ r: rowIndex - 1, c: 4 })];
-                        let cellOffer = worksheet[XLSX.utils.encode_cell({ r: rowIndex - 1, c: 5 })];
-                        let cellSpecs = worksheet[XLSX.utils.encode_cell({ r: rowIndex - 1, c: 6 })];
-                        let cellStatus = worksheet[XLSX.utils.encode_cell({ r: rowIndex - 1, c: 7 })];
-                        let cellImage = worksheet[XLSX.utils.encode_cell({ r: rowIndex - 1, c: 8 })];
+                        let cellType = worksheet[XLSX.utils.encode_cell({ r: rowIndex - 1, c: 1 })];   // النوع (B)
+                        let cellSize = worksheet[XLSX.utils.encode_cell({ r: rowIndex - 1, c: 2 })];   // المقاس (C)
+                        let cellPrice = worksheet[XLSX.utils.encode_cell({ r: rowIndex - 1, c: 3 })];  // السعر (D)
+                        let cellOldPrice = worksheet[XLSX.utils.encode_cell({ r: rowIndex - 1, c: 4 })]; // السعر القديم (E)
+                        let cellOffer = worksheet[XLSX.utils.encode_cell({ r: rowIndex - 1, c: 5 })];  // عرض (F)
+                        let cellSpecs = worksheet[XLSX.utils.encode_cell({ r: rowIndex - 1, c: 6 })];  // المواصفات (G)
+                        let cellStatus = worksheet[XLSX.utils.encode_cell({ r: rowIndex - 1, c: 7 })]; // الحالة (H)
+                        let cellImage = worksheet[XLSX.utils.encode_cell({ r: rowIndex - 1, c: 8 })];  // الصورة (I)
 
                         let bikeId = rowIndex - 1;
                         let rawOffer = cellOffer ? cellOffer.v : "";
                         let isOffer = rawOffer === true || String(rawOffer).toLowerCase() === "true" || rawOffer === "نعم";
                         let priceValue = (cellPrice && cellPrice.v) ? parseFloat(cellPrice.v) || 0 : 0;
                         
-                        let rawImg = "https://via.placeholder.com/300x180?text=Bike";
+                        let rawImg = "https://via.placeholder.com/300x180?text=صورة+غير+متاحة";
                         if (cellImage && String(cellImage.v).trim() !== "") {
                             let imgVal = String(cellImage.v).trim();
                             if (imgVal.includes("drive.google.com")) {
@@ -714,10 +712,12 @@
                         });
                         rowIndex++;
                     }
+                    
                     filterProducts();
                 })
                 .catch(error => {
                     console.error("خطأ في جلب بيانات الشيت:", error);
+                    document.getElementById('products-grid').innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; color:red; font-weight:bold;">حدث خطأ في تحميل البيانات. يرجى التأكد من نشر ملف الإكسيل.</div>`;
                 });
         }
 

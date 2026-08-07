@@ -647,76 +647,90 @@
         function loadExcelData() {
             fetchHtmlLastModified();
             
-            // رابط تصدير مباشر آمن ومستقر للشيت بصيغة اكسيل/CSV يمنع مشاكل الـ 404
-            const sheetUrl = "https://docs.google.com/spreadsheets/d/1vRT04pzSV40ZNYSFbS9zvSdHkXjIV8SOs12Tki7/export?format=xlsx&t=" + new Date().getTime();
+            // الرابط الصحيح والمباشر بصيغة CSV المستخرج من جوجل شيت
+            const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRT04pzSV40ZNYSFbS9zvSdHkXjIV8SOs12Tki7Tqi6TqncA1Fth6ug_qk64zqnGFmzkRV5On28Ya5iPRQ9/pub?gid=0&single=true&output=csv&t=" + new Date().getTime();
 
             fetch(sheetUrl)
                 .then(response => {
                     if (!response.ok) throw new Error("لا يمكن الوصول للشيت، تأكد من إعدادات المشاركة.");
-                    return response.arrayBuffer();
+                    return response.text();
                 })
-                .then(data => {
-                    const workbook = XLSX.read(new Uint8Array(data), { type: 'array' });
-                    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-                    
+                .then(csvText => {
+                    const lines = csvText.split('\n');
                     bikes = [];
-                    let rowIndex = 2; // البدء من الصف الثاني لتخطي الهيدر (العناوين)
 
-                    while (true) {
-                        let cellName = worksheet[XLSX.utils.encode_cell({ r: rowIndex - 1, c: 0 })];
-                        if (!cellName || cellName.v === undefined || String(cellName.v).trim() === "") break;
+                    // البدء من الصف الثاني (index 1) لتخطي صف العناوين (الهيدر)
+                    for (let i = 1; i < lines.length; i++) {
+                        let line = lines[i].trim();
+                        if (!line) continue;
 
-                        let cellType = worksheet[XLSX.utils.encode_cell({ r: rowIndex - 1, c: 1 })];   // النوع (B)
-                        let cellSize = worksheet[XLSX.utils.encode_cell({ r: rowIndex - 1, c: 2 })];   // المقاس (C)
-                        let cellPrice = worksheet[XLSX.utils.encode_cell({ r: rowIndex - 1, c: 3 })];  // السعر (D)
-                        let cellOldPrice = worksheet[XLSX.utils.encode_cell({ r: rowIndex - 1, c: 4 })]; // السعر القديم (E)
-                        let cellOffer = worksheet[XLSX.utils.encode_cell({ r: rowIndex - 1, c: 5 })];  // عرض (F)
-                        let cellSpecs = worksheet[XLSX.utils.encode_cell({ r: rowIndex - 1, c: 6 })];  // المواصفات (G)
-                        let cellStatus = worksheet[XLSX.utils.encode_cell({ r: rowIndex - 1, c: 7 })]; // الحالة (H)
-                        let cellImage = worksheet[XLSX.utils.encode_cell({ r: rowIndex - 1, c: 8 })];  // الصورة (I)
+                        // تقسيم الـ CSV مع مراعاة الفواصل داخل الحقول النصية إن وجدت
+                        let cols = [];
+                        let inQuotes = false;
+                        let currentVal = '';
+                        for (let c = 0; c < line.length; c++) {
+                            let char = line[c];
+                            if (char === '"') {
+                                inQuotes = !inQuotes;
+                            } else if (char === ',' && !inQuotes) {
+                                cols.push(currentVal.trim());
+                                currentVal = '';
+                            } else {
+                                currentVal += char;
+                            }
+                        }
+                        cols.push(currentVal.trim());
 
-                        let bikeId = rowIndex - 1;
-                        let rawOffer = cellOffer ? cellOffer.v : "";
-                        let isOffer = rawOffer === true || String(rawOffer).toLowerCase() === "true" || rawOffer === "نعم";
-                        let priceValue = (cellPrice && cellPrice.v) ? parseFloat(cellPrice.v) || 0 : 0;
-                        
-                        let rawImg = "https://via.placeholder.com/300x180?text=صورة+غير+متاحة";
-                        if (cellImage && String(cellImage.v).trim() !== "") {
-                            let imgVal = String(cellImage.v).trim();
-                            if (imgVal.includes("drive.google.com")) {
-                                let match = imgVal.match(/\/d\/([a-zA-Z0-9_-]+)/);
+                        // الأعمدة حسب ترتيب جدولك:
+                        // 0: اسم العجلة, 1: النوع, 2: المقاس, 3: السعر, 4: السعر القديم, 5: عرض, 6: المواصفات, 7: الحالة, 8: الصورة
+                        let name = cols[0] ? cols[0].replace(/^"|"$/g, '').trim() : '';
+                        if (!name) continue;
+
+                        let type = cols[1] ? cols[1].replace(/^"|"$/g, '').trim() : "عادي";
+                        let size = cols[2] ? cols[2].replace(/^"|"$/g, '').trim() : "26";
+                        let priceVal = cols[3] ? parseFloat(cols[3].replace(/^"|"$/g, '')) || 0 : 0;
+                        let oldPriceVal = cols[4] ? cols[4].replace(/^"|"$/g, '').trim() : '';
+                        let rawOffer = cols[5] ? cols[5].replace(/^"|"$/g, '').trim().toLowerCase() : '';
+                        let isOffer = (rawOffer === 'true' || rawOffer === 'نعم' || rawOffer === '1');
+                        let specs = cols[6] ? cols[6].replace(/^"|"$/g, '').trim() : '';
+                        let statusVal = cols[7] ? cols[7].replace(/^"|"$/g, '').trim().toLowerCase() : 'available';
+                        let rawImg = cols[8] ? cols[8].replace(/^"|"$/g, '').trim() : '';
+
+                        let finalImg = "https://via.placeholder.com/300x180?text=صورة+غير+متاحة";
+                        if (rawImg !== "") {
+                            if (rawImg.includes("drive.google.com")) {
+                                let match = rawImg.match(/\/d\/([a-zA-Z0-9_-]+)/);
                                 if (match && match[1]) {
-                                    rawImg = "https://lh3.googleusercontent.com/d/" + match[1];
+                                    finalImg = "https://lh3.googleusercontent.com/d/" + match[1];
                                 } else {
-                                    rawImg = imgVal;
+                                    finalImg = rawImg;
                                 }
                             } else {
-                                rawImg = imgVal;
+                                finalImg = rawImg;
                             }
                         }
 
                         bikes.push({
-                            id: bikeId,
-                            name: String(cellName.v).trim(),
-                            type: cellType && cellType.v ? String(cellType.v).trim() : "عادي",
-                            size: cellSize && cellSize.v !== undefined ? String(cellSize.v).trim() : "26",
-                            priceVal: priceValue,
-                            price: priceValue + " ج.م",
-                            oldPrice: cellOldPrice && cellOldPrice.v ? cellOldPrice.v + " ج.م" : "",
+                            id: i,
+                            name: name,
+                            type: type,
+                            size: size,
+                            priceVal: priceVal,
+                            price: priceVal + " ج.م",
+                            oldPrice: oldPriceVal ? oldPriceVal + " ج.م" : "",
                             hasOffer: isOffer,
-                            specs: cellSpecs && cellSpecs.v ? String(cellSpecs.v).trim() : "",
-                            status: (cellStatus && String(cellStatus.v).trim().toLowerCase() === "available") ? "available" : "sold",
-                            image: rawImg,
-                            fullImageUrl: rawImg
+                            specs: specs,
+                            status: (statusVal === 'available' ? 'available' : 'sold'),
+                            image: finalImg,
+                            fullImageUrl: finalImg
                         });
-                        rowIndex++;
                     }
                     
                     filterProducts();
                 })
                 .catch(error => {
                     console.error("خطأ في جلب بيانات الشيت:", error);
-                    document.getElementById('products-grid').innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; color:red; font-weight:bold;">حدث خطأ في تحميل البيانات. يرجى التأكد من أن الملف عام (Anyone with the link can view).</div>`;
+                    document.getElementById('products-grid').innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; color:red; font-weight:bold;">حدث خطأ في تحميل البيانات. يرجى التأكد من نشر الشيت بصيغة CSV وأن الملف عام (Anyone with the link can view).</div>`;
                 });
         }
 
@@ -799,7 +813,7 @@
             const minPrice = parseFloat(document.getElementById('price-min').value) || 0;
             const maxPrice = parseFloat(document.getElementById('price-max').value) || Infinity;
             const sortOption = document.getElementById('filter-sort').value;
-            const selectedOffer = document.getElementById('filter-offer.value') || document.getElementById('filter-offer').value;
+            const selectedOffer = document.getElementById('filter-offer').value;
             const selectedType = document.getElementById('filter-type').value;
             const selectedSize = document.getElementById('filter-size').value;
             const selectedStatus = document.getElementById('filter-status').value;

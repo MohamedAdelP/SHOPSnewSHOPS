@@ -619,7 +619,6 @@
             }
         }
 
-        // --- 3. قراءة البيانات من الشيت بدقة وتخطي الصف الأول (الهيدر) ---
         function fetchHtmlLastModified() {
             fetch(window.location.href, { method: 'HEAD' })
                 .then(response => {
@@ -644,54 +643,44 @@
             else { navigator.clipboard.writeText(shareText); alert("تم نسخ رابط المعرض!"); }
         }
 
+        // --- 3. جراءة ملف الشيت باستخدام مكتبة XLSX ---
         function loadExcelData() {
             fetchHtmlLastModified();
             
-            // الرابط الصحيح والمباشر بصيغة CSV لورقة الحاني (elhany) مع منع الكاش
-            const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRT04pzSV40ZNYSFbS9zvSdHkXjIV8SOs12Tki7TqncA1Fth6ug_qk64zqNGFmzkRV5On28Ya5iPRQ9/pub?gid=0&single=true&output=csv&t=" + new Date().getTime();
+            // رابط تصدير الشيت المباشر بصيغة Excel
+            const sheetUrl = "https://docs.google.com/spreadsheets/d/14J7dHMQfh8I223-o6P5BCUrm3NEXARaTxR65mCr6U5A/export?format=xlsx&t=" + new Date().getTime();
 
             fetch(sheetUrl)
                 .then(response => {
-                    if (!response.ok) throw new Error("لا يمكن الوصول للشيت، تأكد من إعدادات المشاركة.");
-                    return response.text();
+                    if (!response.ok) throw new Error("لا يمكن الوصول للشيت");
+                    return response.arrayBuffer();
                 })
-                .then(csvText => {
-                    const lines = csvText.split('\n');
+                .then(buffer => {
+                    const data = new Uint8Array(buffer);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    
+                    const firstSheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[firstSheetName];
+                    const rows = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                    
                     bikes = [];
 
-                    // البدء من الصف الثاني (index 1) لتخطي صف العناوين (الهيدر)
-                    for (let i = 1; i < lines.length; i++) {
-                        let line = lines[i].trim();
-                        if (!line) continue;
+                    for (let i = 1; i < rows.length; i++) {
+                        let cols = rows[i];
+                        if (!cols || cols.length === 0) continue;
 
-                        let cols = [];
-                        let inQuotes = false;
-                        let currentVal = '';
-                        for (let c = 0; c < line.length; c++) {
-                            let char = line[c];
-                            if (char === '"') {
-                                inQuotes = !inQuotes;
-                            } else if (char === ',' && !inQuotes) {
-                                cols.push(currentVal.trim());
-                                currentVal = '';
-                            } else {
-                                currentVal += char;
-                            }
-                        }
-                        cols.push(currentVal.trim());
-
-                        let name = cols[0] ? cols[0].replace(/^"|"$/g, '').trim() : '';
+                        let name = cols[0] ? String(cols[0]).trim() : '';
                         if (!name) continue;
 
-                        let type = cols[1] ? cols[1].replace(/^"|"$/g, '').trim() : "عادي";
-                        let size = cols[2] ? cols[2].replace(/^"|"$/g, '').trim() : "26";
-                        let priceVal = cols[3] ? parseFloat(cols[3].replace(/^"|"$/g, '')) || 0 : 0;
-                        let oldPriceVal = cols[4] ? cols[4].replace(/^"|"$/g, '').trim() : '';
-                        let rawOffer = cols[5] ? cols[5].replace(/^"|"$/g, '').trim().toLowerCase() : '';
-                        let isOffer = (rawOffer === 'true' || rawOffer === 'نعم' || rawOffer === '1');
-                        let specs = cols[6] ? cols[6].replace(/^"|"$/g, '').trim() : '';
-                        let statusVal = cols[7] ? cols[7].replace(/^"|"$/g, '').trim().toLowerCase() : 'available';
-                        let rawImg = cols[8] ? cols[8].replace(/^"|"$/g, '').trim() : '';
+                        let type = cols[1] ? String(cols[1]).trim() : "عادي";
+                        let size = cols[2] ? String(cols[2]).trim() : "26";
+                        let priceVal = cols[3] ? parseFloat(cols[3]) || 0 : 0;
+                        let oldPriceVal = cols[4] ? String(cols[4]).trim() : '';
+                        let rawOffer = cols[5] ? String(cols[5]).trim().toLowerCase() : '';
+                        let isOffer = (rawOffer === 'true' || rawOffer === 'نعم' || rawOffer === '1' || rawOffer === 'TRUE');
+                        let specs = cols[6] ? String(cols[6]).trim() : '';
+                        let statusVal = cols[7] ? String(cols[7]).trim().toLowerCase() : 'available';
+                        let rawImg = cols[8] ? String(cols[8]).trim() : '';
 
                         let finalImg = "https://via.placeholder.com/300x180?text=صورة+غير+متاحة";
                         if (rawImg !== "") {
@@ -717,7 +706,7 @@
                             oldPrice: oldPriceVal ? oldPriceVal + " ج.م" : "",
                             hasOffer: isOffer,
                             specs: specs,
-                            status: (statusVal === 'available' ? 'available' : 'sold'),
+                            status: (statusVal === 'available' || statusVal === 'متاح' ? 'available' : 'sold'),
                             image: finalImg,
                             fullImageUrl: finalImg
                         });
@@ -727,7 +716,7 @@
                 })
                 .catch(error => {
                     console.error("خطأ في جلب بيانات الشيت:", error);
-                    document.getElementById('products-grid').innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; color:red; font-weight:bold;">حدث خطأ في تحميل البيانات. يرجى التأكد من نشر الشيت بصيغة CSV وأن الملف عام (Anyone with the link can view).</div>`;
+                    document.getElementById('products-grid').innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; color:red; font-weight:bold;">حدث خطأ في تحميل البيانات. يرجى التأكد من أن الرابط صحيح وأن المشاركة العامة مفعلة.</div>`;
                 });
         }
 

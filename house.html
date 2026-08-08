@@ -1,11 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>قائمة طعام بيتزا هاوس</title>
-    <!-- مكتبة قراءة ملفات الإكسيل SheetJS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <!-- مكتبة Firebase للتحكم في الإعجابات والمشاهدات -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -78,7 +76,7 @@
             border-radius: var(--radius);
             overflow: hidden;
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
-            border: 2px solid #93c5fd; /* بوردر أزرق هادئ وواضح */
+            border: 2px solid #93c5fd;
             display: flex;
             flex-direction: column;
             transition: all 0.3s ease;
@@ -86,7 +84,7 @@
         .product-card:hover { 
             transform: translateY(-5px); 
             box-shadow: 0 20px 35px -10px rgba(37, 99, 235, 0.15);
-            border-color: #3b82f6; /* أزرق أغمق وأبرز عند التمرير أو اللمس */
+            border-color: #3b82f6;
         }
 
         .img-container { position: relative; width: 100%; height: 190px; background: #e2e8f0; cursor: pointer; overflow: hidden; }
@@ -266,70 +264,87 @@
         let groupedProducts = [];
         let currentCategory = "الكل";
 
+        // دالة ذكية لتحليل ملف الـ CSV وتجاوز الفواصل داخل النصوص
+        function parseCSV(text) {
+            let lines = text.split("\n");
+            let result = [];
+            for (let i = 1; i < lines.length; i++) {
+                if (!lines[i].trim()) continue;
+                let row = [];
+                let current = "";
+                let inQuotes = false;
+                for (let char of lines[i]) {
+                    if (char === '"') {
+                        inQuotes = !inQuotes;
+                    } else if (char === ',' && !inQuotes) {
+                        row.push(current.trim());
+                        current = "";
+                    } else {
+                        current += char;
+                    }
+                }
+                row.push(current.trim());
+                result.push(row);
+            }
+            return result;
+        }
+
         function loadMenuData() {
-            // جلب البيانات من Google Sheets مباشرة باستخدام الـ gid=908088148
-            const sheetUrl = "https://docs.google.com/spreadsheets/d/14J7DHMQfh8I223-o6P5BCUrm3NEXARaTxR65mCr6U5A/export?format=csv&gid=908088148";
+            // رابط نشر الويب بصيغة CSV المحدث
+            const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRT04pzSV40ZNYSFbS9zvSdHkXjIV8SOs12Tki6TqncA1FtH6ug_qk64zqnGFMzkRV5On28Ya5iPRQ9/pub?gid=908088148&single=true&output=csv";
 
             fetch(sheetUrl)
-                .then(res => res.arrayBuffer())
-                .then(buffer => {
-                    const wb = XLSX.read(buffer, { type: 'array' });
-                    const ws = wb.Sheets[wb.SheetNames[0]];
-                    
+                .then(res => res.text())
+                .then(csvText => {
+                    let rows = parseCSV(csvText);
                     let rawRows = [];
-                    let rowIndex = 2;
 
-                    while (true) {
-                        let cellCategory = ws[XLSX.utils.encode_cell({ r: rowIndex - 1, c: 0 })];
-                        if (!cellCategory || cellCategory.v === undefined || String(cellCategory.v).trim() === "") break;
+                    rows.forEach((cols, index) => {
+                        let rowIndex = index + 2;
+                        let cellCategory = cols[0] || "";
+                        if (!cellCategory) return;
 
-                        let cellName = ws[XLSX.utils.encode_cell({ r: rowIndex - 1, c: 1 })];
-                        let cellSize = ws[XLSX.utils.encode_cell({ r: rowIndex - 1, c: 2 })];
-                        let cellPrice = ws[XLSX.utils.encode_cell({ r: rowIndex - 1, c: 3 })];
-                        let cellOldPrice = ws[XLSX.utils.encode_cell({ r: rowIndex - 1, c: 4 })];
-                        let cellOffer = ws[XLSX.utils.encode_cell({ r: rowIndex - 1, c: 5 })];
-                        let cellSpecs = ws[XLSX.utils.encode_cell({ r: rowIndex - 1, c: 6 })];
-                        let cellStatus = ws[XLSX.utils.encode_cell({ r: rowIndex - 1, c: 7 })];
-                        let cellImage = ws[XLSX.utils.encode_cell({ r: rowIndex - 1, c: 8 })];
+                        let cellName = cols[1] || "وجبة جديدة";
+                        let cellSize = cols[2] !== undefined ? cols[2] : "قياسي";
+                        let cellPrice = parseFloat(cols[3]) || 0;
+                        let cellOldPrice = cols[4] || "";
+                        let rawOffer = cols[5] || "";
+                        let isOffer = rawOffer.toLowerCase() === "true" || rawOffer === "نعم";
+                        let cellSpecs = cols[6] || "";
+                        let cellStatus = cols[7] || "";
+                        let cellImage = cols[8] || "";
 
-                        let rawOffer = cellOffer ? cellOffer.v : "";
-                        let isOffer = rawOffer === true || String(rawOffer).toLowerCase() === "true" || rawOffer === "نعم";
-                        let priceVal = (cellPrice && cellPrice.v) ? parseFloat(cellPrice.v) || 0 : 0;
-                        
-                        // معالجة روابط الصور (دعم روابط Google Drive والتنسيق المباشر)
                         let rawImg = "https://via.placeholder.com/300x200?text=Meal";
-                        if (cellImage && String(cellImage.v).trim() !== "") {
-                            let imgVal = String(cellImage.v).trim();
-                            if (imgVal.includes("drive.google.com")) {
-                                let match = imgVal.match(/\/d\/([a-zA-Z0-9_-]+)/);
+                        if (cellImage.trim() !== "") {
+                            if (cellImage.includes("drive.google.com")) {
+                                let match = cellImage.match(/\/d\/([a-zA-Z0-9_-]+)/);
                                 if (match && match[1]) {
                                     rawImg = "https://lh3.googleusercontent.com/d/" + match[1];
                                 } else {
-                                    rawImg = imgVal;
+                                    rawImg = cellImage;
                                 }
                             } else {
-                                rawImg = imgVal;
+                                rawImg = cellImage;
                             }
                         }
 
-                        let statusText = cellStatus && String(cellStatus.v).trim() === "متاح" ? "available" : "sold";
+                        let statusText = cellStatus.trim() === "متاح" ? "available" : "sold";
 
                         rawRows.push({
                             id: rowIndex - 1,
-                            category: String(cellCategory.v).trim(),
-                            name: cellName && cellName.v ? String(cellName.v).trim() : "وجبة جديدة",
-                            size: cellSize && cellSize.v !== undefined ? String(cellSize.v).trim() : "قياسي",
-                            priceVal: priceVal,
-                            price: priceVal + " ج.م",
-                            oldPrice: cellOldPrice && cellOldPrice.v ? cellOldPrice.v + " ج.م" : "",
+                            category: cellCategory,
+                            name: cellName,
+                            size: cellSize,
+                            priceVal: cellPrice,
+                            price: cellPrice + " ج.م",
+                            oldPrice: cellOldPrice ? cellOldPrice + " ج.م" : "",
                             hasOffer: isOffer,
-                            specs: cellSpecs && cellSpecs.v ? String(cellSpecs.v).trim() : "",
+                            specs: cellSpecs,
                             status: statusText,
                             image: rawImg,
                             fullImageUrl: rawImg
                         });
-                        rowIndex++;
-                    }
+                    });
 
                     let map = {};
                     rawRows.forEach(item => {

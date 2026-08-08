@@ -25,6 +25,24 @@
             --border-color: #cbd5e1;
             --radius: 14px;
             --shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.08);
+            --card-border: #94a3b8;
+            --input-bg: #f8fafc;
+            --modal-bg: #ffffff;
+        }
+
+        [data-theme="dark"] {
+            --primary: #3b82f6;
+            --primary-light: #60a5fa;
+            --accent: #fbbf24;
+            --bg-main: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            --shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.3);
+            --card-border: #475569;
+            --input-bg: #0f172a;
+            --modal-bg: #1e293b;
         }
 
         body { 
@@ -36,6 +54,7 @@
             direction: rtl; 
             box-sizing: border-box;
             -webkit-font-smoothing: antialiased;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         *, *:before, *:after { box-sizing: inherit; }
@@ -43,7 +62,7 @@
         .main-wrapper { max-width: 1350px; margin: auto; }
 
         .welcome-banner {
-            background: #ffffff;
+            background: var(--card-bg);
             color: var(--text-main);
             padding: 10px 18px;
             border-radius: var(--radius);
@@ -58,12 +77,13 @@
             align-items: center;
             flex-wrap: wrap;
             gap: 10px;
+            transition: background 0.3s ease, border 0.3s ease;
         }
 
         .banner-buttons { display: flex; gap: 8px; flex-wrap: wrap; }
 
         .nav-btn {
-            background: #f1f5f9;
+            background: var(--input-bg);
             color: var(--primary);
             border: 1px solid var(--border-color);
             padding: 5px 12px;
@@ -78,9 +98,9 @@
             gap: 5px;
             transition: all 0.2s;
         }
-        .nav-btn:hover { background: #e2e8f0; }
+        .nav-btn:hover { opacity: 0.85; }
         .back-exhibitions-btn { background: #eff6ff; color: #1d4ed8; border-color: #bfdbfe; }
-        .back-exhibitions-btn:hover { background: #dbeafe; }
+        [data-theme="dark"] .back-exhibitions-btn { background: #172554; color: #93c5fd; border-color: #1e40af; }
 
         header {
             background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
@@ -109,10 +129,11 @@
             color: var(--text-muted);
             flex-wrap: wrap;
             gap: 12px;
+            transition: background 0.3s ease, border 0.3s ease;
         }
         .info-bar div { display: flex; align-items: center; gap: 8px; }
         .phone-link {
-            background: #f8fafc;
+            background: var(--input-bg);
             color: var(--primary);
             padding: 4px 10px;
             border-radius: 6px;
@@ -122,14 +143,13 @@
             border: 1px solid var(--border-color);
             transition: all 0.2s;
         }
-        .phone-link:hover { background: #eff6ff; border-color: var(--primary-light); }
         .update-badge {
-            color: #d97706;
-            background: #fffbeb;
+            color: var(--accent);
+            background: var(--input-bg);
             padding: 2px 8px;
             border-radius: 6px;
             font-size: 13px;
-            border: 1px solid #fef3c7;
+            border: 1px solid var(--border-color);
             font-weight: 700;
         }
 
@@ -146,6 +166,7 @@
             flex-shrink: 0;
             position: sticky;
             top: 20px;
+            transition: background 0.3s ease, border 0.3s ease;
         }
         .filters h3 { 
             margin-top: 0; 
@@ -166,14 +187,13 @@
             font-family: inherit;
             font-size: 12.5px;
             outline: none;
-            background-color: #f8fafc;
+            background-color: var(--input-bg);
             color: var(--text-main);
             font-weight: 700;
             transition: all 0.2s;
         }
         .filter-group select:focus, .filter-group input:focus {
             border-color: var(--primary-light);
-            background: #fff;
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
         }
         .price-inputs { display: flex; gap: 6px; align-items: center; }
@@ -189,20 +209,20 @@
             background: var(--card-bg); 
             border-radius: var(--radius); 
             overflow: hidden; 
-            box-shadow: 0 6px 20px -4px rgba(0, 0, 0, 0.1); 
-            border: 2px solid #cbd5e1; 
+            box-shadow: var(--shadow); 
+            border: 2px solid var(--card-border); 
             display: flex; 
             flex-direction: column; 
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.3s ease;
         }
-        .product-card:hover { transform: translateY(-3px); box-shadow: 0 12px 25px -5px rgba(0, 0, 0, 0.15); }
+        .product-card:hover { transform: translateY(-3px); box-shadow: 0 12px 25px -5px rgba(0, 0, 0, 0.2); border-color: var(--primary); }
 
         .img-container {
             position: relative;
             cursor: pointer;
             overflow: hidden;
-            background-color: #f1f5f9;
-            border-bottom: 1px solid var(--border-color);
+            background-color: var(--input-bg);
+            border-bottom: 2px solid var(--card-border);
         }
         .product-card img { 
             width: 100%; 
@@ -238,7 +258,7 @@
             color: var(--text-muted); 
             margin-bottom: 10px; 
             line-height: 1.5; 
-            background: #f8fafc;
+            background: var(--input-bg);
             padding: 9px 11px;
             border-radius: 8px;
             font-weight: 600;
@@ -249,7 +269,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: #f8fafc;
+            background: var(--input-bg);
             padding: 8px 12px;
             border-radius: 8px;
             border: 1px solid var(--border-color);
@@ -260,7 +280,7 @@
         }
         .bike-views-count { color: var(--primary); font-weight: 800; }
         .bike-like-btn {
-            background: #fef2f2;
+            background: var(--card-bg);
             color: #b91c1c;
             border: 1px solid #fecaca;
             padding: 4px 10px;
@@ -274,7 +294,7 @@
             align-items: center;
             gap: 4px;
         }
-        .bike-like-btn:hover { background: #fee2e2; transform: scale(1.05); }
+        .bike-like-btn:hover { transform: scale(1.05); }
         .bike-like-btn.liked { background: #b91c1c; color: white; border-color: #991b1b; }
 
         .product-footer {
@@ -306,7 +326,8 @@
             padding: 15px;
         }
         .modal-content {
-            background: white;
+            background: var(--modal-bg);
+            color: var(--text-main);
             border-radius: var(--radius);
             max-width: 500px;
             width: 100%;
@@ -314,6 +335,7 @@
             box-shadow: 0 25px 50px -12px rgba(0,0,0,0.3);
             position: relative;
             animation: modalSlide 0.3s ease;
+            border: 1px solid var(--border-color);
         }
         @keyframes modalSlide {
             from { transform: translateY(20px); opacity: 0; }
@@ -334,7 +356,7 @@
         .modal-details {
             font-size: 13px;
             color: var(--text-muted);
-            background: #f8fafc;
+            background: var(--input-bg);
             padding: 10px;
             border-radius: 8px;
             border: 1px solid var(--border-color);
@@ -391,9 +413,10 @@
             position: absolute;
             bottom: 70px; right: 0;
             width: 320px;
-            background: white;
+            background: var(--modal-bg);
+            color: var(--text-main);
             border-radius: var(--radius);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             border: 1px solid var(--border-color);
             overflow: hidden;
         }
@@ -404,9 +427,9 @@
             font-weight: 800; font-size: 14px;
             display: flex; justify-content: space-between; align-items: center;
         }
-        .chatbot-body { padding: 15px; font-size: 13px; background: #f8fafc; }
-        .chat-msg { background: white; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border-color); font-weight: 600; }
-        .chatbot-footer { padding: 10px; background: white; border-top: 1px solid var(--border-color); text-align: center; }
+        .chatbot-body { padding: 15px; font-size: 13px; background: var(--input-bg); }
+        .chat-msg { background: var(--card-bg); color: var(--text-main); padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border-color); font-weight: 600; }
+        .chatbot-footer { padding: 10px; background: var(--modal-bg); border-top: 1px solid var(--border-color); text-align: center; }
         .chatbot-send-btn {
             background: #059669; color: white; border: none; padding: 8px 15px;
             border-radius: 6px; font-weight: 700; font-size: 12.5px;
@@ -420,13 +443,15 @@
         }
     </style>
 </head>
-<body>
+<body data-theme="light">
 
     <div class="main-wrapper">
         <div class="welcome-banner">
             <span>🔥 أهلاً بكم في معرضنا - عروض حصرية وتوصيل لجميع المناطق ❤️</span>
             <div class="banner-buttons">
                 <a href="index.html" class="nav-btn back-exhibitions-btn">🏪 الرجوع للمعارض</a>
+                <button class="nav-btn" onclick="toggleTheme()" id="themeToggleBtn">🌙 الوضع الداكن</button>
+                <button class="nav-btn" onclick="openBarcodeModal()">📷 باركود الصفحة</button>
                 <button class="nav-btn" onclick="shareWebsite()">🔗 مشاركة المعرض</button>
             </div>
         </div>
@@ -534,12 +559,29 @@
         </div>
     </div>
 
+    <!-- نافذة باركود الصفحة -->
+    <div id="barcodeModal" class="modal" onclick="closeBarcodeModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()" style="text-align: center; max-width: 350px;">
+            <span class="close-modal" onclick="closeBarcodeModalForce()">&times;</span>
+            <div class="modal-body">
+                <div class="modal-title" style="margin-bottom: 12px;">📷 باركود المعرض</div>
+                <p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 15px;">قم بمسح الكود باستخدام كاميرا الهاتف لفتح الصفحة مباشرة:</p>
+                <div id="qrcodeContainer" style="background: var(--input-bg); padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); display: inline-block;">
+                    <img id="qrCodeImg" src="" alt="QR Code" style="width: 200px; height: 200px; border-radius: 4px;">
+                </div>
+                <div style="margin-top: 15px;">
+                    <a id="pageLinkText" href="#" target="_blank" style="font-size: 11px; color: var(--primary-light); word-break: break-all; text-decoration: none; font-weight: 700;">فتح الرابط في متصفح جديد</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- شات بوت الدعم الفني -->
     <div class="chatbot-container">
         <div class="chatbot-box" id="chatbotBox">
             <div class="chatbot-header">
                 <span>🤖 خدمة العملاء الفورية</span>
-                <span class="chatbot-close" onclick="toggleChatbot()">&times;</span>
+                <span class="chatbot-close" onclick="toggleChatbot()" style="cursor: pointer; font-size: 18px;">&times;</span>
             </div>
             <div class="chatbot-body">
                 <div class="chat-msg">أهلاً بك يا فندم في معرض الحاج عادل الحاني للدراجات! ❤️<br>كيف يمكننا مساعدتك اليوم؟</div>
@@ -552,7 +594,31 @@
     </div>
 
     <script>
-        // --- 1. إعدادات السيرفر السحابي الخاص بك ---
+        // --- إدارة الثيم (الوضع الداكن والفاتح) ---
+        function initTheme() {
+            const savedTheme = localStorage.getItem('site_theme') || 'light';
+            document.body.setAttribute('data-theme', savedTheme);
+            updateThemeButtonText(savedTheme);
+        }
+
+        function toggleTheme() {
+            const currentTheme = document.body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            document.body.setAttribute('data-theme', newTheme);
+            localStorage.setItem('site_theme', newTheme);
+            updateThemeButtonText(newTheme);
+        }
+
+        function updateThemeButtonText(theme) {
+            const btn = document.getElementById('themeToggleBtn');
+            if (btn) {
+                btn.innerHTML = theme === 'light' ? '🌙 الوضع الداكن' : '☀️ الوضع الفاتح';
+            }
+        }
+
+        initTheme();
+
+        // --- إعدادات السيرفر السحابي ---
         const firebaseConfig = {
             apiKey: "AIzaSyBDU3ddIiB-d2hNSGG1bAoti2qnvBohyI",
             authDomain: "mohamed-29759.firebaseapp.com",
@@ -579,7 +645,6 @@
 
         let bikes = [];
 
-        // --- 2. إدارة المشاهدات والإعجابات عبر Firebase ---
         function listenToBikeStats(bikeId) {
             if (!db) return;
             db.ref('bikes/' + bikeId).on('value', (snapshot) => {
@@ -643,11 +708,27 @@
             else { navigator.clipboard.writeText(shareText); alert("تم نسخ رابط المعرض!"); }
         }
 
-        // --- 3. جراءة ملف الشيت باستخدام مكتبة XLSX ---
+        function openBarcodeModal() {
+            const currentUrl = window.location.href;
+            const qrApi = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(currentUrl)}`;
+            document.getElementById('qrCodeImg').src = qrApi;
+            document.getElementById('pageLinkText').href = currentUrl;
+            document.getElementById('pageLinkText').innerText = currentUrl;
+            document.getElementById('barcodeModal').style.display = 'flex';
+        }
+
+        function closeBarcodeModal(event) {
+            if (event.target.id === 'barcodeModal') {
+                document.getElementById('barcodeModal').style.display = 'none';
+            }
+        }
+
+        function closeBarcodeModalForce() {
+            document.getElementById('barcodeModal').style.display = 'none';
+        }
+
         function loadExcelData() {
             fetchHtmlLastModified();
-            
-            // رابط تصدير الشيت المباشر بصيغة Excel
             const sheetUrl = "https://docs.google.com/spreadsheets/d/14J7dHMQfh8I223-o6P5BCUrm3NEXARaTxR65mCr6U5A/export?format=xlsx&t=" + new Date().getTime();
 
             fetch(sheetUrl)
@@ -658,7 +739,6 @@
                 .then(buffer => {
                     const data = new Uint8Array(buffer);
                     const workbook = XLSX.read(data, { type: 'array' });
-                    
                     const firstSheetName = workbook.SheetNames[0];
                     const worksheet = workbook.Sheets[firstSheetName];
                     const rows = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
@@ -683,16 +763,20 @@
                         let rawImg = cols[8] ? String(cols[8]).trim() : '';
 
                         let finalImg = "https://via.placeholder.com/300x180?text=صورة+غير+متاحة";
+                        let directImgUrl = "";
                         if (rawImg !== "") {
                             if (rawImg.includes("drive.google.com")) {
                                 let match = rawImg.match(/\/d\/([a-zA-Z0-9_-]+)/);
                                 if (match && match[1]) {
                                     finalImg = "https://lh3.googleusercontent.com/d/" + match[1];
+                                    directImgUrl = finalImg;
                                 } else {
                                     finalImg = rawImg;
+                                    directImgUrl = rawImg;
                                 }
                             } else {
                                 finalImg = rawImg;
+                                directImgUrl = rawImg;
                             }
                         }
 
@@ -708,10 +792,9 @@
                             specs: specs,
                             status: (statusVal === 'available' || statusVal === 'متاح' ? 'available' : 'sold'),
                             image: finalImg,
-                            fullImageUrl: finalImg
+                            fullImageUrl: directImgUrl
                         });
                     }
-                    
                     filterProducts();
                 })
                 .catch(error => {
@@ -735,9 +818,10 @@
             badgesHtml += `<span class="badge ${bike.status === 'available' ? 'available' : 'sold'}">${bike.status === 'available' ? 'متاح للبيع' : 'تم البيع'}</span>`;
             document.getElementById('modalBadges').innerHTML = badgesHtml;
 
-            const whatsappMsg = `مرحباً، أنا مهتم بهذه الدراجة:\n🚲 *${bike.name}*\n💰 السعر: ${bike.price}\n📏 المقاس: ${bike.size}\n🖼️ الصورة:\n${bike.fullImageUrl}`;
+            const whatsappMsg = `مرحباً، أريد طلب هذه الدراجة:\n\n🚲 *${bike.name}*\n💰 *السعر:* ${bike.price}\n📏 *المقاس:* ${bike.size}\n🏷️ *النوع:* ${bike.type}\n📝 *المواصفات:* ${bike.specs}\n\n🖼️ *رابط صورة المنتج:* \n${bike.fullImageUrl}`;
+            
             document.getElementById('modalWhatsapp').href = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(whatsappMsg)}`;
-            document.getElementById('modalReserve').href = `https://wa.me/${phoneNumber}?text=${encodeURIComponent('أرغب بحجز الدراجة: ' + bike.name)}`;
+            document.getElementById('modalReserve').href = `https://wa.me/${phoneNumber}?text=${encodeURIComponent('أرغب بحجز الدراجة: ' + bike.name + '\nرابط الصورة: ' + bike.fullImageUrl)}`;
             document.getElementById('modalCall').href = `tel:${phoneNumber}`;
             document.getElementById('modalShareBtn').onclick = () => shareWebsite();
 
@@ -752,7 +836,7 @@
             grid.innerHTML = "";
 
             if (productsToDisplay.length === 0) {
-                grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; background:#fff; border-radius:12px; font-weight:700;">لا توجد نتائج مطابقة لبحثك</div>`;
+                grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; background:var(--card-bg); border-radius:12px; font-weight:700; border:1px solid var(--border-color);">لا توجد نتائج مطابقة لبحثك</div>`;
                 return;
             }
 
@@ -789,7 +873,6 @@
                     </div>
                 `;
                 grid.appendChild(card);
-
                 listenToBikeStats(bike.id);
             });
         }

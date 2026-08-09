@@ -452,6 +452,8 @@
             console.log("خطأ في الاتصال بقاعدة البيانات:", e);
         }
 
+        let servicesStatsCache = {}; // تخزين مؤقت للعدادات
+
         // دالة زيادة المشاهدات
         function incrementItemView(itemId) {
             let deviceKey = 'user_viewed_' + itemId;
@@ -674,8 +676,17 @@
                         }
                     });
 
-                    buildCategories();
-                    filterAndDisplay();
+                    // جلب العدادات من الـ Firebase لكل العناصر أولاً ثم العرض والترتيب
+                    if (db) {
+                        db.ref('items_stats').once('value', snapshot => {
+                            servicesStatsCache = snapshot.val() || {};
+                            buildCategories();
+                            filterAndDisplay();
+                        });
+                    } else {
+                        buildCategories();
+                        filterAndDisplay();
+                    }
                 })
                 .catch(err => {
                     console.log("خطأ في جلب بيانات الشيت", err);
@@ -710,6 +721,24 @@
                 const matchCat = (currentCategory === "الكل" || item.type === currentCategory);
                 const matchSearch = item.doctor.toLowerCase().includes(searchText) || item.details.toLowerCase().includes(searchText) || item.type.toLowerCase().includes(searchText);
                 return matchCat && matchSearch;
+            });
+
+            // ترتيب العناصر: الأكثر إعجاباً أولاً، ثم الأكثر مشاهدة
+            filtered.sort((a, b) => {
+                let statsA = (servicesStatsCache && servicesStatsCache[a.id]) ? servicesStatsCache[a.id] : { views: 0, likes: 0 };
+                let statsB = (servicesStatsCache && servicesStatsCache[b.id]) ? servicesStatsCache[b.id] : { views: 0, likes: 0 };
+
+                let likesA = statsA.likes || 0;
+                let likesB = statsB.likes || 0;
+
+                if (likesB !== likesA) {
+                    return likesB - likesA;
+                }
+
+                let viewsA = statsA.views || 0;
+                let viewsB = statsB.views || 0;
+
+                return viewsB - viewsA;
             });
 
             if (filtered.length === 0) {
@@ -747,6 +776,8 @@
                 let userLikedKey = 'user_liked_' + item.id;
                 let isLiked = localStorage.getItem(userLikedKey) === 'true';
 
+                let currentItemStats = (servicesStatsCache && servicesStatsCache[item.id]) ? servicesStatsCache[item.id] : { views: 0, likes: 0 };
+
                 card.innerHTML = `
                     ${imageHTML}
                     <div class="card-body">
@@ -766,9 +797,9 @@
                             
                             <!-- شريط التفاعل الفوري (المشاهدات والإعجابات) -->
                             <div class="interaction-bar">
-                                <span style="color: var(--text-muted);"><i class="far fa-eye"></i> المشاهدات: <span id="views-${item.id}">0</span></span>
+                                <span style="color: var(--text-muted);"><i class="far fa-eye"></i> المشاهدات: <span id="views-${item.id}">${currentItemStats.views || 0}</span></span>
                                 <button id="like-btn-${item.id}" class="like-btn ${isLiked ? 'liked' : ''}" onclick="toggleLike('${item.id}', event)">
-                                    <i class="fas fa-heart"></i> إعجاب (<span id="likes-${item.id}">0</span>)
+                                    <i class="fas fa-heart"></i> إعجاب (<span id="likes-${item.id}">${currentItemStats.likes || 0}</span>)
                                 </button>
                             </div>
 

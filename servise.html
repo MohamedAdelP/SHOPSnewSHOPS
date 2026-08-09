@@ -247,6 +247,7 @@
             font-size: 13.5px;
             margin-top: 5px;
             transition: opacity 0.2s;
+            cursor: pointer;
         }
         .action-link-btn.whatsapp {
             background-color: #25d366;
@@ -430,14 +431,28 @@
     </div>
 
     <script>
+        // إعدادات الـ Firebase الصحيحة والمربوطة بالداتا بيس
         const firebaseConfig = {
-            databaseURL: "https://YOUR-PROJECT-ID-default-rtdb.firebaseio.com/"
+            apiKey: "AIzaSyBDU3ddIiB-d2hNSGG1bAoti2qnvBohyI",
+            authDomain: "mohamed-29759.firebaseapp.com",
+            databaseURL: "https://mohamed-29759-default-rtdb.firebaseio.com",
+            projectId: "mohamed-29759",
+            storageBucket: "mohamed-29759.firebasestorage.app",
+            messagingSenderId: "1087982177559",
+            appId: "1:1087982177559:web:b134359fbd0ce2fece3b52"
         };
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
-        const db = firebase.database();
 
+        let db = null;
+        try {
+            if (!firebase.apps.length) {
+                firebase.initializeApp(firebaseConfig);
+            }
+            db = firebase.database();
+        } catch(e) {
+            console.log("خطأ في الاتصال بقاعدة البيانات:", e);
+        }
+
+        // دالة زيادة المشاهدات
         function incrementItemView(itemId) {
             let deviceKey = 'user_viewed_' + itemId;
             if (!localStorage.getItem(deviceKey)) {
@@ -448,6 +463,7 @@
             }
         }
 
+        // دالة الإعجاب اللحظية
         function toggleLike(itemId, event) {
             if (event) event.stopPropagation();
             let userLikedKey = 'user_liked_' + itemId;
@@ -469,6 +485,7 @@
             }
         }
 
+        // الاستماع لتحديثات العدادات من الـ Firebase مباشرة
         function listenToItemStats(itemId) {
             if (!db) return;
             db.ref('items_stats/' + itemId).on('value', snapshot => {
@@ -478,6 +495,18 @@
                 if (vEl) vEl.innerText = data.views || 0;
                 if (lEl) lEl.innerText = data.likes || 0;
             });
+        }
+
+        // دالة تتبع النقرات لزيادة المشاهدات وإظهار رسالة الانتظار التلقائية للعميل
+        function handleActionClick(itemId, url, type, doctorName) {
+            incrementItemView(itemId);
+            window.open(url, type === 'tel' ? '_self' : '_blank');
+
+            if (type === 'whatsapp') {
+                setTimeout(() => {
+                    alert(`تم فتح محادثة الواتساب الخاصة بـ (${doctorName}). في انتظار الرد على حضرتك في أقرب وقت! ❤️`);
+                }, 500);
+            }
         }
 
         const adhkarList = [
@@ -523,7 +552,8 @@
             }
         }
 
-        function openImagePreview(imgUrl, title) {
+        function openImagePreview(imgUrl, title, itemId) {
+            incrementItemView(itemId);
             document.getElementById('previewImage').src = imgUrl;
             document.getElementById('modalTitle').innerText = title;
             toggleModal('imageModal', true);
@@ -639,7 +669,7 @@
                         let image = cols[7] ? cols[7].trim() : "";         
 
                         if (type && type !== "نوع") {
-                            let uniqueId = "item_" + index + "_" + doctor.replace(/\s+/g, '_');
+                            let uniqueId = "doc_" + index;
                             servicesList.push({ id: uniqueId, type, doctor, firstPrice, followPrice, details, workTime, phone, image });
                         }
                     });
@@ -694,20 +724,21 @@
                 let actionBtnHTML = '';
                 if (item.phone) {
                     let cleanPhone = "20" + item.phone.replace(/^0+/, '');
-                    let waMsg = encodeURIComponent(`السلام عليكم، أرغب في الاستفسار أو طلب الخدمة بخصوص (${item.doctor}).`);
                     
-                    // تم توحيد زر الاتصال وزر الواتساب لجميع الخدمات والأنشطة بلا استثناء
+                    let waText = `السلام عليكم، اطلعت على إعلانكم في دليل كفر شكر بخصوص (${item.type} - ${item.doctor}) وأرغب في التواصل معكم للتفاصيل.\n\n🔗 رابط الإعلان: ${window.location.href}`;
+                    let waMsg = encodeURIComponent(waText);
+
                     actionBtnHTML = `
                         <div style="display: flex; gap: 8px; margin-top: 5px;">
-                            <a href="tel:${item.phone}" class="action-link-btn" style="flex: 1;"><i class="fa-solid fa-phone"></i> اتصال</a>
-                            <a href="https://wa.me/${cleanPhone}?text=${waMsg}" class="action-link-btn whatsapp" style="flex: 1;" target="_blank"><i class="fa-brands fa-whatsapp"></i> واتساب</a>
+                            <a onclick="handleActionClick('${item.id}', 'tel:${item.phone}', 'tel', '${item.doctor}')" class="action-link-btn" style="flex: 1;"><i class="fa-solid fa-phone"></i> اتصال</a>
+                            <a onclick="handleActionClick('${item.id}', 'https://wa.me/${cleanPhone}?text=${waMsg}', 'whatsapp', '${item.doctor}')" class="action-link-btn whatsapp" style="flex: 1;"><i class="fa-brands fa-whatsapp"></i> واتساب</a>
                         </div>
                     `;
                 }
 
                 let processedImgUrl = formatDriveImage(item.image);
                 let imageHTML = processedImgUrl ? `
-                    <div class="card-img-container" onclick="openImagePreview('${processedImgUrl}', '${item.doctor}')">
+                    <div class="card-img-container" onclick="openImagePreview('${processedImgUrl}', '${item.doctor}', '${item.id}')">
                         <img src="${processedImgUrl}" class="card-img" alt="صورة المعاينة">
                         <div class="img-badge"><i class="fa-solid fa-magnifying-glass"></i> اضغط للمعاينة</div>
                     </div>
@@ -748,7 +779,6 @@
                 grid.appendChild(card);
 
                 setTimeout(() => {
-                    incrementItemView(item.id);
                     listenToItemStats(item.id);
                 }, 50);
             });

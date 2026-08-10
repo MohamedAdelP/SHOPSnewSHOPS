@@ -7,10 +7,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- مكتبات Firebase المطلوبة -->
+    <!-- مكتبات Firebase المطلوبة للتشغيل (قاعدة البيانات + المصادقة) -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 
     <style>
         :root {
@@ -95,7 +95,6 @@
             background: rgba(239, 68, 68, 0.1);
             border-color: #ef4444;
             color: #ef4444;
-            display: none; /* تظهر فقط بعد تسجيل الدخول */
         }
         .admin-nav-btn:hover { background: #ef4444; color: #fff; }
 
@@ -113,7 +112,6 @@
             justify-content: center;
             gap: 10px;
             cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
             text-align: center;
         }
 
@@ -174,97 +172,174 @@
         }
         .service-card:hover { transform: translateY(-4px); border-color: var(--primary); }
 
-        .card-img-container { position: relative; width: 100%; height: 180px; background: #000; cursor: pointer; }
-        .card-img { width: 100%; height: 100%; object-fit: cover; opacity: 0.9; transition: opacity 0.2s; }
-        .card-img-container:hover .card-img { opacity: 1; }
+        .card-img-container {
+            position: relative;
+            width: 100%;
+            height: 180px;
+            background: #000;
+            cursor: pointer;
+        }
+        .card-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.9;
+        }
         
         .img-badge {
-            position: absolute; bottom: 10px; right: 10px;
-            background: rgba(15, 23, 42, 0.85); color: #fff;
-            padding: 5px 12px; border-radius: 8px; font-size: 11.5px; font-weight: 700;
-            backdrop-filter: blur(4px); border: 1px solid var(--border-color);
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(15, 23, 42, 0.85);
+            color: #fff;
+            padding: 5px 12px;
+            border-radius: 8px;
+            font-size: 11.5px;
+            font-weight: 700;
         }
 
-        .card-body { padding: 20px; display: flex; flex-direction: column; gap: 15px; flex-grow: 1; justify-content: space-between; }
+        .card-body {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            flex-grow: 1;
+            justify-content: space-between;
+        }
 
         .service-tag { 
-            display: inline-block; background: rgba(56, 189, 248, 0.1); color: var(--primary);
-            padding: 4px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; width: fit-content; margin-bottom: 6px;
+            display: inline-block;
+            background: rgba(56, 189, 248, 0.1);
+            color: var(--primary);
+            padding: 4px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            width: fit-content;
+            margin-bottom: 6px;
         }
         .service-title { font-size: 18px; font-weight: 900; color: var(--text-main); margin-bottom: 12px; }
         
         .service-details {
-            font-size: 13px; color: var(--text-muted); background: var(--bg-color);
-            padding: 12px; border-radius: 12px; border: 1px solid var(--border-color); line-height: 1.5;
+            font-size: 13px;
+            color: var(--text-muted);
+            background: var(--bg-color);
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            line-height: 1.5;
         }
 
         .prices-box { display: flex; justify-content: space-between; font-size: 12px; font-weight: 700; border-top: 1px dashed var(--border-color); padding-top: 10px; }
         .time-box { font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 5px; }
 
         .action-link-btn {
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-            background: var(--primary); color: var(--btn-text); text-decoration: none;
-            padding: 11px; border-radius: 12px; font-weight: 700; font-size: 13.5px; margin-top: 5px; cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: var(--primary);
+            color: var(--btn-text);
+            text-decoration: none;
+            padding: 11px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 13.5px;
+            margin-top: 5px;
+            cursor: pointer;
         }
         .action-link-btn.whatsapp { background-color: #25d366; color: #fff; }
-        .action-link-btn:hover { opacity: 0.9; }
 
         .interaction-bar {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 8px 12px; background: var(--bg-color); border-radius: 10px;
-            margin-top: 10px; border: 1px solid var(--border-color); font-size: 12px; font-weight: 700;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: var(--bg-color);
+            border-radius: 10px;
+            margin-top: 10px;
+            border: 1px solid var(--border-color);
+            font-size: 12px;
+            font-weight: 700;
         }
         .like-btn { background: none; border: none; cursor: pointer; font-weight: 800; display: flex; align-items: center; gap: 5px; color: var(--text-muted); font-size: 12px; }
         .like-btn.liked { color: #e74c3c; }
 
-        /* نوافذ النظام (Modals) */
+        /* النوافذ التفاعلية (Modals) */
         .modal {
-            display: none; position: fixed; top: 0; left: 0;
-            width: 100%; height: 100%; background: rgba(0, 0, 0, 0.75);
-            backdrop-filter: blur(4px); justify-content: center; align-items: center; z-index: 1000; padding: 15px; overflow-y: auto;
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(4px);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 15px;
+            overflow-y: auto;
         }
         .modal-content {
-            background: var(--card-bg); padding: 25px; border-radius: 24px;
-            border: 1px solid var(--border-color); max-width: 480px; width: 100%;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2); text-align: right; max-height: 90vh; overflow-y: auto;
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 24px;
+            border: 1px solid var(--border-color);
+            max-width: 480px; width: 100%;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            text-align: right;
+            max-height: 90vh;
+            overflow-y: auto;
         }
         .modal-content img { width: 100%; max-height: 300px; object-fit: contain; margin: 15px 0; background: #000; border-radius: 12px; }
         
         .form-group { margin-bottom: 12px; }
         .form-group label { display: block; font-size: 12.5px; font-weight: 700; margin-bottom: 5px; color: var(--primary); }
-        .form-group input, .form-group textarea, .form-group select {
-            width: 100%; background: var(--bg-color); border: 1px solid var(--border-color);
-            padding: 10px 12px; border-radius: 10px; color: var(--text-main); font-size: 13px; outline: none;
+        .form-group input, .form-group textarea {
+            width: 100%;
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            padding: 10px 12px;
+            border-radius: 10px;
+            color: var(--text-main);
+            font-size: 13px;
+            outline: none;
         }
         .form-group input:focus, .form-group textarea:focus { border-color: var(--primary); }
         .form-group small { display: block; font-size: 11px; color: var(--text-muted); margin-top: 3px; }
 
         .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
         .submit-whatsapp-btn {
-            background: #25d366; color: #fff; border: none; padding: 10px 20px;
-            border-radius: 10px; cursor: pointer; font-weight: 700; flex: 1;
-            display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+            background: #25d366;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 700;
+            flex: 1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
         }
         .close-modal { background: #ef4444; color: #fff; border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer; font-weight: 600; }
+        .admin-card { background: var(--bg-color); border: 1px solid var(--border-color); padding: 15px; border-radius: 12px; margin-bottom: 12px; }
     </style>
 </head>
 <body>
 
     <div class="container">
-        
         <div class="top-nav">
             <a href="index.html" class="back-link"><i class="fa-solid fa-arrow-right"></i> العودة للرئيسية</a>
             <div class="top-actions">
-                <!-- زر تسجيل الدخول للإدارة يظهر دائماً -->
-                <button class="action-btn" onclick="toggleModal('loginModal', true)"><i class="fa-solid fa-lock"></i> دخول الإدارة</button>
-                <!-- أيقونة قائمة الانتظار تظهر فقط بعد نجاح تسجيل الدخول -->
-                <button class="action-btn admin-nav-btn" id="pendingNavBtn" onclick="openPendingModal()"><i class="fa-solid fa-user-clock"></i> قائمة الانتظار</button>
                 <button class="action-btn whatsapp-add-btn" onclick="toggleModal('addModal', true)">
                     <i class="fa-brands fa-whatsapp"></i> اضف مجالك
                 </button>
+                <button class="action-btn admin-nav-btn" onclick="toggleModal('adminLoginModal', true)">
+                    <i class="fa-solid fa-lock"></i> الإدارة
+                </button>
                 <button class="action-btn" onclick="toggleTheme()" id="themeToggleBtn">☀️ فاتح</button>
-                <button class="action-btn" onclick="sharePage()"><i class="fa-solid fa-share-nodes"></i> مشاركة</button>
-                <button class="action-btn" onclick="toggleModal('qrModal', true)"><i class="fa-solid fa-qrcode"></i> باركود</button>
+                <button class="action-btn" onclick="toggleModal('qrModal', true)"><i class="fa-solid fa-qrcode"></i> باركود الصفحة</button>
             </div>
         </div>
 
@@ -288,96 +363,82 @@
         <div class="cards-grid" id="cards-grid"></div>
     </div>
 
-    <!-- نافذة تسجيل دخول الإدارة الآمن -->
-    <div class="modal" id="loginModal">
-        <div class="modal-content">
-            <h3 style="margin-bottom: 15px; font-size: 18px; color: var(--primary); text-align: center;"><i class="fa-solid fa-user-shield"></i> تسجيل دخول المشرف</h3>
-            <p style="font-size: 11.5px; color: var(--text-muted); margin-bottom: 15px; text-align: center;">أدخل بريدك الإلكتروني وكلمة المرور المسجلة للتحكم بقائمة الانتظار.</p>
-            
-            <div class="form-group"><label>البريد الإلكتروني:</label><input type="email" id="adminEmail" placeholder="mohame1dadel59@gmail.com" value="mohame1dadel59@gmail.com"></div>
-            <div class="form-group"><label>كلمة المرور:</label><input type="password" id="adminPassword" placeholder="أدخل كلمة المرور"></div>
-
-            <div class="modal-actions">
-                <button class="submit-whatsapp-btn" onclick="adminLogin()" style="background: var(--primary);"><i class="fa-solid fa-right-to-bracket"></i> دخول</button>
-                <button class="close-modal" onclick="toggleModal('loginModal', false)">إغلاق</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- نافذة قائمة الانتظار للمراجعة والقبول أو الحذف -->
-    <div class="modal" id="pendingModal">
-        <div class="modal-content" style="max-width: 600px;">
-            <h3 style="margin-bottom: 15px; font-size: 18px; color: var(--primary); text-align: center;"><i class="fa-solid fa-user-clock"></i> طلبات الانضمام المعلقة</h3>
-            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 15px; text-align: center;">راجع الطلبات الجديدة وقم بقبولها لتنضم للموقع أو حذفها.</p>
-            
-            <div id="pendingCardsContainer" style="display: flex; flex-direction: column; gap: 10px; max-height: 400px; overflow-y: auto;">
-                <!-- يتم تعبئتها ديناميكياً -->
-                <div style="text-align: center; color: var(--text-muted); padding: 20px;">جاري تحميل الطلبات...</div>
-            </div>
-
-            <div class="modal-actions" style="margin-top: 20px;">
-                <button class="close-modal" onclick="toggleModal('pendingModal', false)" style="width: 100%;">إغلاق</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- نافذة إدخال بيانات "أضف مجالك" -->
+    <!-- نافذة أضف مجالك مع رابط جوجل درايف -->
     <div class="modal" id="addModal">
         <div class="modal-content">
             <h3 style="margin-bottom: 15px; font-size: 18px; color: var(--primary); text-align: center;"><i class="fa-solid fa-store"></i> طلب إضافة نشاط جديد</h3>
-            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 15px; text-align: center;">املأ بيانات مجالك، وارفع صورتك أو ضع رابطها، ثم اضغط تأكيد للانتقال للواتساب.</p>
             
-            <div class="form-group"><label>1- النوع:</label><input type="text" id="addType" placeholder="مثال: عيادة / سباك / كهربائي"></div>
-            <div class="form-group"><label>2- الاسم:</label><input type="text" id="addName" placeholder="مثال: د. أحمد السيد / م. محمد علي"></div>
-            <div class="form-group"><label>3- سعر أول مرة:</label><input type="text" id="addFirstPrice" placeholder="مثال: 1500 أو بالاتفاق"></div>
+            <div class="form-group"><label>1- النوع:</label><input type="text" id="addType" placeholder="مثال: عيادة / سباك"></div>
+            <div class="form-group"><label>2- الاسم:</label><input type="text" id="addName" placeholder="مثال: د. أحمد السيد"></div>
+            <div class="form-group"><label>3- سعر أول مرة:</label><input type="text" id="addFirstPrice" placeholder="مثال: 1500"></div>
             <div class="form-group"><label>4- سعر المتابعة:</label><input type="text" id="addFollowPrice" placeholder="مثال: 600"></div>
-            <div class="form-group"><label>5- تفاصيل النشاط:</label><textarea id="addDetails" rows="2" placeholder="مثال: دكتور أخصائي أسنان - حشو وعلاج جذور"></textarea></div>
-            <div class="form-group"><label>6- مواعيد العمل:</label><input type="text" id="addWorkTime" placeholder="مثال: من السبت للخميس (4 عصراً لـ 10 مساءً)"></div>
-            <div class="form-group"><label>7- الرقم:</label><input type="text" id="addPhone" placeholder="مثال: 01012345678"></div>
+            <div class="form-group"><label>5- تفاصيل النشاط:</label><textarea id="addDetails" rows="2" placeholder="تفاصيل الخدمة..."></textarea></div>
+            <div class="form-group"><label>6- مواعيد العمل:</label><input type="text" id="addWorkTime" placeholder="من السبت للخميس"></div>
+            <div class="form-group"><label>7- الرقم:</label><input type="text" id="addPhone" placeholder="01012345678"></div>
             <div class="form-group">
                 <label>8- رابط صورة Google Drive:</label>
-                <input type="text" id="addImageUrl" placeholder="الصق رابط الـ Drive هنا">
-                <small>برجاء رفع الصورة على Google Drive الخاص بك وجعل مشاركتها عامة (Anyone with the link).</small>
+                <input type="text" id="addDriveUrl" placeholder="الصق رابط مشاركة الصورة من درايف هنا">
+                <small>ارفع الصورة على Google Drive، اضغط مشاركة، وانسخ الرابط[cite: 1].</small>
             </div>
 
             <div class="modal-actions">
-                <button class="submit-whatsapp-btn" onclick="sendToWhatsApp()"><i class="fa-brands fa-whatsapp"></i> تأكيد وإرسال للواتساب</button>
+                <button class="submit-whatsapp-btn" onclick="submitNewActivity()"><i class="fa-brands fa-whatsapp"></i> إرسال للواتساب وحفظ بالانتظار</button>
                 <button class="close-modal" onclick="toggleModal('addModal', false)">إغلاق</button>
             </div>
         </div>
     </div>
 
-    <!-- نافذة معاينة الصورة الكبيرة -->
+    <!-- نافذة تسجيل دخول المالك الحقيقية عبر Firebase Authentication -->
+    <div class="modal" id="adminLoginModal">
+        <div class="modal-content">
+            <h3 style="margin-bottom: 15px; color: #ef4444; text-align: center;"><i class="fa-solid fa-lock"></i> دخول لوحة الإدارة</h3>
+            <div class="form-group"><label>البريد الإلكتروني:</label><input type="email" id="adminEmail" placeholder="mohame1dadel59@gmail.com"></div>
+            <div class="form-group"><label>كلمة المرور:</label><input type="password" id="adminPassword" placeholder="********"></div>
+            <div class="modal-actions">
+                <button class="submit-whatsapp-btn" style="background:#ef4444;" onclick="loginAdmin()">تسجيل الدخول</button>
+                <button class="close-modal" onclick="toggleModal('adminLoginModal', false)">إغلاق</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- لوحة التحكم (الإدارة) -->
+    <div class="modal" id="adminDashboardModal">
+        <div class="modal-content" style="max-width: 700px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h3 style="color: var(--primary);"><i class="fa-solid fa-user-shield"></i> لوحة التحكم - طلبات الانتظار</h3>
+                <button class="close-modal" onclick="toggleModal('adminDashboardModal', false)">إغلاق</button>
+            </div>
+            <div id="pendingCardsContainer">جاري التحميل...</div>
+        </div>
+    </div>
+
+    <!-- معاينة الصورة -->
     <div class="modal" id="imageModal">
         <div class="modal-content" style="text-align: center;">
             <h3 id="modalTitle" style="font-size: 16px;">معاينة الصورة</h3>
             <img src="" id="previewImage" alt="المعاينة">
-            <br>
             <button class="close-modal" onclick="toggleModal('imageModal', false)">إغلاق</button>
         </div>
     </div>
 
-    <!-- نافذة الباركود -->
+    <!-- الباركود -->
     <div class="modal" id="qrModal">
         <div class="modal-content" style="text-align: center;">
             <h3>باركود الصفحة</h3>
-            <p style="font-size: 12px; color: var(--text-muted); margin-top: 5px;">امسح الكود لفتح دليل الخدمات على هاتفك</p>
             <img src="" id="qrImage" alt="QR Code" style="background:#fff; padding:10px; width:170px; height:170px; margin: 15px auto;">
-            <br>
             <button class="close-modal" onclick="toggleModal('qrModal', false)">إغلاق</button>
         </div>
     </div>
 
     <script>
-        // إعدادات الـ Firebase المحدثة بالـ API Key الجديد
         const firebaseConfig = {
-            apiKey: "AIzaSyBDDu3ddIiB-d2hNSGG1bAotI2qnvBohyI",
+            apiKey: "AIzaSyBDU3ddIiB-d2hNSGG1bAoti2qnvBohyI",
             authDomain: "mohamed-29759.firebaseapp.com",
             databaseURL: "https://mohamed-29759-default-rtdb.firebaseio.com",
             projectId: "mohamed-29759",
             storageBucket: "mohamed-29759.firebasestorage.app",
             messagingSenderId: "1087982177559",
-            appId: "1:1087982177559:web:579a1555e8a40a75ce3b52"
+            appId: "1:1087982177559:web:b134359fbd0ce2fece3b52"
         };
 
         let db = null;
@@ -392,10 +453,367 @@
 
         let servicesStatsCache = {};
 
-        // دالة تسجيل دخول الإدارة عبر Firebase Auth باستخدام بياناتك المحددة
-        function adminLogin() {
-            const email = document.getElementById('adminEmail').value.trim();
-            const pass = document.getElementById('adminPassword').value.trim();
+        function incrementItemView(itemId) {
+            let deviceKey = 'user_viewed_' + itemId;
+            if (!localStorage.getItem(deviceKey)) {
+                localStorage.setItem(deviceKey, 'true');
+                if (db) db.ref('items_stats/' + itemId + '/views').transaction(curr => (curr || 0) + 1);
+            }
+        }
+
+        function toggleLike(itemId, event) {
+            if (event) event.stopPropagation();
+            let userLikedKey = 'user_liked_' + itemId;
+            const btn = document.getElementById('like-btn-' + itemId);
+            let isLiked = localStorage.getItem(userLikedKey) === 'true';
+
+            if (!isLiked) {
+                localStorage.setItem(userLikedKey, 'true');
+                if (btn) btn.classList.add('liked');
+                if (db) db.ref('items_stats/' + itemId + '/likes').transaction(curr => (curr || 0) + 1);
+            } else {
+                localStorage.removeItem(userLikedKey);
+                if (btn) btn.classList.remove('liked');
+                if (db) db.ref('items_stats/' + itemId + '/likes').transaction(curr => Math.max(0, (curr || 0) - 1));
+            }
+        }
+
+        function listenToItemStats(itemId) {
+            if (!db) return;
+            db.ref('items_stats/' + itemId).on('value', snapshot => {
+                const data = snapshot.val() || { views: 0, likes: 0 };
+                const vEl = document.getElementById('views-' + itemId);
+                const lEl = document.getElementById('likes-' + itemId);
+                if (vEl) vEl.innerText = data.views || 0;
+                if (lEl) lEl.innerText = data.likes || 0;
+            });
+        }
+
+        function handleActionClick(itemId, url, type, doctorName) {
+            incrementItemView(itemId);
+            window.open(url, type === 'tel' ? '_self' : '_blank');
+        }
+
+        const adhkarList = ["سبحان الله وبحمده، سبحان الله العظيم", "استغفر الله العظيم واتوب إليه", "اللهم صل وسلم على نبينا محمد"];
+        function changeAdhkar() {
+            let randomIndex = Math.floor(Math.random() * adhkarList.length);
+            document.getElementById('adhkarText').innerText = adhkarList[randomIndex];
+        }
+
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+
+        function toggleTheme() {
+            let currentTheme = document.documentElement.getAttribute('data-theme');
+            let newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            document.getElementById('themeToggleBtn').innerHTML = newTheme === 'dark' ? '☀️ فاتح' : '🌙 غامق';
+        }
+
+        function toggleModal(modalId, show) {
+            let modal = document.getElementById(modalId);
+            if (show) {
+                if (modalId === 'qrModal') {
+                    document.getElementById('qrImage').src = "https://api.qrserver.com/v1/create-qr-code/?size=170x170&data=" + encodeURIComponent(window.location.href);
+                }
+                modal.style.display = "flex";
+            } else {
+                modal.style.display = "none";
+            }
+        }
+
+        function openImagePreview(imgUrl, title, itemId) {
+            incrementItemView(itemId);
+            document.getElementById('previewImage').src = imgUrl;
+            document.getElementById('modalTitle').innerText = title;
+            toggleModal('imageModal', true);
+        }
+
+        function formatDriveImage(url) {
+            if (!url) return "";
+            if (url.includes('drive.google.com')) {
+                let match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+                if (match && match[1]) {
+                    return `https://lh3.googleusercontent.com/d/${match[1]}`;
+                }
+            }
+            return url;
+        }
+
+        // تسجيل الدخول الفعلي عبر Firebase Authentication
+        function loginAdmin() {
+            let email = document.getElementById('adminEmail').value.trim();
+            let pass = document.getElementById('adminPassword').value.trim();
 
             if (!email || !pass) {
-                alert("برجاء إدخال البريد
+                alert("برجاء إدخال البريد وكلمة المرور");
+                return;
+            }
+
+            firebase.auth().signInWithEmailAndPassword(email, pass)
+                .then((userCredential) => {
+                    toggleModal('adminLoginModal', false);
+                    loadPendingRequestsForAdmin();
+                    toggleModal('adminDashboardModal', true);
+                })
+                .catch((error) => {
+                    alert("خطأ في البيانات أو ليس لديك صلاحية: " + error.message);
+                });
+        }
+
+        function loadPendingRequestsForAdmin() {
+            const container = document.getElementById('pendingCardsContainer');
+            container.innerHTML = "جاري التحميل...";
+            if (!db) return;
+
+            db.ref('pending_requests').once('value', snapshot => {
+                const data = snapshot.val();
+                container.innerHTML = "";
+                if (!data) {
+                    container.innerHTML = "<p style='text-align:center; color:var(--text-muted);'>لا توجد طلبات معلقة حالياً.</p>";
+                    return;
+                }
+
+                Object.keys(data).forEach(key => {
+                    let item = data[key];
+                    let cardDiv = document.createElement('div');
+                    cardDiv.className = 'admin-card';
+                    cardDiv.innerHTML = `
+                        <div style="font-weight:900; font-size:16px; color:var(--primary); margin-bottom:5px;">${item.doctor} (${item.type})</div>
+                        <div style="font-size:12.5px; color:var(--text-muted); margin-bottom:8px;">الهاتف: ${item.phone} | السعر: ${item.firstPrice || '---'}</div>
+                        <div style="display:flex; gap:10px;">
+                            <button onclick="approveRequest('${key}')" style="background:#25d366; color:#fff; border:none; padding:6px 15px; border-radius:8px; cursor:pointer; font-weight:700;">قبول ونشر</button>
+                            <button onclick="rejectRequest('${key}')" style="background:#ef4444; color:#fff; border:none; padding:6px 15px; border-radius:8px; cursor:pointer; font-weight:700;">رفض وحذف</button>
+                        </div>
+                    `;
+                    container.appendChild(cardDiv);
+                });
+            });
+        }
+
+        function approveRequest(key) {
+            db.ref('pending_requests/' + key).once('value', snapshot => {
+                let val = snapshot.val();
+                if (val) {
+                    db.ref('approved_services').push(val);
+                    db.ref('pending_requests/' + key).remove();
+                    alert("تم قبول ونشر الكارت بنجاح!");
+                    loadPendingRequestsForAdmin();
+                    loadServicesData();
+                }
+            });
+        }
+
+        function rejectRequest(key) {
+            if (confirm("هل أنت متأكد من الرفض؟")) {
+                db.ref('pending_requests/' + key).remove();
+                loadPendingRequestsForAdmin();
+            }
+        }
+
+        function submitNewActivity() {
+            let type = document.getElementById('addType').value.trim();
+            let name = document.getElementById('addName').value.trim();
+            let firstPrice = document.getElementById('addFirstPrice').value.trim();
+            let followPrice = document.getElementById('addFollowPrice').value.trim();
+            let details = document.getElementById('addDetails').value.trim();
+            let workTime = document.getElementById('addWorkTime').value.trim();
+            let phone = document.getElementById('addPhone').value.trim();
+            let driveUrl = document.getElementById('addDriveUrl').value.trim();
+
+            if (!type || !name || !phone) {
+                alert("برجاء إدخال الحقول الأساسية (النوع، الاسم، ورقم الهاتف)");
+                return;
+            }
+
+            let newEntry = { type, doctor: name, firstPrice, followPrice, details, workTime, phone, image: driveUrl, timestamp: Date.now() };
+
+            if (db) db.ref('pending_requests').push(newEntry);
+
+            let message = `تسجيل نشاط جديد:\nالنوع: ${type}\nالاسم: ${name}\nالرقم: ${phone}\nرابط درايف: ${driveUrl}`;
+            window.open(`https://wa.me/201023745774?text=${encodeURIComponent(message)}`, '_blank');
+            toggleModal('addModal', false);
+            alert("تم إرسال طلبك للواتساب وضعه في قائمة الانتظار للمراجعة.");
+        }
+
+        let servicesList = [];
+        let currentCategory = "الكل";
+
+        function parseCSV(text) {
+            let lines = text.split("\n");
+            let result = [];
+            for (let i = 1; i < lines.length; i++) {
+                if (!lines[i].trim()) continue;
+                let row = []; let current = ""; let inQuotes = false;
+                for (let char of lines[i]) {
+                    if (char === '"') inQuotes = !inQuotes;
+                    else if (char === ',' && !inQuotes) { row.push(current.trim()); current = ""; }
+                    else current += char;
+                }
+                row.push(current.trim());
+                result.push(row);
+            }
+            return result;
+        }
+
+        function loadServicesData() {
+            const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRT04pzSV40ZNYSFbS9zvSdHkXjIV8SOs12Tki6TqncA1FtH6ug_qk64zqnGFMzkRV5On28Ya5iPRQ9/pub?gid=806428213&single=true&output=csv";
+
+            fetch(sheetUrl)
+                .then(res => res.text())
+                .then(csvText => {
+                    let rows = parseCSV(csvText);
+                    servicesList = [];
+                    rows.forEach((cols, index) => {
+                        let type = cols[0] ? cols[0].trim() : "";         
+                        let doctor = cols[1] ? cols[1].trim() : "";       
+                        let firstPrice = cols[2] ? cols[2].trim() : "";   
+                        let followPrice = cols[3] ? cols[3].trim() : ""; 
+                        let details = cols[4] ? cols[4].trim() : "";     
+                        let workTime = cols[5] ? cols[5].trim() : "";     
+                        let phone = cols[6] ? cols[6].trim() : "";         
+                        let image = cols[7] ? cols[7].trim() : "";         
+
+                        if (type && type !== "نوع") {
+                            servicesList.push({ id: "doc_" + index, type, doctor, firstPrice, followPrice, details, workTime, phone, image });
+                        }
+                    });
+
+                    if (db) {
+                        db.ref('approved_services').once('value', snapshot => {
+                            const approvedData = snapshot.val();
+                            if (approvedData) {
+                                Object.keys(approvedData).forEach(k => {
+                                    servicesList.push({ id: "app_" + k, ...approvedData[k] });
+                                });
+                            }
+                            fetchStatsAndRender();
+                        });
+                    } else {
+                        fetchStatsAndRender();
+                    }
+                })
+                .catch(() => fetchStatsAndRender());
+        }
+
+        function fetchStatsAndRender() {
+            if (db) {
+                db.ref('items_stats').once('value', snapshot => {
+                    servicesStatsCache = snapshot.val() || {};
+                    buildCategories();
+                    filterAndDisplay();
+                });
+            } else {
+                buildCategories();
+                filterAndDisplay();
+            }
+        }
+
+        function buildCategories() {
+            const container = document.getElementById('categories-container');
+            const categories = ["الكل", ...new Set(servicesList.map(item => item.type))];
+            container.innerHTML = "";
+            categories.forEach(cat => {
+                const btn = document.createElement('button');
+                btn.className = `cat-btn ${cat === currentCategory ? 'active' : ''}`;
+                btn.innerText = cat;
+                btn.onclick = () => {
+                    currentCategory = cat;
+                    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    filterAndDisplay();
+                };
+                container.appendChild(btn);
+            });
+        }
+
+        function filterAndDisplay() {
+            const searchText = document.getElementById('search-input').value.toLowerCase().trim();
+            const grid = document.getElementById('cards-grid');
+            grid.innerHTML = "";
+
+            let filtered = servicesList.filter(item => {
+                const matchCat = (currentCategory === "الكل" || item.type === currentCategory);
+                const matchSearch = item.doctor.toLowerCase().includes(searchText) || item.details.toLowerCase().includes(searchText) || item.type.toLowerCase().includes(searchText);
+                return matchCat && matchSearch;
+            });
+
+            filtered.sort((a, b) => {
+                let statsA = servicesStatsCache[a.id] || { views: 0, likes: 0 };
+                let statsB = servicesStatsCache[b.id] || { views: 0, likes: 0 };
+                if ((statsB.likes || 0) !== (statsA.likes || 0)) return (statsB.likes || 0) - (statsA.likes || 0);
+                return (statsB.views || 0) - (statsA.views || 0);
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-muted); font-weight: 700;">لا توجد نتائج مطابقة للبحث</div>`;
+                return;
+            }
+
+            filtered.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'service-card';
+
+                let actionBtnHTML = '';
+                if (item.phone) {
+                    let cleanPhone = "20" + item.phone.replace(/^0+/, '');
+                    let waMsg = encodeURIComponent(`السلام عليكم، اطلعت على إعلانكم في دليل كفر شكر وأرغب في التواصل للتفاصيل.`);
+                    actionBtnHTML = `
+                        <div style="display: flex; gap: 8px; margin-top: 5px;">
+                            <a onclick="handleActionClick('${item.id}', 'tel:${item.phone}', 'tel')" class="action-link-btn" style="flex: 1;"><i class="fa-solid fa-phone"></i> اتصال</a>
+                            <a onclick="handleActionClick('${item.id}', 'https://wa.me/${cleanPhone}?text=${waMsg}', 'whatsapp')" class="action-link-btn whatsapp" style="flex: 1;"><i class="fa-brands fa-whatsapp"></i> واتساب</a>
+                        </div>
+                    `;
+                }
+
+                let processedImgUrl = formatDriveImage(item.image);
+                let imageHTML = processedImgUrl ? `
+                    <div class="card-img-container" onclick="openImagePreview('${processedImgUrl}', '${item.doctor}', '${item.id}')">
+                        <img src="${processedImgUrl}" class="card-img" alt="صورة">
+                        <div class="img-badge"><i class="fa-solid fa-magnifying-glass"></i> اضغط للمعاينة</div>
+                    </div>
+                ` : '';
+
+                let isLiked = localStorage.getItem('user_liked_' + item.id) === 'true';
+                let stats = servicesStatsCache[item.id] || { views: 0, likes: 0 };
+
+                card.innerHTML = `
+                    ${imageHTML}
+                    <div class="card-body">
+                        <div>
+                            <span class="service-tag">${item.type}</span>
+                            <div class="service-title">${item.doctor}</div>
+                            ${item.details ? `<div class="service-details">${item.details}</div>` : ''}
+                        </div>
+                        <div style="margin-top: 15px;">
+                            ${(item.firstPrice || item.followPrice) ? `
+                                <div class="prices-box">
+                                    <span>أول مرة: <strong style="color:var(--primary);">${item.firstPrice}</strong></span>
+                                    ${item.followPrice ? `<span>المتابعة: <strong>${item.followPrice}</strong></span>` : ''}
+                                </div>
+                            ` : ''}
+                            ${item.workTime ? `<div class="time-box" style="margin-top:8px;"><i class="fa-regular fa-clock"></i> <span>${item.workTime}</span></div>` : ''}
+                            
+                            <div class="interaction-bar">
+                                <span style="color: var(--text-muted);"><i class="far fa-eye"></i> المشاهدات: <span id="views-${item.id}">${stats.views || 0}</span></span>
+                                <button id="like-btn-${item.id}" class="like-btn ${isLiked ? 'liked' : ''}" onclick="toggleLike('${item.id}', event)">
+                                    <i class="fas fa-heart"></i> إعجاب (<span id="likes-${item.id}">${stats.likes || 0}</span>)
+                                </button>
+                            </div>
+                            ${actionBtnHTML}
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+                setTimeout(() => listenToItemStats(item.id), 50);
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            changeAdhkar();
+            loadServicesData();
+        });
+    </script>
+</body>
+</html>

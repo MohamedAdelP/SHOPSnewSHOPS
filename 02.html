@@ -480,14 +480,35 @@
         .admin-card { background: var(--bg-color); border: 1px solid var(--border-color); padding: 15px; border-radius: 12px; margin-bottom: 12px; }
         
         .info-box-item {
-            background: var(--bg-color);
-            border: 1px solid var(--border-color);
-            padding: 12px 15px;
-            border-radius: 12px;
-            margin-bottom: 12px;
-            font-size: 13px;
-            line-height: 1.6;
-        }
+    background: var(--bg-color);
+    border: 1px solid var(--border-color);
+    padding: 16px 18px;
+    border-radius: 16px;
+    margin-bottom: 15px;
+    font-size: 13.5px;
+    line-height: 1.7;
+}
+.info-box-item strong { 
+    color: var(--primary); 
+    display: flex; 
+    align-items: center; 
+    gap: 8px; 
+    margin-bottom: 8px; 
+    font-size: 14.5px; 
+}
+.info-box-item ul { 
+    padding-right: 22px; 
+    margin-top: 8px; 
+}
+.info-box-item li { 
+    margin-bottom: 6px; 
+    color: var(--text-muted);
+}
+.info-box-item li strong {
+    display: inline;
+    color: var(--text-main);
+    font-size: 13.5px;
+}
         .info-box-item strong { color: var(--primary); display: block; margin-bottom: 5px; font-size: 14px; }
         .info-box-item ul { padding-right: 20px; margin-top: 5px; }
         .info-box-item li { margin-bottom: 5px; }
@@ -546,46 +567,46 @@
     </div>
 
     <!-- نافذة دليل النظام والتقييمات والفوائد -->
-    <div class="modal" id="infoModal">
-        <div class="modal-content" style="max-width: 580px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                <h3 style="color: #f59e0b;"><i class="fa-solid fa-circle-info"></i> دليل نظام المنصة والتقييمات</h3>
-                <button class="close-modal" onclick="toggleModal('infoModal', false)">إغلاق</button>
-            </div>
-            
-            <div class="info-box-item">
-                <strong>🔗 دليل استخدام زر "مشاركة الكارت"</strong>
-                <ul>
-                    <li><strong>الفكرة ببساطة:</strong> الزر ليس مجرد رابط عادي للموقع، بل ينشئ <strong>رابطاً مخصصاً ومستقلاً</strong> لكل نشاط.</li>
-                    <li><strong>الدخول المباشر:</strong> عندما تشارك الرابط مع عملائك، سينتقلون إلى نشاطك مباشرة ويظهر لهم اسمك فوراً دون أي بحث يدوي.</li>
-                    <li><strong>توفير الوقت:</strong> يمنع أي لخبطة ويسهل على العميل الوصول لقائمتك ومنتجاتك بأسرع وقت ممكن.</li>
-                </ul>
-            </div>
+<div class="modal" id="infoModal">
+    <div class="modal-content" style="max-width: 580px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+            <h3 style="color: #f59e0b; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-circle-info"></i> دليل نظام المنصة والتقييمات</h3>
+            <button class="close-modal" onclick="toggleModal('infoModal', false)">إغلاق</button>
+        </div>
+        
+        <div class="info-box-item">
+            <strong><i class="fa-solid fa-share-nodes"></i> دليل استخدام زر "مشاركة الكارت"</strong>
+            <ul>
+                <li><strong>الفكرة ببساطة:</strong> الزر ليس مجرد رابط عادي للموقع، بل ينشئ <strong>رابطاً مخصصاً ومستقلاً</strong> لكل نشاط.</li>
+                <li><strong>الدخول المباشر:</strong> عندما تشارك الرابط مع عملائك، سينتقلون إلى نشاطك مباشرة ويظهر لهم اسمك فوراً دون أي بحث يدوي.</li>
+                <li><strong>توفير الوقت:</strong>    يسهل على العميل الوصول لقائمتك ومنتجاتك بأسرع وقت ممكن.</li>
+            </ul>
+        </div>
 
-            <div class="info-box-item">
-                <strong>👁️ كيف تزيد المشاهدات؟</strong>
-                تزداد مشاهدات كارت الخدمة تلقائياً عند قيام أي زائر بـ:
-                <ul>
-                    <li>فتح تفاصيل الصورة أو المعاينة.</li>
-                    <li>الضغط على أزرار الاتصال أو الواتساب (يتم احتساب مشاهدة واحدة لكل جهاز لمنع التكرار).</li>
-                </ul>
-            </div>
+        <div class="info-box-item">
+            <strong><i class="fa-regular fa-eye"></i> كيف تزيد المشاهدات؟</strong>
+            تزداد مشاهدات كارت الخدمة تلقائياً عند قيام أي زائر بـ:
+            <ul>
+                <li>فتح تفاصيل الصورة أو المعاينة.</li>
+                <li>الضغط على أزرار الاتصال أو الواتساب (يتم احتساب مشاهدة واحدة لكل جهاز لمنع التكرار).</li>
+            </ul>
+        </div>
 
-            <div class="info-box-item">
-                <strong>⭐ كيف يتم حساب النجوم والتقييمات؟</strong>
-                يرتبط تقييم النشاط طردياً بعدد المشاهدات التصاعدية التي يحصل عليها تلقائياً:
-                <ul>
-                    <li><strong>100 مشاهدة:</strong> ⭐ (نجمة واحدة)</li>
-                    <li><strong>250 مشاهدة:</strong> ⭐⭐ (نجمتان)</li>
-                    <li><strong>1000 مشاهدة:</strong> ⭐⭐⭐ (3 نجوم)</li>
-                    <li><strong>2000 مشاهدة:</strong> ⭐⭐⭐⭐ (4 نجوم)</li>
-                    <li><strong>3000 مشاهدة:</strong> ⭐⭐⭐⭐⭐ (5 نجوم)</li>
-                    <li><strong>5000 مشاهدة:</strong> ⭐⭐⭐⭐⭐⭐ (6 نجوم)</li>
-                    <li><strong>أكثر من 10000 مشاهدة:</strong> ⭐⭐⭐⭐⭐⭐⭐ (7 نجوم كحد أقصى)</li>
-                </ul>
-            </div>
+        <div class="info-box-item">
+            <strong><i class="fa-solid fa-star"></i> كيف يتم حساب النجوم والتقييمات؟</strong>
+            يرتبط تقييم النشاط طردياً بعدد المشاهدات التصاعدية التي يحصل عليها تلقائياً:
+            <ul>
+                <li><strong>100 مشاهدة:</strong> ⭐ (نجمة واحدة)</li>
+                <li><strong>250 مشاهدة:</strong> ⭐⭐ (نجمتان)</li>
+                <li><strong>1000 مشاهدة:</strong> ⭐⭐⭐ (3 نجوم)</li>
+                <li><strong>2000 مشاهدة:</strong> ⭐⭐⭐⭐ (4 نجوم)</li>
+                <li><strong>3000 مشاهدة:</strong> ⭐⭐⭐⭐⭐ (5 نجوم)</li>
+                <li><strong>5000 مشاهدة:</strong> ⭐⭐⭐⭐⭐⭐ (6 نجوم)</li>
+                <li><strong>أكثر من 10000 مشاهدة:</strong> ⭐⭐⭐⭐⭐⭐⭐ (7 نجوم كحد أقصى)</li>
+            </ul>
         </div>
     </div>
+</div>
 
     <!-- نافذة أضف مجالك -->
     <div class="modal" id="addModal">

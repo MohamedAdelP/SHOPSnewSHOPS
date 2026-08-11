@@ -6,11 +6,42 @@
     <title>منصة كفر شكر المجتمعية</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- مكتبات Firebase المطلوبة للتشغيل (قاعدة البيانات + المصادقة) -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+
+    <!-- مكتبة EmailJS -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script type="text/javascript">
+       (function(){
+          emailjs.init("FQFGijHqvlbXqbtWq");
+       })();
+    </script>
+
+    <!-- مكتبات Firebase الإصدار المعياري (Modular SDKs) عبر CDN -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, onValue, get, push, update, remove, runTransaction } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        
+        const firebaseConfig = {
+            apiKey: "AIzaSyAU-H5PM8i9ptXC9d3id1wTiOIwEvAFBNQ",
+            authDomain: "kafr-shokr.firebaseapp.com",
+            databaseURL: "https://kafr-shokr-default-rtdb.firebaseio.com",
+            projectId: "kafr-shokr",
+            storageBucket: "kafr-shokr.firebasestorage.app",
+            messagingSenderId: "271572065923",
+            appId: "1:271572065923:web:e116ec6ae8319f623245b6",
+            measurementId: "G-X9HJV2F09R"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const auth = getAuth(app);
+
+        window.FB = { db, auth, ref, onValue, get, push, update, remove, runTransaction, signInWithEmailAndPassword };
+        
+        if (typeof window.initApp === 'function') {
+            window.initApp();
+        }
+    </script>
 
     <style>
         :root {
@@ -430,27 +461,6 @@
         .form-group input:focus, .form-group textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15); }
         .form-group small { display: block; font-size: 11px; color: var(--text-muted); margin-top: 3px; }
 
-        .password-wrapper {
-            position: relative;
-            width: 100%;
-        }
-        .password-wrapper input {
-            width: 100%;
-            padding-left: 40px;
-        }
-        .toggle-password {
-            position: absolute;
-            left: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            cursor: pointer;
-            font-size: 14px;
-        }
-        .toggle-password:hover { color: var(--primary); }
-
         .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
         .submit-whatsapp-btn {
             background: #25d366;
@@ -470,14 +480,35 @@
         .admin-card { background: var(--bg-color); border: 1px solid var(--border-color); padding: 15px; border-radius: 12px; margin-bottom: 12px; }
         
         .info-box-item {
-            background: var(--bg-color);
-            border: 1px solid var(--border-color);
-            padding: 12px 15px;
-            border-radius: 12px;
-            margin-bottom: 12px;
-            font-size: 13px;
-            line-height: 1.6;
-        }
+    background: var(--bg-color);
+    border: 1px solid var(--border-color);
+    padding: 16px 18px;
+    border-radius: 16px;
+    margin-bottom: 15px;
+    font-size: 13.5px;
+    line-height: 1.7;
+}
+.info-box-item strong { 
+    color: var(--primary); 
+    display: flex; 
+    align-items: center; 
+    gap: 8px; 
+    margin-bottom: 8px; 
+    font-size: 14.5px; 
+}
+.info-box-item ul { 
+    padding-right: 22px; 
+    margin-top: 8px; 
+}
+.info-box-item li { 
+    margin-bottom: 6px; 
+    color: var(--text-muted);
+}
+.info-box-item li strong {
+    display: inline;
+    color: var(--text-main);
+    font-size: 13.5px;
+}
         .info-box-item strong { color: var(--primary); display: block; margin-bottom: 5px; font-size: 14px; }
         .info-box-item ul { padding-right: 20px; margin-top: 5px; }
         .info-box-item li { margin-bottom: 5px; }
@@ -499,7 +530,7 @@
                 <button class="action-btn whatsapp-add-btn" onclick="toggleModal('addModal', true)">
                     <i class="fa-brands fa-whatsapp"></i> اضف مجالك
                 </button>
-                <button class="action-btn admin-nav-btn" onclick="toggleModal('adminLoginModal', true)">
+                <button class="action-btn admin-nav-btn" onclick="openAdminPanel()">
                     <i class="fa-solid fa-lock"></i> الإدارة
                 </button>
                 <button class="action-btn" onclick="toggleTheme()" id="themeToggleBtn">☀️ فاتح</button>
@@ -535,79 +566,63 @@
         <div class="cards-grid" id="cards-grid"></div>
     </div>
 
-    <!-- نافذة دليل النظام والتقييمات والفوائد (محدثة بدليل مشاركة الكارت) -->
-    <div class="modal" id="infoModal">
-        <div class="modal-content" style="max-width: 580px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                <h3 style="color: #f59e0b;"><i class="fa-solid fa-circle-info"></i> دليل نظام المنصة والتقييمات</h3>
-                <button class="close-modal" onclick="toggleModal('infoModal', false)">إغلاق</button>
-            </div>
-            
-            <div class="info-box-item">
-                <strong>🔗 دليل استخدام زر "مشاركة الكارت"</strong>
-                <ul>
-                    <li><strong>الفكرة ببساطة:</strong> الزر ليس مجرد رابط عادي للموقع، بل ينشئ <strong>رابطاً مخصصاً ومستقلاً</strong> لكل نشاط[cite: 2].</li>
-                    <li><strong>الدخول المباشر:</strong> عندما تشارك الرابط مع عملائك، سينتقلون إلى نشاطك مباشرة ويظهر لهم اسمك فوراً دون أي بحث يدوي[cite: 2].</li>
-                    <li><strong>توفير الوقت:</strong> يمنع أي لخبطة ويسهل على العميل الوصول لقائمتك ومنتجاتك بأسرع وقت ممكن[cite: 2].</li>
-                </ul>
-            </div>
+    <!-- نافذة دليل النظام والتقييمات والفوائد -->
+<div class="modal" id="infoModal">
+    <div class="modal-content" style="max-width: 580px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+            <h3 style="color: #f59e0b; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-circle-info"></i> دليل نظام المنصة والتقييمات</h3>
+            <button class="close-modal" onclick="toggleModal('infoModal', false)">إغلاق</button>
+        </div>
+        
+        <div class="info-box-item">
+            <strong><i class="fa-solid fa-share-nodes"></i> دليل استخدام زر "مشاركة الكارت"</strong>
+            <ul>
+                <li><strong>الفكرة ببساطة:</strong> الزر ليس مجرد رابط عادي للموقع، بل ينشئ <strong>رابطاً مخصصاً ومستقلاً</strong> لكل نشاط.</li>
+                <li><strong>الدخول المباشر:</strong> عندما تشارك الرابط مع عملائك، سينتقلون إلى نشاطك مباشرة ويظهر لهم اسمك فوراً دون أي بحث يدوي.</li>
+                <li><strong>توفير الوقت:</strong>    يسهل على العميل الوصول لقائمتك ومنتجاتك بأسرع وقت ممكن.</li>
+            </ul>
+        </div>
 
-            <div class="info-box-item">
-                <strong>👁️ كيف تزيد المشاهدات؟</strong>
-                تزداد مشاهدات كارت الخدمة تلقائياً عند قيام أي زائر بـ:
-                <ul>
-                    <li>فتح تفاصيل الصورة أو المعاينة[cite: 2].</li>
-                    <li>الضغط على أزرار الاتصال أو الواتساب (يتم احتساب مشاهدة واحدة لكل جهاز لمنع التكرار)[cite: 2].</li>
-                </ul>
-            </div>
+        <div class="info-box-item">
+            <strong><i class="fa-regular fa-eye"></i> كيف تزيد المشاهدات؟</strong>
+            تزداد مشاهدات كارت الخدمة تلقائياً عند قيام أي زائر بـ:
+            <ul>
+                <li>فتح تفاصيل الصورة أو المعاينة.</li>
+                <li>الضغط على أزرار الاتصال أو الواتساب (يتم احتساب مشاهدة واحدة لكل جهاز لمنع التكرار).</li>
+            </ul>
+        </div>
 
-            <div class="info-box-item">
-                <strong>⭐ كيف يتم حساب النجوم والتقييمات؟</strong>
-                يرتبط تقييم النشاط طردياً بعدد المشاهدات التصاعدية التي يحصل عليها تلقائياً[cite: 2]:
-                <ul>
-                    <li><strong>100 مشاهدة:</strong> ⭐ (نجمة واحدة)[cite: 2]</li>
-                    <li><strong>250 مشاهدة:</strong> ⭐⭐ (نجمتان)[cite: 2]</li>
-                    <li><strong>1000 مشاهدة:</strong> ⭐⭐⭐ (3 نجوم)[cite: 2]</li>
-                    <li><strong>2000 مشاهدة:</strong> ⭐⭐⭐⭐ (4 نجوم)[cite: 2]</li>
-                    <li><strong>3000 مشاهدة:</strong> ⭐⭐⭐⭐⭐ (5 نجوم)[cite: 2]</li>
-                    <li><strong>5000 مشاهدة:</strong> ⭐⭐⭐⭐⭐⭐ (6 نجوم)[cite: 2]</li>
-                    <li><strong>أكثر من 10000 مشاهدة:</strong> ⭐⭐⭐⭐⭐⭐⭐ (7 نجوم كحد أقصى)[cite: 2]</li>
-                </ul>
-            </div>
-
-            <div class="info-box-item">
-                <strong>❤️ الإعجابات والمفضلة</strong>
-                <ul>
-                    <li>يمكن للمستخدمين الضغط على زر الإعجاب (القلب) لحفظ الكارت في قائمة "المفضلة" للوصول إليه سريعاً لاحقاً[cite: 2].</li>
-                    <li>الكروت التي تحظى بتفاعل وإعجابات أعلى تظهر في <strong>مقدمة النتائج</strong> تلقائياً[cite: 2].</li>
-                </ul>
-            </div>
-
-            <div class="info-box-item">
-                <strong>🎯 ما هي الاستفادة لصاحب النشاط؟</strong>
-                <ul>
-                    <li><strong>مصداقية وثقة أكبر:</strong> كثرة النجوم تعكس إقبال العملاء وشهرة المكان[cite: 2].</li>
-                    <li><strong>ظهور أفضل:</strong> التقييم العالي والمشاهدات الكثيرة تضع نشاطك في الصدارة دائماً[cite: 2].</li>
-                    <li><strong>عملاء أكثر:</strong> تسهيل وصول أبناء المركز لخدمتك وقياس مدى نجاح إعلاناتك بوضوح[cite: 2].</li>
-                </ul>
-            </div>
+        <div class="info-box-item">
+            <strong><i class="fa-solid fa-star"></i> كيف يتم حساب النجوم والتقييمات؟</strong>
+            يرتبط تقييم النشاط طردياً بعدد المشاهدات التصاعدية التي يحصل عليها تلقائياً:
+            <ul>
+                <li><strong>100 مشاهدة:</strong> ⭐ (نجمة واحدة)</li>
+                <li><strong>250 مشاهدة:</strong> ⭐⭐ (نجمتان)</li>
+                <li><strong>1000 مشاهدة:</strong> ⭐⭐⭐ (3 نجوم)</li>
+                <li><strong>2000 مشاهدة:</strong> ⭐⭐⭐⭐ (4 نجوم)</li>
+                <li><strong>3000 مشاهدة:</strong> ⭐⭐⭐⭐⭐ (5 نجوم)</li>
+                <li><strong>5000 مشاهدة:</strong> ⭐⭐⭐⭐⭐⭐ (6 نجوم)</li>
+                <li><strong>أكثر من 10000 مشاهدة:</strong> ⭐⭐⭐⭐⭐⭐⭐ (7 نجوم كحد أقصى)</li>
+            </ul>
         </div>
     </div>
+</div>
 
     <!-- نافذة أضف مجالك -->
     <div class="modal" id="addModal">
         <div class="modal-content">
             <h3 style="margin-bottom: 15px; font-size: 18px; color: var(--primary); text-align: center;"><i class="fa-solid fa-store"></i> طلب إضافة نشاط جديد</h3>
             
-            <div class="form-group"><label>1- النوع:</label><input type="text" id="addType" placeholder="مثال: عيادة / سباك"></div>
-            <div class="form-group"><label>2- الاسم:</label><input type="text" id="addName" placeholder="مثال: د. أحمد السيد"></div>
-            <div class="form-group"><label>3- سعر أول مرة:</label><input type="text" id="addFirstPrice" placeholder="مثال: 1500"></div>
-            <div class="form-group"><label>4- سعر المتابعة:</label><input type="text" id="addFollowPrice" placeholder="مثال: 600"></div>
-            <div class="form-group"><label>5- تفاصيل النشاط:</label><textarea id="addDetails" rows="2" placeholder="تفاصيل الخدمة..."></textarea></div>
-            <div class="form-group"><label>6- مواعيد العمل:</label><input type="text" id="addWorkTime" placeholder="من السبت للخميس"></div>
-            <div class="form-group"><label>7- الرقم:</label><input type="text" id="addPhone" placeholder="01012345678"></div>
+            <div class="form-group"><label>1- النوع: <span style="color: #e74c3c;">*</span></label><input type="text" id="addType" placeholder="مثال: عيادة / سباك"></div>
+            <div class="form-group"><label>2- الاسم: <span style="color: #e74c3c;">*</span></label><input type="text" id="addName" placeholder="مثال: د. أحمد السيد"></div>
+            <div class="form-group"><label>3- العنوان: <span style="color: #e74c3c;">*</span></label><input type="text" id="addAddress" placeholder="مثال: شارع المركز - بجوار المحطة"></div>
+            <div class="form-group"><label>4- سعر أول مرة:</label><input type="text" id="addFirstPrice" placeholder="مثال: 1500"></div>
+            <div class="form-group"><label>5- سعر المتابعة:</label><input type="text" id="addFollowPrice" placeholder="مثال: 600"></div>
+            <div class="form-group"><label>6- تفاصيل النشاط:</label><textarea id="addDetails" rows="2" placeholder="تفاصيل الخدمة..."></textarea></div>
+            <div class="form-group"><label>7- مواعيد العمل:</label><input type="text" id="addWorkTime" placeholder="من السبت للخميس"></div>
+            <div class="form-group"><label>8- الرقم: <span style="color: #e74c3c;">*</span></label><input type="text" id="addPhone" placeholder="01xxxxxxxxxx"></div>
             <div class="form-group">
-                <label>8- رابط صورة Google Drive:</label>
+                <label>9- رابط صورة Google Drive:</label>
                 <input type="text" id="addDriveUrl" placeholder="الصق رابط مشاركة الصورة من درايف هنا">
                 <small>ارفع الصورة على Google Drive، اضغط مشاركة، وانسخ الرابط.</small>
             </div>
@@ -619,21 +634,34 @@
         </div>
     </div>
 
-    <!-- نافذة تسجيل دخول المالك عبر Firebase Authentication -->
+    <!-- نافذة تسجيل دخول الإدارة عبر البريد وكلمة المرور مع ميزة إظهار الباسورد -->
     <div class="modal" id="adminLoginModal">
         <div class="modal-content">
             <h3 style="margin-bottom: 15px; color: #ef4444; text-align: center;"><i class="fa-solid fa-lock"></i> دخول لوحة الإدارة</h3>
-            <div class="form-group"><label>البريد الإلكتروني:</label><input type="email" id="adminEmail" value="mohame1dadel59@gmail.com" placeholder="mohame1dadel59@gmail.com" onkeydown="handleAdminKeydown(event)"></div>
-            <div class="form-group">
+            <div class="form-group"><label>البريد الإلكتروني للأدمن:</label><input type="email" id="adminEmail" placeholder="name@example.com"></div>
+            <div class="form-group" style="position: relative;">
                 <label>كلمة المرور:</label>
-                <div class="password-wrapper">
-                    <input type="password" id="adminPassword" placeholder="********" onkeydown="handleAdminKeydown(event)">
-                    <button type="button" class="toggle-password" onclick="togglePasswordVisibility()"><i class="fa-solid fa-eye" id="eyeIcon"></i></button>
-                </div>
+                <input type="password" id="adminPassword" placeholder="********" style="padding-left: 40px;">
+                <i class="fa-solid fa-eye" id="togglePasswordIcon" onclick="togglePasswordVisibility()" style="position: absolute; left: 12px; top: 34px; cursor: pointer; color: var(--text-muted);"></i>
             </div>
             <div class="modal-actions">
-                <button class="submit-whatsapp-btn" style="background:#ef4444;" onclick="loginAdmin()">تسجيل الدخول</button>
+                <button class="submit-whatsapp-btn" style="background:#25d366;" onclick="loginAdminWithPassword()">التحقق وإرسال كود OTP</button>
                 <button class="close-modal" onclick="toggleModal('adminLoginModal', false)">إغلاق</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة إدخال الكود (OTP Modal) -->
+    <div class="modal" id="otpModal">
+        <div class="modal-content">
+            <h3 style="margin-bottom: 15px; color: var(--primary); text-align: center;"><i class="fa-solid fa-shield-halved"></i> أدخل كود التحقق</h3>
+            <div class="form-group">
+                <label>تم إرسال كود من 6 أرقام إلى بريدك الإلكتروني:</label>
+                <input type="text" id="otpInput" placeholder="------" maxlength="6" style="text-align:center; font-size: 22px; letter-spacing: 5px;">
+            </div>
+            <div class="modal-actions">
+                <button class="submit-whatsapp-btn" onclick="verifyOTP()">تأكيد الكود</button>
+                <button class="close-modal" onclick="toggleModal('otpModal', false)">إلغاء</button>
             </div>
         </div>
     </div>
@@ -647,16 +675,32 @@
             </div>
 
             <div class="admin-tabs">
-                <button class="admin-tab-btn active" id="tabPendingBtn" onclick="switchAdminTab('pending')">طلبات الانتظار</button>
-                <button class="admin-tab-btn" id="tabApprovedBtn" onclick="switchAdminTab('approved')">الأنشطة المنشورة والإحصائيات</button>
+                <button class="admin-tab-btn active" id="tabApprovedBtn" onclick="switchAdminTab('approved')"><i class="fa-solid fa-circle-check"></i> الأنشطة المقبولة</button>
+                <button class="admin-tab-btn" id="tabPendingBtn" onclick="switchAdminTab('pending')"><i class="fa-solid fa-clock"></i> طلبات الانتظار</button>
             </div>
 
-            <div id="adminSectionPending">
+            <div id="adminSectionApproved">
+                <div id="approvedCardsContainer">جاري التحميل...</div>
+            </div>
+
+            <div id="adminSectionPending" style="display: none;">
                 <div id="pendingCardsContainer">جاري التحميل...</div>
             </div>
+        </div>
+    </div>
 
-            <div id="adminSectionApproved" style="display: none;">
-                <div id="approvedCardsContainer">جاري التحميل...</div>
+    <!-- نافذة تأكيد الحذف النهائي -->
+    <div class="modal" id="confirmDeleteModal">
+        <div class="modal-content" style="max-width: 380px; text-align: center;">
+            <h3 style="color: #ef4444; margin-bottom: 15px;"><i class="fa-solid fa-triangle-exclamation"></i> تأكيد الحذف</h3>
+            <p style="font-size: 14px; margin-bottom: 20px; color: var(--text-muted);">هل أنت متأكد من حذف هذا الكارت نهائياً؟ سيتم إرسال رسالة واتساب بتأكيد الحذف.</p>
+            <input type="hidden" id="deleteTargetKey">
+            <input type="hidden" id="deleteTargetType">
+            <input type="hidden" id="deleteTargetName">
+            <input type="hidden" id="deleteTargetPhone">
+            <div class="modal-actions">
+                <button onclick="executeFinalDelete()" style="background:#ef4444; color:#fff; border:none; padding:10px 20px; border-radius:10px; cursor:pointer; font-weight:700; flex:1;">نعم، حذف وإرسال إشعار</button>
+                <button class="close-modal" onclick="toggleModal('confirmDeleteModal', false)">إلغاء</button>
             </div>
         </div>
     </div>
@@ -668,6 +712,7 @@
             <input type="hidden" id="editServiceKey">
             <div class="form-group"><label>النوع:</label><input type="text" id="editType"></div>
             <div class="form-group"><label>الاسم:</label><input type="text" id="editName"></div>
+            <div class="form-group"><label>العنوان:</label><input type="text" id="editAddress"></div>
             <div class="form-group"><label>سعر أول مرة:</label><input type="text" id="editFirstPrice"></div>
             <div class="form-group"><label>سعر المتابعة:</label><input type="text" id="editFollowPrice"></div>
             <div class="form-group"><label>تفاصيل النشاط:</label><textarea id="editDetails" rows="2"></textarea></div>
@@ -701,58 +746,34 @@
     </div>
 
     <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyBDDu3ddIiB-d2hNSGG1bAoti2qnvBohyI",
-            authDomain: "mohamed-29759.firebaseapp.com",
-            databaseURL: "https://mohamed-29759-default-rtdb.firebaseio.com",
-            projectId: "mohamed-29759",
-            storageBucket: "mohamed-29759.firebasestorage.app",
-            messagingSenderId: "1087982177559",
-            appId: "1:1087982177559:web:b134359fbd0ce2fece3b52",
-            measurementId: "G-81CSF6GEGM"
-        };
-
-        let db = null;
-        try {
-            if (!firebase.apps.length) {
-                firebase.initializeApp(firebaseConfig);
-            }
-            db = firebase.database();
-        } catch(e) {
-            console.log("خطأ في الاتصال بقاعدة البيانات:", e);
-        }
-
         let servicesStatsCache = {};
+        let servicesList = [];
+        let currentCategory = "الكل";
+        let onlyFavorites = false;
+        let generatedOTP = "";
 
-        const slider = document.getElementById('categories-container');
-        let isDown = false;
-        let startX;
-        let scrollLeft;
+        window.initApp = function() {
+            const slider = document.getElementById('categories-container');
+            let isDown = false, startX, scrollLeft;
 
-        slider.addEventListener('mousedown', (e) => {
-            isDown = true;
-            slider.classList.add('active');
-            startX = e.pageX - slider.offsetLeft;
-            scrollLeft = slider.scrollLeft;
-        });
+            slider.addEventListener('mousedown', (e) => {
+                isDown = true;
+                slider.classList.add('active');
+                startX = e.pageX - slider.offsetLeft;
+                scrollLeft = slider.scrollLeft;
+            });
+            slider.addEventListener('mouseleave', () => { isDown = false; slider.classList.remove('active'); });
+            slider.addEventListener('mouseup', () => { isDown = false; slider.classList.remove('active'); });
+            slider.addEventListener('mousemove', (e) => {
+                if (!isDown) return;
+                e.preventDefault();
+                const x = e.pageX - slider.offsetLeft;
+                slider.scrollLeft = scrollLeft - ((x - startX) * 2);
+            });
 
-        slider.addEventListener('mouseleave', () => {
-            isDown = false;
-            slider.classList.remove('active');
-        });
-
-        slider.addEventListener('mouseup', () => {
-            isDown = false;
-            slider.classList.remove('active');
-        });
-
-        slider.addEventListener('mousemove', (e) => {
-            if (!isDown) return;
-            e.preventDefault();
-            const x = e.pageX - slider.offsetLeft;
-            const walk = (x - startX) * 2;
-            slider.scrollLeft = scrollLeft - walk;
-        });
+            changeAdhkar();
+            loadServicesData();
+        };
 
         function calculateStars(views) {
             let count = 0;
@@ -765,12 +786,8 @@
             else if (views >= 100) count = 1;
 
             let starsHTML = '';
-            for (let i = 0; i < count; i++) {
-                starsHTML += '<i class="fas fa-star"></i>';
-            }
-            for (let i = count; i < 7; i++) {
-                starsHTML += '<i class="far fa-star" style="opacity: 0.3;"></i>';
-            }
+            for (let i = 0; i < count; i++) starsHTML += '<i class="fas fa-star"></i>';
+            for (let i = count; i < 7; i++) starsHTML += '<i class="far fa-star" style="opacity: 0.3;"></i>';
             return starsHTML;
         }
 
@@ -778,20 +795,17 @@
             let deviceKey = 'user_viewed_' + itemId;
             if (!localStorage.getItem(deviceKey)) {
                 localStorage.setItem(deviceKey, 'true');
-                if (db) db.ref('items_stats/' + itemId + '/views').transaction(curr => (curr || 0) + 1);
+                if (window.FB) {
+                    window.FB.runTransaction(window.FB.ref(window.FB.db, 'items_stats/' + itemId + '/views'), (curr) => (curr || 0) + 1);
+                }
             }
         }
-
-        let onlyFavorites = false;
 
         function toggleFavoritesFilter() {
             onlyFavorites = !onlyFavorites;
             const favBtn = document.getElementById('favoritesFilterBtn');
-            if (onlyFavorites) {
-                favBtn.classList.add('active');
-            } else {
-                favBtn.classList.remove('active');
-            }
+            if (onlyFavorites) favBtn.classList.add('active');
+            else favBtn.classList.remove('active');
             filterAndDisplay();
         }
 
@@ -804,65 +818,30 @@
             if (!isLiked) {
                 localStorage.setItem(userLikedKey, 'true');
                 if (btn) btn.classList.add('liked');
-                if (db) db.ref('items_stats/' + itemId + '/likes').transaction(curr => (curr || 0) + 1);
+                if (window.FB) window.FB.runTransaction(window.FB.ref(window.FB.db, 'items_stats/' + itemId + '/likes'), (curr) => (curr || 0) + 1);
             } else {
                 localStorage.removeItem(userLikedKey);
                 if (btn) btn.classList.remove('liked');
-                if (db) db.ref('items_stats/' + itemId + '/likes').transaction(curr => Math.max(0, (curr || 0) - 1));
+                if (window.FB) window.FB.runTransaction(window.FB.ref(window.FB.db, 'items_stats/' + itemId + '/likes'), (curr) => Math.max(0, (curr || 0) - 1));
             }
-
-            if (onlyFavorites) {
-                filterAndDisplay();
-            }
+            if (onlyFavorites) filterAndDisplay();
         }
 
         function shareCard(itemId, itemTitle, itemType, event) {
             if (event) event.stopPropagation();
-            
-            // توليد رابط مخصص يفتح الكارت مباشرة ويبحث عنه بالاسم
             let shareUrl = window.location.origin + window.location.pathname + "#" + encodeURIComponent(itemTitle);
-            let shareData = {
-                title: itemTitle,
-                text: `تعرف على نشاط ${itemTitle} (${itemType}) عبر منصة كفر شكر المجتمعية:`,
-                url: shareUrl
-            };
+            let shareData = { title: itemTitle, text: `تعرف على نشاط ${itemTitle} (${itemType}) عبر منصة كفر شكر المجتمعية:`, url: shareUrl };
 
             if (navigator.share) {
-                navigator.share(shareData)
-                    .catch((error) => console.log('خطأ في المشاركة:', error));
+                navigator.share(shareData).catch((error) => console.log('خطأ في المشاركة:', error));
             } else {
-                navigator.clipboard.writeText(shareUrl).then(() => {
-                    alert("تم نسخ رابط كارتك الشخصي بنجاح!");
-                }).catch(() => {
-                    prompt("نسخ الرابط:", shareUrl);
-                });
-            }
-        }
-
-        function togglePasswordVisibility() {
-            const passwordInput = document.getElementById('adminPassword');
-            const eyeIcon = document.getElementById('eyeIcon');
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                eyeIcon.classList.remove('fa-eye');
-                eyeIcon.classList.add('fa-eye-slash');
-            } else {
-                passwordInput.type = 'password';
-                eyeIcon.classList.remove('fa-eye-slash');
-                eyeIcon.classList.add('fa-eye');
-            }
-        }
-
-        function handleAdminKeydown(event) {
-            if (event.key === 'Enter') {
-                event.preventDefault();
-                loginAdmin();
+                navigator.clipboard.writeText(shareUrl).then(() => alert("تم نسخ رابط كارتك الشخصي بنجاح!"));
             }
         }
 
         function listenToItemStats(itemId) {
-            if (!db) return;
-            db.ref('items_stats/' + itemId).on('value', snapshot => {
+            if (!window.FB) return;
+            window.FB.onValue(window.FB.ref(window.FB.db, 'items_stats/' + itemId), (snapshot) => {
                 const data = snapshot.val() || { views: 0, likes: 0 };
                 const vEl = document.getElementById('views-' + itemId);
                 const lEl = document.getElementById('likes-' + itemId);
@@ -914,6 +893,7 @@
             toggleModal('imageModal', true);
         }
 
+        // دالة تحويل روابط Google Drive تلقائياً إلى رابط عرض مباشر للصورة
         function formatDriveImage(url) {
             if (!url) return "";
             if (url.includes('drive.google.com')) {
@@ -925,25 +905,81 @@
             return url;
         }
 
-        function loginAdmin() {
-            let email = document.getElementById('adminEmail').value.trim();
-            let pass = document.getElementById('adminPassword').value.trim();
+        function togglePasswordVisibility() {
+            let passwordInput = document.getElementById('adminPassword');
+            let icon = document.getElementById('togglePasswordIcon');
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+                icon.classList.remove("fa-eye");
+                icon.classList.add("fa-eye-slash");
+            } else {
+                passwordInput.type = "password";
+                icon.classList.remove("fa-eye-slash");
+                icon.classList.add("fa-eye");
+            }
+        }
 
-            if (!email || !pass) {
-                alert("برجاء إدخال البريد وكلمة المرور");
+        function openAdminPanel() {
+            if (sessionStorage.getItem('admin_logged_in') === 'true') {
+                loadApprovedServicesForAdmin();
+                loadPendingRequestsForAdmin();
+                toggleModal('adminDashboardModal', true);
+            } else {
+                toggleModal('adminLoginModal', true);
+            }
+        }
+
+        function loginAdminWithPassword() {
+            let email = document.getElementById('adminEmail').value.trim();
+            let password = document.getElementById('adminPassword').value.trim();
+
+            if (!email || !password) {
+                alert("يرجى إدخال البريد الإلكتروني وكلمة المرور أولاً");
                 return;
             }
 
-            firebase.auth().signInWithEmailAndPassword(email, pass)
-                .then(() => {
-                    toggleModal('adminLoginModal', false);
-                    loadPendingRequestsForAdmin();
-                    loadApprovedServicesForAdmin();
-                    toggleModal('adminDashboardModal', true);
+            if (!window.FB) {
+                alert("جاري الاتصال بقاعدة البيانات، حاول بعد قليل");
+                return;
+            }
+
+            window.FB.signInWithEmailAndPassword(window.FB.auth, email, password)
+                .then((userCredential) => {
+                    generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
+
+                    emailjs.send("service_k7ftnle", "template_60xuzhi", {
+                        email: email,
+                        passcode: generatedOTP
+                    }).then(() => {
+                        alert("تم التحقق من الحساب بنجاح، وتم إرسال كود التحقق (OTP) إلى بريدك الإلكتروني");
+                        toggleModal('adminLoginModal', false);
+                        toggleModal('otpModal', true);
+                    }, (err) => {
+                        console.error("EmailJS Error:", err);
+                        alert("خطأ في إرسال الإيميل: " + (err.text || JSON.stringify(err)));
+                    });
                 })
                 .catch((error) => {
-                    alert("خطأ في تسجيل الدخول: " + error.message);
+                    alert("خطأ في بيانات الدخول: البريد الإلكتروني أو كلمة المرور غير صحيحة!");
+                    console.error(error);
                 });
+        }
+
+        function verifyOTP() {
+            let enteredOTP = document.getElementById('otpInput').value.trim();
+            if (enteredOTP === generatedOTP) {
+                sessionStorage.setItem('admin_logged_in', 'true');
+
+                alert("تم التحقق من الكود بنجاح! جارٍ فتح لوحة الإدارة...");
+                toggleModal('otpModal', false);
+                loadApprovedServicesForAdmin();
+                loadPendingRequestsForAdmin();
+                toggleModal('adminDashboardModal', true);
+                document.getElementById('otpInput').value = '';
+                document.getElementById('adminPassword').value = '';
+            } else {
+                alert("كود التحقق غير صحيح، تأكد من الكود المدخل");
+            }
         }
 
         function switchAdminTab(tab) {
@@ -952,31 +988,68 @@
             const sectionPending = document.getElementById('adminSectionPending');
             const sectionApproved = document.getElementById('adminSectionApproved');
 
-            if (tab === 'pending') {
-                tabPendingBtn.classList.add('active');
-                tabApprovedBtn.classList.remove('active');
-                sectionPending.style.display = 'block';
-                sectionApproved.style.display = 'none';
-                loadPendingRequestsForAdmin();
-            } else {
+            if (tab === 'approved') {
                 tabApprovedBtn.classList.add('active');
                 tabPendingBtn.classList.remove('active');
                 sectionApproved.style.display = 'block';
                 sectionPending.style.display = 'none';
                 loadApprovedServicesForAdmin();
+            } else {
+                tabPendingBtn.classList.add('active');
+                tabApprovedBtn.classList.remove('active');
+                sectionPending.style.display = 'block';
+                sectionApproved.style.display = 'none';
+                loadPendingRequestsForAdmin();
             }
+        }
+
+        function loadApprovedServicesForAdmin() {
+            const container = document.getElementById('approvedCardsContainer');
+            container.innerHTML = "جاري التحميل...";
+            
+            let allApproved = [...servicesList];
+
+            if (allApproved.length === 0) {
+                container.innerHTML = "<p style='text-align:center; color:var(--text-muted);'>لا توجد أنشطة مقبولة في الداتا حالياً.</p>";
+                return;
+            }
+
+            container.innerHTML = "";
+            allApproved.forEach(item => {
+                let processedImgUrl = formatDriveImage(item.image);
+                let imageHTML = processedImgUrl ? `<img src="${processedImgUrl}" style="width:100%; height:120px; object-fit:cover; border-radius:8px; margin-bottom:8px;" alt="صورة">` : '';
+
+                let cardDiv = document.createElement('div');
+                cardDiv.className = 'admin-card';
+                cardDiv.innerHTML = `
+                    ${imageHTML}
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
+                        <div style="font-weight:900; font-size:16px; color:var(--primary);">${item.doctor} (${item.type})</div>
+                        <div style="font-size:12px; background:rgba(56,189,248,0.1); padding:3px 8px; border-radius:6px; color:var(--primary); border:1px solid rgba(56,189,248,0.2);">
+                            📞 ${item.phone || '---'}
+                        </div>
+                    </div>
+                    <div style="font-size:12.5px; color:var(--text-muted); margin-bottom:10px;">العنوان: ${item.address || '---'} | تفاصيل: ${item.details || '---'}</div>
+                    <div style="display:flex; gap:10px;">
+                        ${item.id.startsWith('doc_') ? '<span style="font-size:12px; color:#10b981; align-self:center;">(مستورد من الشيت)</span>' : ''}
+                        <button onclick="openEditModal('${item.id}')" style="background:#f59e0b; color:#fff; border:none; padding:6px 15px; border-radius:8px; cursor:pointer; font-weight:700;"><i class="fa-solid fa-pen"></i> تعديل</button>
+                        <button onclick="promptDelete('${item.id}', 'approved', '${item.doctor}', '${item.phone}')" style="background:#ef4444; color:#fff; border:none; padding:6px 15px; border-radius:8px; cursor:pointer; font-weight:700;"><i class="fa-solid fa-trash"></i> حذف وإرسال إشعار</button>
+                    </div>
+                `;
+                container.appendChild(cardDiv);
+            });
         }
 
         function loadPendingRequestsForAdmin() {
             const container = document.getElementById('pendingCardsContainer');
             container.innerHTML = "جاري التحميل...";
-            if (!db) return;
+            if (!window.FB) return;
 
-            db.ref('pending_requests').once('value', snapshot => {
+            window.FB.get(window.FB.ref(window.FB.db, 'pending_requests')).then((snapshot) => {
                 const data = snapshot.val();
                 container.innerHTML = "";
                 if (!data) {
-                    container.innerHTML = "<p style='text-align:center; color:var(--text-muted);'>لا توجد طلبات معلقة حالياً.</p>";
+                    container.innerHTML = "<p style='text-align:center; color:var(--text-muted);'>لا توجد طلبات انتظار جديدة.</p>";
                     return;
                 }
 
@@ -986,10 +1059,10 @@
                     cardDiv.className = 'admin-card';
                     cardDiv.innerHTML = `
                         <div style="font-weight:900; font-size:16px; color:var(--primary); margin-bottom:5px;">${item.doctor} (${item.type})</div>
-                        <div style="font-size:12.5px; color:var(--text-muted); margin-bottom:8px;">الهاتف: ${item.phone} | السعر: ${item.firstPrice || '---'}</div>
+                        <div style="font-size:12.5px; color:var(--text-muted); margin-bottom:8px;">العنوان: ${item.address || '---'} | الهاتف: ${item.phone}</div>
                         <div style="display:flex; gap:10px;">
-                            <button onclick="approveRequest('${key}')" style="background:#25d366; color:#fff; border:none; padding:6px 15px; border-radius:8px; cursor:pointer; font-weight:700;">قبول ونشر</button>
-                            <button onclick="rejectRequest('${key}')" style="background:#ef4444; color:#fff; border:none; padding:6px 15px; border-radius:8px; cursor:pointer; font-weight:700;">رفض وحذف</button>
+                            <button onclick="approveRequest('${key}')" style="background:#25d366; color:#fff; border:none; padding:6px 15px; border-radius:8px; cursor:pointer; font-weight:700;"><i class="fa-solid fa-check"></i> قبول</button>
+                            <button onclick="promptDelete('${key}', 'pending', '${item.doctor}', '${item.phone}')" style="background:#ef4444; color:#fff; border:none; padding:6px 15px; border-radius:8px; cursor:pointer; font-weight:700;"><i class="fa-solid fa-xmark"></i> رفض</button>
                         </div>
                     `;
                     container.appendChild(cardDiv);
@@ -997,50 +1070,65 @@
             });
         }
 
-        function loadApprovedServicesForAdmin() {
-            const container = document.getElementById('approvedCardsContainer');
-            container.innerHTML = "جاري التحميل...";
-            if (!db) return;
+        function promptDelete(key, type, name, phone) {
+            document.getElementById('deleteTargetKey').value = key;
+            document.getElementById('deleteTargetType').value = type;
+            document.getElementById('deleteTargetName').value = name || 'غير محدد';
+            document.getElementById('deleteTargetPhone').value = phone || '';
+            toggleModal('confirmDeleteModal', true);
+        }
 
-            db.ref('approved_services').once('value', snapshot => {
-                const data = snapshot.val();
-                container.innerHTML = "";
-                if (!data) {
-                    container.innerHTML = "<p style='text-align:center; color:var(--text-muted);'>لا توجد أنشطة منشورة في قاعدة البيانات حالياً.</p>";
-                    return;
-                }
+        function executeFinalDelete() {
+            let key = document.getElementById('deleteTargetKey').value;
+            let type = document.getElementById('deleteTargetType').value;
+            let targetName = document.getElementById('deleteTargetName').value;
+            let targetPhone = document.getElementById('deleteTargetPhone').value;
+            let path = type === 'approved' ? 'approved_services/' + key : 'pending_requests/' + key;
 
-                Object.keys(data).forEach(key => {
-                    let item = data[key];
-                    let stats = servicesStatsCache[key] || { views: 0, likes: 0 };
-                    let cardDiv = document.createElement('div');
-                    cardDiv.className = 'admin-card';
-                    cardDiv.innerHTML = `
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
-                            <div style="font-weight:900; font-size:16px; color:var(--primary);">${item.doctor} (${item.type})</div>
-                            <div style="font-size:12px; background:rgba(56,189,248,0.1); padding:3px 8px; border-radius:6px; color:var(--primary); border:1px solid rgba(56,189,248,0.2);">
-                                👁️ مشاهدات: ${stats.views || 0} | ❤️ إعجابات: ${stats.likes || 0}
-                            </div>
-                        </div>
-                        <div style="font-size:12.5px; color:var(--text-muted); margin-bottom:10px;">الهاتف: ${item.phone} | التفاصيل: ${item.details || '---'}</div>
-                        <div style="display:flex; gap:10px;">
-                            <button onclick="openEditModal('${key}')" style="background:#f59e0b; color:#fff; border:none; padding:6px 15px; border-radius:8px; cursor:pointer; font-weight:700;"><i class="fa-solid fa-pen"></i> تعديل</button>
-                            <button onclick="deleteApprovedService('${key}')" style="background:#ef4444; color:#fff; border:none; padding:6px 15px; border-radius:8px; cursor:pointer; font-weight:700;"><i class="fa-solid fa-trash"></i> حذف نهائي</button>
-                        </div>
-                    `;
-                    container.appendChild(cardDiv);
+            if (window.FB) {
+                window.FB.remove(window.FB.ref(window.FB.db, path)).then(() => {
+                    toggleModal('confirmDeleteModal', false);
+                    
+                    let waText = `⚠️ *تنبيه إداري: تم حذف نشاط من المنصة*\n\n` +
+                                 `👤 *اسم النشاط/الشخص:* ${targetName}\n` +
+                                 `📞 *رقم الهاتف:* ${targetPhone || 'غير محدد'}\n` +
+                                 `🗑️ *الحالة:* تم إزالة الكارت نهائياً بواسطة الأدمن.`;
+                    
+                    let ownerPhone = "201023745774"; 
+                    let whatsappUrl = `https://wa.me/${ownerPhone}?text=` + encodeURIComponent(waText);
+                    window.open(whatsappUrl, '_blank');
+
+                    alert("تم الحذف نهائياً وإرسال رسالة تأكيد الحذف عبر الواتساب بنجاح!");
+                    if (type === 'approved') loadApprovedServicesForAdmin();
+                    else loadPendingRequestsForAdmin();
+                    loadServicesData();
                 });
+            }
+        }
+
+        function approveRequest(key) {
+            window.FB.get(window.FB.ref(window.FB.db, 'pending_requests/' + key)).then((snapshot) => {
+                let val = snapshot.val();
+                if (val) {
+                    window.FB.push(window.FB.ref(window.FB.db, 'approved_services'), val);
+                    window.FB.remove(window.FB.ref(window.FB.db, 'pending_requests/' + key));
+                    alert("تم قبول الكارت بنجاح ليراه الزائر الجديد!");
+                    loadPendingRequestsForAdmin();
+                    loadApprovedServicesForAdmin();
+                    loadServicesData();
+                }
             });
         }
 
         function openEditModal(key) {
-            if (!db) return;
-            db.ref('approved_services/' + key).once('value', snapshot => {
+            if (!window.FB) return;
+            window.FB.get(window.FB.ref(window.FB.db, 'approved_services/' + key)).then((snapshot) => {
                 let item = snapshot.val();
                 if (item) {
                     document.getElementById('editServiceKey').value = key;
                     document.getElementById('editType').value = item.type || '';
                     document.getElementById('editName').value = item.doctor || '';
+                    document.getElementById('editAddress').value = item.address || '';
                     document.getElementById('editFirstPrice').value = item.firstPrice || '';
                     document.getElementById('editFollowPrice').value = item.followPrice || '';
                     document.getElementById('editDetails').value = item.details || '';
@@ -1057,6 +1145,7 @@
             let updatedData = {
                 type: document.getElementById('editType').value.trim(),
                 doctor: document.getElementById('editName').value.trim(),
+                address: document.getElementById('editAddress').value.trim(),
                 firstPrice: document.getElementById('editFirstPrice').value.trim(),
                 followPrice: document.getElementById('editFollowPrice').value.trim(),
                 details: document.getElementById('editDetails').value.trim(),
@@ -1065,13 +1154,13 @@
                 image: document.getElementById('editDriveUrl').value.trim()
             };
 
-            if (!updatedData.type || !updatedData.doctor || !updatedData.phone) {
-                alert("برجاء إدخال الحقول الأساسية (النوع، الاسم، ورقم الهاتف)");
+            if (!updatedData.type || !updatedData.doctor || !updatedData.address || !updatedData.phone) {
+                alert("برجاء إدخال الحقول الأساسية (النوع، الاسم، العنوان، ورقم الهاتف)");
                 return;
             }
 
-            if (db) {
-                db.ref('approved_services/' + key).update(updatedData)
+            if (window.FB) {
+                window.FB.update(window.FB.ref(window.FB.db, 'approved_services/' + key), updatedData)
                     .then(() => {
                         alert("تم تحديث النشاط بنجاح!");
                         toggleModal('editServiceModal', false);
@@ -1082,76 +1171,53 @@
             }
         }
 
-        function deleteApprovedService(key) {
-            if (confirm("هل أنت متأكد من حذف هذا النشاط نهائياً من الموقع؟")) {
-                if (db) {
-                    db.ref('approved_services/' + key).remove()
-                        .then(() => {
-                            alert("تم الحذف بنجاح!");
-                            loadApprovedServicesForAdmin();
-                            loadServicesData();
-                        });
-                }
-            }
-        }
-
-        function approveRequest(key) {
-            db.ref('pending_requests/' + key).once('value', snapshot => {
-                let val = snapshot.val();
-                if (val) {
-                    db.ref('approved_services').push(val);
-                    db.ref('pending_requests/' + key).remove();
-                    alert("تم قبول الطلب ونشره بنجاح!");
-                    loadPendingRequestsForAdmin();
-                    loadServicesData();
-                }
-            });
-        }
-
-        function rejectRequest(key) {
-            if (confirm("هل أنت متأكد من الرفض؟")) {
-                db.ref('pending_requests/' + key).remove();
-                loadPendingRequestsForAdmin();
-            }
-        }
-
         function submitNewActivity() {
-            let type = document.getElementById('addType').value.trim();
-            let name = document.getElementById('addName').value.trim();
-            let firstPrice = document.getElementById('addFirstPrice').value.trim();
-            let followPrice = document.getElementById('addFollowPrice').value.trim();
-            let details = document.getElementById('addDetails').value.trim();
-            let workTime = document.getElementById('addWorkTime').value.trim();
-            let phone = document.getElementById('addPhone').value.trim();
-            let driveUrl = document.getElementById('addDriveUrl').value.trim();
-
-            if (!type || !name || !phone) {
-                alert("برجاء إدخال الحقول الأساسية (النوع، الاسم، ورقم الهاتف)");
-                return;
-            }
-
             let newEntry = { 
-                type, 
-                doctor: name, 
-                firstPrice, 
-                followPrice, 
-                details, 
-                workTime, 
-                phone, 
-                image: driveUrl, 
+                type: document.getElementById('addType').value.trim(), 
+                doctor: document.getElementById('addName').value.trim(), 
+                address: document.getElementById('addAddress').value.trim(),
+                firstPrice: document.getElementById('addFirstPrice').value.trim(), 
+                followPrice: document.getElementById('addFollowPrice').value.trim(), 
+                details: document.getElementById('addDetails').value.trim(), 
+                workTime: document.getElementById('addWorkTime').value.trim(), 
+                phone: document.getElementById('addPhone').value.trim(), 
+                image: document.getElementById('addDriveUrl').value.trim(), 
                 status: "قيد الانتظار", 
                 timestamp: Date.now() 
             };
 
-            if (db) {
-                db.ref('pending_requests').push(newEntry);
+            if (!newEntry.type || !newEntry.doctor || !newEntry.address || !newEntry.phone) {
+                alert("برجاء إدخال الحقول الأساسية (النوع، الاسم، العنوان، ورقم الهاتف)");
+                return;
             }
 
+            if (window.FB) {
+                window.FB.push(window.FB.ref(window.FB.db, 'pending_requests'), newEntry);
+            }
+
+            let waText = `🔔 *طلب إضافة نشاط جديد بالمنصة:*\n\n` +
+                         `📌 *النوع:* ${newEntry.type}\n` +
+                         `👤 *الاسم:* ${newEntry.doctor}\n` +
+                         `📍 *العنوان:* ${newEntry.address}\n` +
+                         `💰 *سعر أول مرة:* ${newEntry.firstPrice || 'غير محدد'}\n` +
+                         `💵 *سعر المتابعة:* ${newEntry.followPrice || 'غير محدد'}\n` +
+                         `📝 *التفاصيل:* ${newEntry.details || 'لا توجد'}\n` +
+                         `⏰ *مواعيد العمل:* ${newEntry.workTime || 'غير محددة'}\n` +
+                         `📞 *رقم الهاتف:* ${newEntry.phone}\n` +
+                         `🖼️ *صورة درايف:* ${newEntry.image || 'لا توجد'}\n\n` +
+                         `_تم إرسال هذا الطلب تلقائياً للمراجعة._`;
+
+            let encodedMsg = encodeURIComponent(waText);
+            let ownerPhone = "201023745774"; 
+            let whatsappUrl = `https://wa.me/${ownerPhone}?text=${encodedMsg}`;
+
+            window.open(whatsappUrl, '_blank');
             toggleModal('addModal', false);
-            alert("تم حفظ البيانات بنجاح وإرسالها إلى قائمة الانتظار في لوحة الإدارة للمراجعة.");
+            alert("تم حفظ البيانات وإرسالها لقائمة الانتظار بنجاح، وتم تجهيز رسالة الواتساب لتصلك فوراً!");
             
             document.getElementById('addType').value = '';
             document.getElementById('addName').value = '';
+            document.getElementById('addAddress').value = '';
             document.getElementById('addFirstPrice').value = '';
             document.getElementById('addFollowPrice').value = '';
             document.getElementById('addDetails').value = '';
@@ -1160,15 +1226,12 @@
             document.getElementById('addDriveUrl').value = '';
         }
 
-        let servicesList = [];
-        let currentCategory = "الكل";
-
         function parseCSV(text) {
             let lines = text.split("\n");
             let result = [];
             for (let i = 1; i < lines.length; i++) {
                 if (!lines[i].trim()) continue;
-                let row = []; let current = ""; let inQuotes = false;
+                let row = [], current = "", inQuotes = false;
                 for (let char of lines[i]) {
                     if (char === '"') inQuotes = !inQuotes;
                     else if (char === ',' && !inQuotes) { row.push(current.trim()); current = ""; }
@@ -1189,26 +1252,32 @@
                     let rows = parseCSV(csvText);
                     servicesList = [];
                     rows.forEach((cols, index) => {
-                        let type = cols[0] ? cols[0].trim() : "";         
-                        let doctor = cols[1] ? cols[1].trim() : "";       
-                        let firstPrice = cols[2] ? cols[2].trim() : "";   
-                        let followPrice = cols[3] ? cols[3].trim() : ""; 
-                        let details = cols[4] ? cols[4].trim() : "";     
-                        let workTime = cols[5] ? cols[5].trim() : "";     
-                        let phone = cols[6] ? cols[6].trim() : "";         
-                        let image = cols[7] ? cols[7].trim() : "";         
+    let type = cols[0] ? cols[0].trim() : "";         
+    let doctor = cols[1] ? cols[1].trim() : "";       
+    let firstPrice = cols[2] ? cols[2].trim() : "";   
+    let followPrice = cols[3] ? cols[3].trim() : ""; 
+    let details = cols[4] ? cols[4].trim() : "";     
+    let workTime = cols[5] ? cols[5].trim() : "";     
+    let phone = cols[6] ? cols[6].trim() : "";         
+    let image = cols[7] ? cols[7].trim() : "";         
 
-                        if (type && type !== "نوع") {
-                            servicesList.push({ id: "doc_" + index, type, doctor, firstPrice, followPrice, details, workTime, phone, image });
-                        }
-                    });
+    if (type && type !== "نوع") {
+        // استخدام رقم الهاتف كمعرف فريد وثابت للشخص (مع إزالة أي أرقام غير صالحة أو مسافات)
+        let cleanPhoneId = phone ? phone.replace(/\D/g, '') : ('doc_' + index);
+        let uniqueId = "person_" + cleanPhoneId; 
 
-                    if (db) {
-                        db.ref('approved_services').once('value', snapshot => {
+        servicesList.push({ id: uniqueId, type, doctor, firstPrice, followPrice, details, workTime, phone, image });
+    }
+});
+
+                    if (window.FB) {
+                        window.FB.get(window.FB.ref(window.FB.db, 'approved_services')).then((snapshot) => {
                             const approvedData = snapshot.val();
                             if (approvedData) {
                                 Object.keys(approvedData).forEach(k => {
-                                    servicesList.push({ id: k, ...approvedData[k] });
+                                    if (!servicesList.some(item => item.phone === approvedData[k].phone && item.doctor === approvedData[k].doctor)) {
+                                        servicesList.push({ id: k, ...approvedData[k] });
+                                    }
                                 });
                             }
                             fetchStatsAndRender();
@@ -1221,11 +1290,11 @@
         }
 
         function fetchStatsAndRender() {
-            if (db) {
-                db.ref('items_stats').once('value', snapshot => {
+            if (window.FB) {
+                window.FB.get(window.FB.ref(window.FB.db, 'items_stats')).then((snapshot) => {
                     servicesStatsCache = snapshot.val() || {};
                     buildCategories();
-                    checkUrlHashForSearch(); // التحقق التلقائي من الرابط وتطبيق البحث
+                    checkUrlHashForSearch();
                     filterAndDisplay();
                 });
             } else {
@@ -1235,13 +1304,11 @@
             }
         }
 
-        // دالة لفحص الرابط عند الفتح وتطبيق البحث المباشر باسم صاحب الكارت
         function checkUrlHashForSearch() {
             if (window.location.hash) {
                 let decodedHash = decodeURIComponent(window.location.hash.substring(1));
                 if (decodedHash) {
-                    const searchInput = document.getElementById('search-input');
-                    searchInput.value = decodedHash;
+                    document.getElementById('search-input').value = decodedHash;
                     document.getElementById('clearSearchBtn').style.display = 'block';
                 }
             }
@@ -1269,15 +1336,14 @@
 
         function handleSearchInput() {
             const inputVal = document.getElementById('search-input').value;
-            const clearBtn = document.getElementById('clearSearchBtn');
-            clearBtn.style.display = inputVal ? 'block' : 'none';
+            document.getElementById('clearSearchBtn').style.display = inputVal ? 'block' : 'none';
             filterAndDisplay();
         }
 
         function clearSearchField() {
             document.getElementById('search-input').value = '';
             document.getElementById('clearSearchBtn').style.display = 'none';
-            window.location.hash = ''; // إزالة الهاش من الرابط عند مسح البحث
+            window.location.hash = '';
             filterAndDisplay();
         }
 
@@ -1291,16 +1357,22 @@
                 if (onlyFavorites && !isLiked) return false;
 
                 const matchCat = (currentCategory === "الكل" || item.type === currentCategory);
-                const matchSearch = item.doctor.toLowerCase().includes(searchText) || item.details.toLowerCase().includes(searchText) || item.type.toLowerCase().includes(searchText);
+                const matchSearch = item.doctor.toLowerCase().includes(searchText) || (item.address && item.address.toLowerCase().includes(searchText)) || item.details.toLowerCase().includes(searchText) || item.type.toLowerCase().includes(searchText);
                 return matchCat && matchSearch;
             });
 
             filtered.sort((a, b) => {
-                let statsA = servicesStatsCache[a.id] || { views: 0, likes: 0 };
-                let statsB = servicesStatsCache[b.id] || { views: 0, likes: 0 };
-                if ((statsB.likes || 0) !== (statsA.likes || 0)) return (statsB.likes || 0) - (statsA.likes || 0);
-                return (statsB.views || 0) - (statsA.views || 0);
-            });
+    let statsA = servicesStatsCache[a.id] || { views: 0, likes: 0 };
+    let statsB = servicesStatsCache[b.id] || { views: 0, likes: 0 };
+    
+    // 1. المقارنة الأساسية بناءً على عدد المشاهدات الأكبر
+    if ((statsB.views || 0) !== (statsA.views || 0)) {
+        return (statsB.views || 0) - (statsA.views || 0);
+    }
+    
+    // 2. لو المشاهدات متساوية، يتم المقارنة بناءً على عدد الإعجابات الأكثر
+    return (statsB.likes || 0) - (statsA.likes || 0);
+});
 
             if (filtered.length === 0) {
                 let msg = onlyFavorites ? "لا توجد عناصر في قائمة المفضلة لديك حالياً." : "لا توجد نتائج مطابقة للبحث";
@@ -1344,6 +1416,7 @@
                             <span class="service-tag">${item.type}</span>
                             <div class="service-title">${item.doctor}</div>
                             <div class="rating-stars" id="stars-${item.id}">${currentStarsHTML}</div>
+                            ${item.address ? `<div style="font-size: 13px; color: var(--primary); margin-bottom: 8px;"><i class="fa-solid fa-location-dot"></i> ${item.address}</div>` : ''}
                             ${item.details ? `<div class="service-details">${item.details}</div>` : ''}
                         </div>
                         <div style="margin-top: 15px;">
@@ -1377,11 +1450,6 @@
                 setTimeout(() => listenToItemStats(item.id), 50);
             });
         }
-
-        window.addEventListener('DOMContentLoaded', () => {
-            changeAdhkar();
-            loadServicesData();
-        });
     </script>
 </body>
 </html>

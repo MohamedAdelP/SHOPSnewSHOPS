@@ -7,13 +7,20 @@
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- مكتبات Firebase الإصدار المعياري (Modular SDKs) عبر CDN المتوافقة مع الإعدادات الحديثة -->
+    <!-- مكتبة EmailJS -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script type="text/javascript">
+       (function(){
+          emailjs.init("FQFGijHqvlbXqbtWq");
+       })();
+    </script>
+
+    <!-- مكتبات Firebase الإصدار المعياري (Modular SDKs) عبر CDN -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, onValue, once, push, update, remove, transaction } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getDatabase, ref, onValue, get, push, update, remove, runTransaction } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
         import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         
-        // إعدادات Firebase الخاصة بمشروعك الجديد
         const firebaseConfig = {
             apiKey: "AIzaSyAU-H5PM8i9ptXC9d3id1wTiOIwEvAFBNQ",
             authDomain: "kafr-shokr.firebaseapp.com",
@@ -25,15 +32,12 @@
             measurementId: "G-X9HJV2F09R"
         };
 
-        // تهيئة Firebase
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
         const auth = getAuth(app);
 
-        // إتاحة الدوال على نطاق عام للاستخدام داخل الصفحة
-        window.FB = { db, auth, ref, onValue, push, update, remove, transaction, signInWithEmailAndPassword };
+        window.FB = { db, auth, ref, onValue, get, push, update, remove, runTransaction, signInWithEmailAndPassword };
         
-        // بدء تشغيل تطبيق المنصة بعد تحميل مكتبات الفايربيز
         if (typeof window.initApp === 'function') {
             window.initApp();
         }
@@ -457,27 +461,6 @@
         .form-group input:focus, .form-group textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15); }
         .form-group small { display: block; font-size: 11px; color: var(--text-muted); margin-top: 3px; }
 
-        .password-wrapper {
-            position: relative;
-            width: 100%;
-        }
-        .password-wrapper input {
-            width: 100%;
-            padding-left: 40px;
-        }
-        .toggle-password {
-            position: absolute;
-            left: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            cursor: pointer;
-            font-size: 14px;
-        }
-        .toggle-password:hover { color: var(--primary); }
-
         .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
         .submit-whatsapp-btn {
             background: #25d366;
@@ -573,9 +556,9 @@
             <div class="info-box-item">
                 <strong>🔗 دليل استخدام زر "مشاركة الكارت"</strong>
                 <ul>
-                    <li><strong>الفكرة ببساطة:</strong> الزر ليس مجرد رابط عادي للموقع، بل ينشئ <strong>رابطاً مخصصاً ومستقلاً</strong> لكل نشاط[cite: 2].</li>
-                    <li><strong>الدخول المباشر:</strong> عندما تشارك الرابط مع عملائك، سينتقلون إلى نشاطك مباشرة ويظهر لهم اسمك فوراً دون أي بحث يدوي[cite: 2].</li>
-                    <li><strong>توفير الوقت:</strong> يمنع أي لخبطة ويسهل على العميل الوصول لقائمتك ومنتجاتك بأسرع وقت ممكن[cite: 2].</li>
+                    <li><strong>الفكرة ببساطة:</strong> الزر ليس مجرد رابط عادي للموقع، بل ينشئ <strong>رابطاً مخصصاً ومستقلاً</strong> لكل نشاط.</li>
+                    <li><strong>الدخول المباشر:</strong> عندما تشارك الرابط مع عملائك، سينتقلون إلى نشاطك مباشرة ويظهر لهم اسمك فوراً دون أي بحث يدوي.</li>
+                    <li><strong>توفير الوقت:</strong> يمنع أي لخبطة ويسهل على العميل الوصول لقائمتك ومنتجاتك بأسرع وقت ممكن.</li>
                 </ul>
             </div>
 
@@ -583,22 +566,22 @@
                 <strong>👁️ كيف تزيد المشاهدات؟</strong>
                 تزداد مشاهدات كارت الخدمة تلقائياً عند قيام أي زائر بـ:
                 <ul>
-                    <li>فتح تفاصيل الصورة أو المعاينة[cite: 2].</li>
-                    <li>الضغط على أزرار الاتصال أو الواتساب (يتم احتساب مشاهدة واحدة لكل جهاز لمنع التكرار)[cite: 2].</li>
+                    <li>فتح تفاصيل الصورة أو المعاينة.</li>
+                    <li>الضغط على أزرار الاتصال أو الواتساب (يتم احتساب مشاهدة واحدة لكل جهاز لمنع التكرار).</li>
                 </ul>
             </div>
 
             <div class="info-box-item">
                 <strong>⭐ كيف يتم حساب النجوم والتقييمات؟</strong>
-                يرتبط تقييم النشاط طردياً بعدد المشاهدات التصاعدية التي يحصل عليها تلقائياً[cite: 2]:
+                يرتبط تقييم النشاط طردياً بعدد المشاهدات التصاعدية التي يحصل عليها تلقائياً:
                 <ul>
-                    <li><strong>100 مشاهدة:</strong> ⭐ (نجمة واحدة)[cite: 2]</li>
-                    <li><strong>250 مشاهدة:</strong> ⭐⭐ (نجمتان)[cite: 2]</li>
-                    <li><strong>1000 مشاهدة:</strong> ⭐⭐⭐ (3 نجوم)[cite: 2]</li>
-                    <li><strong>2000 مشاهدة:</strong> ⭐⭐⭐⭐ (4 نجوم)[cite: 2]</li>
-                    <li><strong>3000 مشاهدة:</strong> ⭐⭐⭐⭐⭐ (5 نجوم)[cite: 2]</li>
-                    <li><strong>5000 مشاهدة:</strong> ⭐⭐⭐⭐⭐⭐ (6 نجوم)[cite: 2]</li>
-                    <li><strong>أكثر من 10000 مشاهدة:</strong> ⭐⭐⭐⭐⭐⭐⭐ (7 نجوم كحد أقصى)[cite: 2]</li>
+                    <li><strong>100 مشاهدة:</strong> ⭐ (نجمة واحدة)</li>
+                    <li><strong>250 مشاهدة:</strong> ⭐⭐ (نجمتان)</li>
+                    <li><strong>1000 مشاهدة:</strong> ⭐⭐⭐ (3 نجوم)</li>
+                    <li><strong>2000 مشاهدة:</strong> ⭐⭐⭐⭐ (4 نجوم)</li>
+                    <li><strong>3000 مشاهدة:</strong> ⭐⭐⭐⭐⭐ (5 نجوم)</li>
+                    <li><strong>5000 مشاهدة:</strong> ⭐⭐⭐⭐⭐⭐ (6 نجوم)</li>
+                    <li><strong>أكثر من 10000 مشاهدة:</strong> ⭐⭐⭐⭐⭐⭐⭐ (7 نجوم كحد أقصى)</li>
                 </ul>
             </div>
         </div>
@@ -629,21 +612,30 @@
         </div>
     </div>
 
-    <!-- نافذة تسجيل دخول المالك -->
+    <!-- نافذة تسجيل دخول الإدارة عبر البريد وكلمة المرور -->
     <div class="modal" id="adminLoginModal">
         <div class="modal-content">
             <h3 style="margin-bottom: 15px; color: #ef4444; text-align: center;"><i class="fa-solid fa-lock"></i> دخول لوحة الإدارة</h3>
-            <div class="form-group"><label>البريد الإلكتروني:</label><input type="email" id="adminEmail" placeholder="name@example.com" onkeydown="handleAdminKeydown(event)"></div>
+            <div class="form-group"><label>البريد الإلكتروني للأدمن:</label><input type="email" id="adminEmail" placeholder="name@example.com"></div>
+            <div class="form-group"><label>كلمة المرور:</label><input type="password" id="adminPassword" placeholder="********"></div>
+            <div class="modal-actions">
+                <button class="submit-whatsapp-btn" style="background:#25d366;" onclick="loginAdminWithPassword()">التحقق وإرسال كود OTP</button>
+                <button class="close-modal" onclick="toggleModal('adminLoginModal', false)">إغلاق</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة إدخال الكود (OTP Modal) -->
+    <div class="modal" id="otpModal">
+        <div class="modal-content">
+            <h3 style="margin-bottom: 15px; color: var(--primary); text-align: center;"><i class="fa-solid fa-shield-halved"></i> أدخل كود التحقق</h3>
             <div class="form-group">
-                <label>كلمة المرور:</label>
-                <div class="password-wrapper">
-                    <input type="password" id="adminPassword" placeholder="********" onkeydown="handleAdminKeydown(event)">
-                    <button type="button" class="toggle-password" onclick="togglePasswordVisibility()"><i class="fa-solid fa-eye" id="eyeIcon"></i></button>
-                </div>
+                <label>تم إرسال كود من 6 أرقام إلى بريدك الإلكتروني:</label>
+                <input type="text" id="otpInput" placeholder="------" maxlength="6" style="text-align:center; font-size: 22px; letter-spacing: 5px;">
             </div>
             <div class="modal-actions">
-                <button class="submit-whatsapp-btn" style="background:#ef4444;" onclick="loginAdmin()">تسجيل الدخول</button>
-                <button class="close-modal" onclick="toggleModal('adminLoginModal', false)">إغلاق</button>
+                <button class="submit-whatsapp-btn" onclick="verifyOTP()">تأكيد الكود</button>
+                <button class="close-modal" onclick="toggleModal('otpModal', false)">إلغاء</button>
             </div>
         </div>
     </div>
@@ -658,7 +650,7 @@
 
             <div class="admin-tabs">
                 <button class="admin-tab-btn active" id="tabPendingBtn" onclick="switchAdminTab('pending')">طلبات الانتظار</button>
-                <button class="admin-tab-btn" id="tabApprovedBtn" onclick="switchAdminTab('approved')">الأنشطة المنشورة والإحصائيات</button>
+                <button class="admin-tab-btn" id="tabApprovedBtn" onclick="switchAdminTab('نشطة')">الأنشطة المنشورة والإحصائيات</button>
             </div>
 
             <div id="adminSectionPending">
@@ -715,6 +707,7 @@
         let servicesList = [];
         let currentCategory = "الكل";
         let onlyFavorites = false;
+        let generatedOTP = "";
 
         window.initApp = function() {
             const slider = document.getElementById('categories-container');
@@ -760,7 +753,7 @@
             if (!localStorage.getItem(deviceKey)) {
                 localStorage.setItem(deviceKey, 'true');
                 if (window.FB) {
-                    window.FB.transaction(window.FB.ref(window.FB.db, 'items_stats/' + itemId + '/views'), (curr) => (curr || 0) + 1);
+                    window.FB.runTransaction(window.FB.ref(window.FB.db, 'items_stats/' + itemId + '/views'), (curr) => (curr || 0) + 1);
                 }
             }
         }
@@ -782,11 +775,11 @@
             if (!isLiked) {
                 localStorage.setItem(userLikedKey, 'true');
                 if (btn) btn.classList.add('liked');
-                if (window.FB) window.FB.transaction(window.FB.ref(window.FB.db, 'items_stats/' + itemId + '/likes'), (curr) => (curr || 0) + 1);
+                if (window.FB) window.FB.runTransaction(window.FB.ref(window.FB.db, 'items_stats/' + itemId + '/likes'), (curr) => (curr || 0) + 1);
             } else {
                 localStorage.removeItem(userLikedKey);
                 if (btn) btn.classList.remove('liked');
-                if (window.FB) window.FB.transaction(window.FB.ref(window.FB.db, 'items_stats/' + itemId + '/likes'), (curr) => Math.max(0, (curr || 0) - 1));
+                if (window.FB) window.FB.runTransaction(window.FB.ref(window.FB.db, 'items_stats/' + itemId + '/likes'), (curr) => Math.max(0, (curr || 0) - 1));
             }
             if (onlyFavorites) filterAndDisplay();
         }
@@ -801,24 +794,6 @@
             } else {
                 navigator.clipboard.writeText(shareUrl).then(() => alert("تم نسخ رابط كارتك الشخصي بنجاح!"));
             }
-        }
-
-        function togglePasswordVisibility() {
-            const passwordInput = document.getElementById('adminPassword');
-            const eyeIcon = document.getElementById('eyeIcon');
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                eyeIcon.classList.remove('fa-eye');
-                eyeIcon.classList.add('fa-eye-slash');
-            } else {
-                passwordInput.type = 'password';
-                eyeIcon.classList.remove('fa-eye-slash');
-                eyeIcon.classList.add('fa-eye');
-            }
-        }
-
-        function handleAdminKeydown(event) {
-            if (event.key === 'Enter') { event.preventDefault(); loginAdmin(); }
         }
 
         function listenToItemStats(itemId) {
@@ -884,19 +859,57 @@
             return url;
         }
 
-        function loginAdmin() {
+        // --- تسجيل الدخول وإرسال الكود عبر EmailJS ---
+        function loginAdminWithPassword() {
             let email = document.getElementById('adminEmail').value.trim();
-            let pass = document.getElementById('adminPassword').value.trim();
-            if (!email || !pass) { alert("برجاء إدخال البريد وكلمة المرور"); return; }
+            let password = document.getElementById('adminPassword').value.trim();
 
-            window.FB.signInWithEmailAndPassword(window.FB.auth, email, pass)
-                .then(() => {
-                    toggleModal('adminLoginModal', false);
-                    loadPendingRequestsForAdmin();
-                    loadApprovedServicesForAdmin();
-                    toggleModal('adminDashboardModal', true);
+            if (!email || !password) {
+                alert("يرجى إدخال البريد الإلكتروني وكلمة المرور أولاً");
+                return;
+            }
+
+            if (!window.FB) {
+                alert("جاري الاتصال بقاعدة البيانات، حاول بعد قليل");
+                return;
+            }
+
+            window.FB.signInWithEmailAndPassword(window.FB.auth, email, password)
+                .then((userCredential) => {
+                    generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
+
+                    // تأكد من استبدال 'u753exi' بمعرف القالب الصحيح من لوحة تحكم EmailJS الخاصة بك
+                    emailjs.send("service_k7ftnle", "template_60xuzhi", {
+                        email: email,
+                        passcode: generatedOTP
+                    }).then(() => {
+                        alert("تم التحقق من الحساب بنجاح، وتم إرسال كود التحقق (OTP) إلى بريدك الإلكتروني");
+                        toggleModal('adminLoginModal', false);
+                        toggleModal('otpModal', true);
+                    }, (err) => {
+                        console.error("EmailJS Error:", err);
+                        alert("خطأ في إرسال الإيميل: " + (err.text || JSON.stringify(err)));
+                    });
                 })
-                .catch((error) => alert("خطأ في تسجيل الدخول: " + error.message));
+                .catch((error) => {
+                    alert("خطأ في بيانات الدخول: البريد الإلكتروني أو كلمة المرور غير صحيحة!");
+                    console.error(error);
+                });
+        }
+
+        function verifyOTP() {
+            let enteredOTP = document.getElementById('otpInput').value.trim();
+            if (enteredOTP === generatedOTP) {
+                alert("تم التحقق من الكود بنجاح! جارٍ فتح لوحة الإدارة...");
+                toggleModal('otpModal', false);
+                loadPendingRequestsForAdmin();
+                loadApprovedServicesForAdmin();
+                toggleModal('adminDashboardModal', true);
+                document.getElementById('otpInput').value = '';
+                document.getElementById('adminPassword').value = '';
+            } else {
+                alert("كود التحقق غير صحيح، تأكد من الكود المدخل");
+            }
         }
 
         function switchAdminTab(tab) {
@@ -925,7 +938,7 @@
             container.innerHTML = "جاري التحميل...";
             if (!window.FB) return;
 
-            window.FB.onValue(window.FB.ref(window.FB.db, 'pending_requests'), (snapshot) => {
+            window.FB.get(window.FB.ref(window.FB.db, 'pending_requests')).then((snapshot) => {
                 const data = snapshot.val();
                 container.innerHTML = "";
                 if (!data) {
@@ -947,7 +960,7 @@
                     `;
                     container.appendChild(cardDiv);
                 });
-            }, { onlyOnce: true });
+            });
         }
 
         function loadApprovedServicesForAdmin() {
@@ -955,7 +968,7 @@
             container.innerHTML = "جاري التحميل...";
             if (!window.FB) return;
 
-            window.FB.onValue(window.FB.ref(window.FB.db, 'approved_services'), (snapshot) => {
+            window.FB.get(window.FB.ref(window.FB.db, 'approved_services')).then((snapshot) => {
                 const data = snapshot.val();
                 container.innerHTML = "";
                 if (!data) {
@@ -983,12 +996,12 @@
                     `;
                     container.appendChild(cardDiv);
                 });
-            }, { onlyOnce: true });
+            });
         }
 
         function openEditModal(key) {
             if (!window.FB) return;
-            window.FB.onValue(window.FB.ref(window.FB.db, 'approved_services/' + key), (snapshot) => {
+            window.FB.get(window.FB.ref(window.FB.db, 'approved_services/' + key)).then((snapshot) => {
                 let item = snapshot.val();
                 if (item) {
                     document.getElementById('editServiceKey').value = key;
@@ -1002,7 +1015,7 @@
                     document.getElementById('editDriveUrl').value = item.image || '';
                     toggleModal('editServiceModal', true);
                 }
-            }, { onlyOnce: true });
+            });
         }
 
         function saveEditedService() {
@@ -1049,7 +1062,7 @@
         }
 
         function approveRequest(key) {
-            window.FB.onValue(window.FB.ref(window.FB.db, 'pending_requests/' + key), (snapshot) => {
+            window.FB.get(window.FB.ref(window.FB.db, 'pending_requests/' + key)).then((snapshot) => {
                 let val = snapshot.val();
                 if (val) {
                     window.FB.push(window.FB.ref(window.FB.db, 'approved_services'), val);
@@ -1058,7 +1071,7 @@
                     loadPendingRequestsForAdmin();
                     loadServicesData();
                 }
-            }, { onlyOnce: true });
+            });
         }
 
         function rejectRequest(key) {
@@ -1142,7 +1155,7 @@
                     });
 
                     if (window.FB) {
-                        window.FB.onValue(window.FB.ref(window.FB.db, 'approved_services'), (snapshot) => {
+                        window.FB.get(window.FB.ref(window.FB.db, 'approved_services')).then((snapshot) => {
                             const approvedData = snapshot.val();
                             if (approvedData) {
                                 Object.keys(approvedData).forEach(k => {
@@ -1150,7 +1163,7 @@
                                 });
                             }
                             fetchStatsAndRender();
-                        }, { onlyOnce: true });
+                        });
                     } else {
                         fetchStatsAndRender();
                     }
@@ -1160,12 +1173,12 @@
 
         function fetchStatsAndRender() {
             if (window.FB) {
-                window.FB.onValue(window.FB.ref(window.FB.db, 'items_stats'), (snapshot) => {
+                window.FB.get(window.FB.ref(window.FB.db, 'items_stats')).then((snapshot) => {
                     servicesStatsCache = snapshot.val() || {};
                     buildCategories();
                     checkUrlHashForSearch();
                     filterAndDisplay();
-                }, { onlyOnce: true });
+                });
             } else {
                 buildCategories();
                 checkUrlHashForSearch();

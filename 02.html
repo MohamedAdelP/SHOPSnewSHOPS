@@ -1231,19 +1231,23 @@
                     let rows = parseCSV(csvText);
                     servicesList = [];
                     rows.forEach((cols, index) => {
-                        let type       = cols[0] ? cols[0].trim() : ""; // 1. النوع
-                        let doctor     = cols[1] ? cols[1].trim() : ""; // 2. الاسم
-                        let firstPrice = cols[2] ? cols[2].trim() : ""; // 3. سعر اول مره
-                        let followPrice= cols[3] ? cols[3].trim() : ""; // 4. سعر المتابعه
-                        let details    = cols[4] ? cols[4].trim() : ""; // 5. تفاصيل عن النشاط
-                        let workTime   = cols[5] ? cols[5].trim() : ""; // 6. مواعيد العمل
-                        let phone      = cols[6] ? cols[6].trim() : ""; // 7. الرقم
-                        let image      = cols[7] ? cols[7].trim() : ""; // 8. صوره
+    let type = cols[0] ? cols[0].trim() : "";         
+    let doctor = cols[1] ? cols[1].trim() : "";       
+    let firstPrice = cols[2] ? cols[2].trim() : "";   
+    let followPrice = cols[3] ? cols[3].trim() : ""; 
+    let details = cols[4] ? cols[4].trim() : "";     
+    let workTime = cols[5] ? cols[5].trim() : "";     
+    let phone = cols[6] ? cols[6].trim() : "";         
+    let image = cols[7] ? cols[7].trim() : "";         
 
-                        if (type && type !== "نوع") {
-                            servicesList.push({ id: "doc_" + index, type, doctor, address: "بالاتفاق", firstPrice, followPrice, details, workTime, phone, image });
-                        }
-                    });
+    if (type && type !== "نوع") {
+        // استخدام رقم الهاتف كمعرف فريد وثابت للشخص (مع إزالة أي أرقام غير صالحة أو مسافات)
+        let cleanPhoneId = phone ? phone.replace(/\D/g, '') : ('doc_' + index);
+        let uniqueId = "person_" + cleanPhoneId; 
+
+        servicesList.push({ id: uniqueId, type, doctor, firstPrice, followPrice, details, workTime, phone, image });
+    }
+});
 
                     if (window.FB) {
                         window.FB.get(window.FB.ref(window.FB.db, 'approved_services')).then((snapshot) => {

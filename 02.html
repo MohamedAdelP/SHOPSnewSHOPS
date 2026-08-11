@@ -872,11 +872,14 @@
             toggleModal('imageModal', true);
         }
 
+        // دالة تحويل روابط Google Drive تلقائياً إلى رابط عرض مباشر للصورة
         function formatDriveImage(url) {
             if (!url) return "";
             if (url.includes('drive.google.com')) {
                 let match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
-                if (match && match[1]) return `https://lh3.googleusercontent.com/d/${match[1]}`;
+                if (match && match[1]) {
+                    return `https://lh3.googleusercontent.com/d/${match[1]}`;
+                }
             }
             return url;
         }
@@ -983,7 +986,6 @@
             const container = document.getElementById('approvedCardsContainer');
             container.innerHTML = "جاري التحميل...";
             
-            // دمج عناصر الشيت وعناصر قاعدة البيانات المعروضة
             let allApproved = [...servicesList];
 
             if (allApproved.length === 0) {
@@ -1008,10 +1010,9 @@
                     </div>
                     <div style="font-size:12.5px; color:var(--text-muted); margin-bottom:10px;">العنوان: ${item.address || '---'} | تفاصيل: ${item.details || '---'}</div>
                     <div style="display:flex; gap:10px;">
-                        ${item.id.startsWith('doc_') ? '<span style="font-size:12px; color:#f59e0b; align-self:center;">(من شيت الإكسل - يحتاج لحذفه من الشيت أو نقله لقاعدة البيانات)</span>' : `
-                            <button onclick="openEditModal('${item.id}')" style="background:#f59e0b; color:#fff; border:none; padding:6px 15px; border-radius:8px; cursor:pointer; font-weight:700;"><i class="fa-solid fa-pen"></i> تعديل</button>
-                            <button onclick="promptDelete('${item.id}', 'approved', '${item.doctor}', '${item.phone}')" style="background:#ef4444; color:#fff; border:none; padding:6px 15px; border-radius:8px; cursor:pointer; font-weight:700;"><i class="fa-solid fa-trash"></i> حذف وإرسال إشعار</button>
-                        `}
+                        ${item.id.startsWith('doc_') ? '<span style="font-size:12px; color:#10b981; align-self:center;">(مستورد من الشيت)</span>' : ''}
+                        <button onclick="openEditModal('${item.id}')" style="background:#f59e0b; color:#fff; border:none; padding:6px 15px; border-radius:8px; cursor:pointer; font-weight:700;"><i class="fa-solid fa-pen"></i> تعديل</button>
+                        <button onclick="promptDelete('${item.id}', 'approved', '${item.doctor}', '${item.phone}')" style="background:#ef4444; color:#fff; border:none; padding:6px 15px; border-radius:8px; cursor:pointer; font-weight:700;"><i class="fa-solid fa-trash"></i> حذف وإرسال إشعار</button>
                     </div>
                 `;
                 container.appendChild(cardDiv);
@@ -1067,13 +1068,12 @@
                 window.FB.remove(window.FB.ref(window.FB.db, path)).then(() => {
                     toggleModal('confirmDeleteModal', false);
                     
-                    // إرسال رسالة واتساب لتأكيد الحذف لشخص كذا
                     let waText = `⚠️ *تنبيه إداري: تم حذف نشاط من المنصة*\n\n` +
                                  `👤 *اسم النشاط/الشخص:* ${targetName}\n` +
                                  `📞 *رقم الهاتف:* ${targetPhone || 'غير محدد'}\n` +
                                  `🗑️ *الحالة:* تم إزالة الكارت نهائياً بواسطة الأدمن.`;
                     
-                    let ownerPhone = "201023745774"; // رقمك الشخصي لاستلام التأكيد
+                    let ownerPhone = "201023745774"; 
                     let whatsappUrl = `https://wa.me/${ownerPhone}?text=` + encodeURIComponent(waText);
                     window.open(whatsappUrl, '_blank');
 
@@ -1231,18 +1231,17 @@
                     let rows = parseCSV(csvText);
                     servicesList = [];
                     rows.forEach((cols, index) => {
-                        let type = cols[0] ? cols[0].trim() : "";         
-                        let doctor = cols[1] ? cols[1].trim() : "";       
-                        let address = cols[2] ? cols[2].trim() : "";       
-                        let firstPrice = cols[3] ? cols[3].trim() : "";   
-                        let followPrice = cols[4] ? cols[4].trim() : ""; 
-                        let details = cols[5] ? cols[5].trim() : "";     
-                        let workTime = cols[6] ? cols[6].trim() : "";     
-                        let phone = cols[7] ? cols[7].trim() : "";         
-                        let image = cols[8] ? cols[8].trim() : "";         
+                        let type       = cols[0] ? cols[0].trim() : ""; // 1. النوع
+                        let doctor     = cols[1] ? cols[1].trim() : ""; // 2. الاسم
+                        let firstPrice = cols[2] ? cols[2].trim() : ""; // 3. سعر اول مره
+                        let followPrice= cols[3] ? cols[3].trim() : ""; // 4. سعر المتابعه
+                        let details    = cols[4] ? cols[4].trim() : ""; // 5. تفاصيل عن النشاط
+                        let workTime   = cols[5] ? cols[5].trim() : ""; // 6. مواعيد العمل
+                        let phone      = cols[6] ? cols[6].trim() : ""; // 7. الرقم
+                        let image      = cols[7] ? cols[7].trim() : ""; // 8. صوره
 
                         if (type && type !== "نوع") {
-                            servicesList.push({ id: "doc_" + index, type, doctor, address, firstPrice, followPrice, details, workTime, phone, image });
+                            servicesList.push({ id: "doc_" + index, type, doctor, address: "بالاتفاق", firstPrice, followPrice, details, workTime, phone, image });
                         }
                     });
 
@@ -1251,7 +1250,9 @@
                             const approvedData = snapshot.val();
                             if (approvedData) {
                                 Object.keys(approvedData).forEach(k => {
-                                    servicesList.push({ id: k, ...approvedData[k] });
+                                    if (!servicesList.some(item => item.phone === approvedData[k].phone && item.doctor === approvedData[k].doctor)) {
+                                        servicesList.push({ id: k, ...approvedData[k] });
+                                    }
                                 });
                             }
                             fetchStatsAndRender();

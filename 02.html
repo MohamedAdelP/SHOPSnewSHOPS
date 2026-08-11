@@ -1341,11 +1341,17 @@
             });
 
             filtered.sort((a, b) => {
-                let statsA = servicesStatsCache[a.id] || { views: 0, likes: 0 };
-                let statsB = servicesStatsCache[b.id] || { views: 0, likes: 0 };
-                if ((statsB.likes || 0) !== (statsA.likes || 0)) return (statsB.likes || 0) - (statsA.likes || 0);
-                return (statsB.views || 0) - (statsA.views || 0);
-            });
+    let statsA = servicesStatsCache[a.id] || { views: 0, likes: 0 };
+    let statsB = servicesStatsCache[b.id] || { views: 0, likes: 0 };
+    
+    // 1. المقارنة الأساسية بناءً على عدد المشاهدات الأكبر
+    if ((statsB.views || 0) !== (statsA.views || 0)) {
+        return (statsB.views || 0) - (statsA.views || 0);
+    }
+    
+    // 2. لو المشاهدات متساوية، يتم المقارنة بناءً على عدد الإعجابات الأكثر
+    return (statsB.likes || 0) - (statsA.likes || 0);
+});
 
             if (filtered.length === 0) {
                 let msg = onlyFavorites ? "لا توجد عناصر في قائمة المفضلة لديك حالياً." : "لا توجد نتائج مطابقة للبحث";

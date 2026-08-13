@@ -16,6 +16,8 @@
           emailjs.init("FQFGijHqvlbXqbtWq");
        })();
     </script>
+    <link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#2563eb">
 
     <!-- مكتبات Firebase الإصدار المعياري (Modular SDKs) عبر CDN -->
     <script type="module">
@@ -310,6 +312,163 @@
             box-shadow: 0 18px 35px rgba(56, 189, 248, 0.1); 
         }
 
+        /* -------------------------------------------------------------------------- */
+        /* تصميم الإطارات الخاصة بكل نجمة (مستوحاة بدقة من ألعاب الأبطال والنيون والهالة) */
+        /* -------------------------------------------------------------------------- */
+
+        /* ضبط عام لكل الكارتات لتكون ناعمة وبدون إضاءات مزعجة */
+
+/* ضبط عام لشكل وملمس الكروت */
+.service-card {
+    border-radius: 16px;
+    transition: all 0.3s ease;
+    background-color: var(--card-bg, #0f172a);
+    position: relative;
+}
+
+.service-card:hover {
+    transform: translateY(-4px);
+}
+
+/* 1 نجمة: برونزي */
+.service-card.star-1 {
+    border: 3px solid #b45309;
+    box-shadow: 0 0 15px rgba(180, 83, 9, 0.25);
+}
+
+/* 2 نجوم: أزرق */
+.service-card.star-2 {
+    border: 3px solid #2563eb;
+    box-shadow: 0 0 18px rgba(37, 99, 235, 0.3);
+}
+
+/* 3 نجوم: ذهبي كلاسيكي */
+.service-card.star-3 {
+    border: 3px solid #ca8a04;
+    box-shadow: 0 0 20px rgba(202, 138, 4, 0.35), inset 0 0 8px rgba(202, 138, 4, 0.2);
+}
+
+/* 4 نجوم: أزرق ملكي عميق */
+.service-card.star-4 {
+    border: 3.5px solid #1d4ed8;
+    box-shadow: 0 0 22px rgba(29, 78, 216, 0.4), inset 0 0 10px rgba(29, 78, 216, 0.25);
+}
+
+/* 5 نجوم: زمردي أخضر */
+.service-card.star-5 {
+    border: 3.5px solid #059669;
+    box-shadow: 0 0 25px rgba(5, 150, 105, 0.45), inset 0 0 12px rgba(5, 150, 105, 0.3);
+    animation: glow5 3s infinite alternate;
+}
+@keyframes glow5 {
+    0% { box-shadow: 0 0 20px rgba(5, 150, 105, 0.35); }
+    100% { box-shadow: 0 0 30px rgba(5, 150, 105, 0.6); }
+}
+
+/* 6 نجوم: بنفسجي كريستالي */
+.service-card.star-6 {
+    border: 4px solid #c026d3;
+    box-shadow: 0 0 28px rgba(192, 38, 211, 0.45), inset 0 0 14px rgba(192, 38, 211, 0.3);
+    animation: glow6 3s infinite alternate;
+}
+@keyframes glow6 {
+    0% { box-shadow: 0 0 22px rgba(192, 38, 211, 0.35); }
+    100% { box-shadow: 0 0 35px rgba(192, 38, 211, 0.65); }
+}
+
+/* 7 نجوم: التدرج الملكي الأسطوري */
+.service-card.star-7 {
+    border: 4px solid transparent;
+    background-image: linear-gradient(var(--card-bg, #0f172a), var(--card-bg, #0f172a)), linear-gradient(135deg, #e11d48, #9333ea, #2563eb);
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+    box-shadow: 0 0 32px rgba(147, 51, 234, 0.5), inset 0 0 15px rgba(225, 29, 72, 0.35);
+    animation: glow7 3s infinite alternate;
+}
+@keyframes glow7 {
+    0% { box-shadow: 0 0 25px rgba(147, 51, 234, 0.4); }
+    100% { box-shadow: 0 0 40px rgba(225, 29, 72, 0.7); }
+}
+
+/* 7 نجوم: التوهج الأسطوري الملكي الفاخر (أقصى فخامة بدون إزعاج) */
+.service-card.star-7 {
+    border: 3px solid transparent;
+    background-image: linear-gradient(var(--card-bg, #0f172a), var(--card-bg, #0f172a)), linear-gradient(135deg, #f43f5e, #a855f7, #3b82f6);
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+    box-shadow: 0 0 38px rgba(168, 85, 247, 0.6), inset 0 0 16px rgba(244, 63, 94, 0.4);
+    animation: ultimateGlow7 2.2s infinite alternate;
+}
+@keyframes ultimateGlow7 {
+    0% { box-shadow: 0 0 25px rgba(168, 85, 247, 0.45), inset 0 0 10px rgba(244, 63, 94, 0.25); }
+    100% { box-shadow: 0 0 48px rgba(244, 63, 94, 0.75), inset 0 0 22px rgba(59, 130, 246, 0.5); }
+}
+
+/* 7 نجوم: Mythic Glory (الأيقونة والقمة - تدرج لوني ملكي متناسق وفاخر) */
+.service-card.star-7 {
+    border: 3.5px solid transparent;
+    background-image: linear-gradient(var(--card-bg, #0f172a), var(--card-bg, #0f172a)), linear-gradient(135deg, rgba(244, 63, 94, 0.8), rgba(168, 85, 247, 0.8), rgba(59, 130, 246, 0.8));
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+    box-shadow: 0 8px 26px rgba(168, 85, 247, 0.3);
+    animation: pulseMythic 4s infinite alternate;
+}
+@keyframes pulseMythic {
+    0% { box-shadow: 0 4px 16px rgba(168, 85, 247, 0.25); }
+    100% { box-shadow: 0 10px 30px rgba(244, 63, 94, 0.4); }
+}
+
+/* 6 نجوم: Legend Crystal Style */
+.service-card.star-6 {
+    border: 3.5px solid rgba(217, 70, 239, 0.7);
+    box-shadow: 0 5px 20px rgba(217, 70, 239, 0.25);
+    animation: flameEffect6 3s infinite alternate;
+}
+@keyframes flameEffect6 {
+    0% { box-shadow: 0 4px 14px rgba(217, 70, 239, 0.15); }
+    100% { box-shadow: 0 6px 24px rgba(236, 72, 153, 0.35); }
+}
+
+/* 7 نجوم: Mythic Glory */
+.service-card.star-7 {
+    border: 3.5px solid transparent;
+    background-image: linear-gradient(var(--card-bg), var(--card-bg)), linear-gradient(135deg, rgba(244, 63, 94, 0.8), rgba(168, 85, 247, 0.8), rgba(59, 130, 246, 0.8));
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+    box-shadow: 0 6px 22px rgba(168, 85, 247, 0.3);
+    position: relative;
+    animation: ultimateGlow 3s infinite alternate;
+}
+@keyframes ultimateGlow {
+    0% { box-shadow: 0 4px 16px rgba(168, 85, 247, 0.25); }
+    100% { box-shadow: 0 6px 28px rgba(244, 63, 94, 0.4); }
+}
+
+/* 6 نجوم: Legend Crystal Style (بنفسجي ناعم ومتوازن) */
+.service-card.star-6 {
+    border: 2px solid rgba(217, 70, 239, 0.5);
+    box-shadow: 0 4px 18px rgba(217, 70, 239, 0.2);
+    animation: flameEffect6 3s infinite alternate;
+}
+@keyframes flameEffect6 {
+    0% { box-shadow: 0 4px 14px rgba(217, 70, 239, 0.15); }
+    100% { box-shadow: 0 6px 22px rgba(236, 72, 153, 0.3); }
+}
+
+/* 7 نجوم: Mythic Glory (تدرج لوني شيك جداً وبدون إضاءات مبالغ فيها) */
+.service-card.star-7 {
+    border: 2px solid transparent;
+    background-image: linear-gradient(var(--card-bg), var(--card-bg)), linear-gradient(135deg, rgba(244, 63, 94, 0.6), rgba(168, 85, 247, 0.6), rgba(59, 130, 246, 0.6));
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+    box-shadow: 0 5px 20px rgba(168, 85, 247, 0.25);
+    position: relative;
+    animation: ultimateGlow 3s infinite alternate;
+}
+@keyframes ultimateGlow {
+    0% { box-shadow: 0 4px 15px rgba(168, 85, 247, 0.2); }
+    100% { box-shadow: 0 6px 25px rgba(244, 63, 94, 0.35); }
+}
         .card-img-container {
             position: relative;
             width: 100%;
@@ -1010,6 +1169,11 @@
             </div>
 
             <div id="adminSectionApproved">
+                <!-- حقل البحث السريع بالاسم أو الرقم في الأنشطة المقبولة للأدمن -->
+                <div class="search-box" style="margin-bottom: 15px;">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    <input type="text" id="admin-search-input" placeholder="ابحث باسم الشخص أو رقمه للوصول السريع والتعديل..." oninput="loadApprovedServicesForAdmin()">
+                </div>
                 <div id="approvedCardsContainer">جاري التحميل...</div>
             </div>
 
@@ -1179,7 +1343,6 @@
             }
         }
 
-        // دالة التأكد من الرقم قبل تعديل الموقع مع إزالة الصفر الأول تلقائياً
         function checkPhoneExistsForLocation() {
             let phoneInput = document.getElementById('updateLocPhone');
             let rawPhone = phoneInput.value.trim();
@@ -1191,9 +1354,8 @@
                 return false;
             }
 
-            // إزالة الصفر من البداية لو موجود
             let processedPhone = rawPhone.replace(/^0/, '');
-            phoneInput.value = processedPhone; // تحديث حقل الإدخال ليظهر بدون صفر
+            phoneInput.value = processedPhone;
 
             let existingItem = servicesList.find(i => i.phone === processedPhone || i.phone === rawPhone);
             if (existingItem) {
@@ -1207,7 +1369,6 @@
             }
         }
 
-        // دالة التأكد من الرقم قبل تعديل الصورة مع إزالة الصفر الأول تلقائياً
         function checkPhoneExistsForImage() {
             let phoneInput = document.getElementById('updateImgPhone');
             let rawPhone = phoneInput.value.trim();
@@ -1219,9 +1380,8 @@
                 return false;
             }
 
-            // إزالة الصفر من البداية لو موجود
             let processedPhone = rawPhone.replace(/^0/, '');
-            phoneInput.value = processedPhone; // تحديث حقل الإدخال ليظهر بدون صفر
+            phoneInput.value = processedPhone;
 
             let existingItem = servicesList.find(i => i.phone === processedPhone || i.phone === rawPhone);
             if (existingItem) {
@@ -1235,7 +1395,6 @@
             }
         }
 
-        // تحديث موقعي وتسجيله في قائمة الانتظار للرقم بدون صفر
         function submitUpdateLocation() {
             let phoneInput = document.getElementById('updateLocPhone');
             let phone = phoneInput.value.trim().replace(/^0/, '');
@@ -1272,7 +1431,6 @@
             }
         }
 
-        // تحديث صورتي وتسجيله في قائمة الانتظار للرقم بدون صفر
         function submitUpdateImage() {
             let phoneInput = document.getElementById('updateImgPhone');
             let phone = phoneInput.value.trim().replace(/^0/, '');
@@ -1502,6 +1660,16 @@
                 if (vEl) vEl.innerText = data.views || 0;
                 if (lEl) lEl.innerText = data.likes || 0;
                 if (starsEl) starsEl.innerHTML = calculateStars(data.views || 0);
+
+                // تحديث كلاس البرواز الديناميكي عند تغير المشاهدات مباشرًة
+                const cardEl = document.getElementById('card-' + itemId);
+                if (cardEl) {
+                    cardEl.className = 'service-card';
+                    let starCount = getStarCount(data.views || 0);
+                    if (starCount > 0) {
+                        cardEl.classList.add('star-' + starCount);
+                    }
+                }
             });
         }
 
@@ -1573,6 +1741,7 @@
 
         function openAdminPanel() {
             if (sessionStorage.getItem('admin_logged_in') === 'true') {
+                document.getElementById('admin-search-input').value = '';
                 loadApprovedServicesForAdmin();
                 loadPendingRequestsForAdmin();
                 loadEditPendingRequestsForAdmin();
@@ -1616,6 +1785,7 @@
                 sessionStorage.setItem('admin_logged_in', 'true');
                 alert("تم التحقق من الكود بنجاح! جارٍ فتح لوحة الإدارة...");
                 toggleModal('otpModal', false);
+                document.getElementById('admin-search-input').value = '';
                 loadApprovedServicesForAdmin();
                 loadPendingRequestsForAdmin();
                 loadEditPendingRequestsForAdmin();
@@ -1665,10 +1835,19 @@
         function loadApprovedServicesForAdmin() {
             const container = document.getElementById('approvedCardsContainer');
             container.innerHTML = "جاري التحميل...";
-            let allApproved = [...servicesList];
+            
+            const searchQuery = document.getElementById('admin-search-input') ? document.getElementById('admin-search-input').value.toLowerCase().trim() : "";
+
+            let allApproved = servicesList.filter(item => {
+                if (!searchQuery) return true;
+                let name = item.doctor ? item.doctor.toLowerCase() : "";
+                let phone = item.phone ? item.phone.toLowerCase() : "";
+                let type = item.type ? item.type.toLowerCase() : "";
+                return name.includes(searchQuery) || phone.includes(searchQuery) || type.includes(searchQuery);
+            });
 
             if (allApproved.length === 0) {
-                container.innerHTML = "<p style='text-align:center; color:var(--text-muted);'>لا توجد أنشطة مقبولة في الداتا حالياً.</p>";
+                container.innerHTML = "<p style='text-align:center; color:var(--text-muted);'>لا توجد أنشطة مطابقة للبحث حالياً.</p>";
                 return;
             }
 
@@ -2097,7 +2276,13 @@
 
             currentSlice.forEach(item => {
                 const card = document.createElement('div');
-                card.className = 'service-card';
+                
+                let stats = servicesStatsCache[item.id] || { views: 0, likes: 0 };
+                let starCount = getStarCount(stats.views || 0);
+                
+                // تعيين كلاس الإطار الخاص بعدد النجوم ديناميكياً
+                card.className = 'service-card' + (starCount > 0 ? (' star-' + starCount) : '');
+                card.id = 'card-' + item.id;
 
                 let actionBtnHTML = '';
                 if (item.phone) {
@@ -2134,7 +2319,6 @@
                 }
 
                 let isLiked = localStorage.getItem('user_liked_' + item.id) === 'true';
-                let stats = servicesStatsCache[item.id] || { views: 0, likes: 0 };
                 let currentStarsHTML = calculateStars(stats.views || 0);
 
                 card.innerHTML = `
@@ -2181,3 +2365,4 @@
     </script>
 </body>
 </html>
+```[cite: 1]

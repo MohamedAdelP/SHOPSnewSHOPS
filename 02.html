@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>منصة كفر شكر المجتمعية</title>
+    <!-- أيقونة الموقع -->
+    <link rel="icon" type="image/png" href="https://i.ibb.co/5X79X05/map-pin.png">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -578,41 +580,39 @@
         .stats-table tr:hover {
             background: rgba(56, 189, 248, 0.02);
         }
-        /* ... باقي التنسیقات بتاعتك الموجودة في الملف ... */
 
-    /* حط التنسيقات الجديدة هنا */
-    .location-input-group {
-        display: flex;
-        gap: 8px;
-        align-items: center;
-        width: 100%;
-    }
+        .location-input-group {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            width: 100%;
+        }
 
-    .location-input-group input {
-        flex: 1;
-    }
+        .location-input-group input {
+            flex: 1;
+        }
 
-    .current-loc-btn {
-        background: rgba(56, 189, 248, 0.1);
-        border: 1px solid var(--primary);
-        color: var(--primary);
-        padding: 10px 14px;
-        border-radius: 10px;
-        font-weight: 700;
-        font-size: 12.5px;
-        cursor: pointer;
-        white-space: nowrap;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        flex-shrink: 0;
-        transition: all 0.2s ease;
-    }
+        .current-loc-btn {
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 12.5px;
+            cursor: pointer;
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+            transition: all 0.2s ease;
+        }
 
-    .current-loc-btn:hover {
-        background: var(--primary);
-        color: var(--btn-text);
-    }
+        .current-loc-btn:hover {
+            background: var(--primary);
+            color: var(--btn-text);
+        }
     </style>
 </head>
 <body>
@@ -630,7 +630,6 @@
                 <button class="action-btn whatsapp-add-btn" onclick="toggleModal('addModal', true)">
                     <i class="fa-brands fa-whatsapp"></i> اضف مجالك
                 </button>
-                <!-- زر اضف مكانك الجديد -->
                 <button class="action-btn map-add-btn" onclick="toggleModal('addLocationModal', true)">
                     <i class="fa-solid fa-map-location-dot"></i> اضف مكانك
                 </button>
@@ -677,7 +676,7 @@
         <div class="cards-grid" id="cards-grid"></div>
     </div>
 
-    <!-- نافذة أبرز النجوم والترتيب -->
+    <!-- نافذة أبرز النجوم والترتيب (محدثة حسب الطلب) -->
     <div class="modal" id="starsRankingModal">
         <div class="modal-content" style="max-width: 580px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
@@ -687,17 +686,17 @@
             
             <div class="search-box" style="margin-bottom: 12px;">
                 <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                <input type="text" id="stars-search-input" placeholder="ابحث بالاسم، القسم، أو رقم الهاتف..." oninput="filterStarsRankingTable()" style="padding: 9px 40px 9px 15px; font-size: 13px;">
+                <input type="text" id="stars-search-input" placeholder="ابحث بالاسم أو القسم..." oninput="filterStarsRankingTable()" style="padding: 9px 40px 9px 15px; font-size: 13px;">
             </div>
 
-            <p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 12px;"><i class="fa-solid fa-circle-info" style="color:var(--primary);"></i> الترتيب يعتمد أولاً على **المشاهدات**، ثم **الإعجابات**:</p>
+            <p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 12px;"><i class="fa-solid fa-circle-info" style="color:var(--primary);"></i> الترتيب يعتمد أولاً على **النجوم**، ثم **المشاهدات**، ثم **الإعجابات**:</p>
             
             <div style="max-height: 320px; overflow-y: auto;">
                 <table class="stats-table">
                     <thead>
                         <tr>
-                            <th>#</th>
-                            <th><i class="fa-solid fa-user"></i> الاسم والنشاط</th>
+                            <th>الترتيب العام</th>
+                            <th><i class="fa-solid fa-user"></i> اسم الشخص</th>
                             <th><i class="fa-solid fa-star" style="color:#fbbf24;"></i> النجوم</th>
                             <th><i class="fa-regular fa-eye"></i> المشاهدات</th>
                             <th><i class="fa-solid fa-heart" style="color:#e74c3c;"></i> الإعجابات</th>
@@ -800,8 +799,9 @@
             <div class="form-group"><label>7- مواعيد العمل:</label><input type="text" id="addWorkTime" placeholder="من السبت للخميس"></div>
             <div class="form-group"><label>8- الرقم: <span style="color: #e74c3c;">*</span></label><input type="text" id="addPhone" placeholder="01xxxxxxxxxx"></div>
             <div class="form-group">
-                <label>9- رابط صورة Google Drive:</label>
-                <input type="text" id="addDriveUrl" placeholder="الصق رابط مشاركة الصورة من درايف هنا">
+                <label>9- رابط الصورة (ارفعها على موقع ImgBB وأرفق رابط jpg):</label>
+                <input type="text" id="addDriveUrl" placeholder="https://i.ibb.co/.........../image.jpg">
+                <small>يرجى رفع الصورة على <a href="https://imgbb.com" target="_blank" style="color:var(--primary);">موقع ImgBB</a> ونسخ الرابط المباشر (صيغة jpg).</small>
             </div>
 
             <div class="modal-actions">
@@ -811,34 +811,34 @@
         </div>
     </div>
 
-    <!-- نافذة "اضف مكانك" المحسنة -->
-<div class="modal" id="addLocationModal">
-    <div class="modal-content" style="max-width: 450px;">
-        <h3 style="margin-bottom: 20px; font-size: 18px; color: #ea4335; text-align: center;"><i class="fa-solid fa-map-location-dot"></i> طلب إضافة موقعك</h3>
-        
-        <div class="form-group">
-            <label>📍 رابط موقعك من Google Maps أو حدده تلقائياً: <span style="color: #e74c3c;">*</span></label>
-            <div class="location-input-group">
-                <input type="text" id="locationMapUrl" placeholder="الصق رابط موقعك أو اضغط الزر لجلب موقعك">
-                <button type="button" class="current-loc-btn" onclick="getCurrentLocation()" title="الحصول على موقعي الحالي">
-                    <i class="fa-solid fa-location-crosshairs"></i> موقعي الحالي
-                </button>
+    <!-- نافذة "اضف مكانك" -->
+    <div class="modal" id="addLocationModal">
+        <div class="modal-content" style="max-width: 450px;">
+            <h3 style="margin-bottom: 20px; font-size: 18px; color: #ea4335; text-align: center;"><i class="fa-solid fa-map-location-dot"></i> طلب إضافة موقعك</h3>
+            
+            <div class="form-group">
+                <label>📍 رابط موقعك من Google Maps أو حدده تلقائياً: <span style="color: #e74c3c;">*</span></label>
+                <div class="location-input-group">
+                    <input type="text" id="locationMapUrl" placeholder="الصق رابط موقعك أو اضغط الزر لجلب موقعك">
+                    <button type="button" class="current-loc-btn" onclick="getCurrentLocation()" title="الحصول على موقعي الحالي">
+                        <i class="fa-solid fa-location-crosshairs"></i> موقعي الحالي
+                    </button>
+                </div>
+                <small>يمكنك لصق الرابط يدوياً أو الضغط على زر "موقعي الحالي" لتحديده بضغطة زر.</small>
             </div>
-            <small>يمكنك لصق الرابط يدوياً أو الضغط على زر "موقعي الحالي" لتحديده بضغطة زر.</small>
-        </div>
-        
-        <div class="form-group">
-            <label>📞 رقم التلفون: <span style="color: #e74c3c;">*</span></label>
-            <input type="text" id="locationPhone" placeholder="01xxxxxxxxxx">
-            <small>رقم الهاتف المرتبط بهذا الموقع.</small>
-        </div>
+            
+            <div class="form-group">
+                <label>📞 رقم التلفون: <span style="color: #e74c3c;">*</span></label>
+                <input type="text" id="locationPhone" placeholder="01xxxxxxxxxx">
+                <small>رقم الهاتف المرتبط بهذا الموقع.</small>
+            </div>
 
-        <div class="modal-actions">
-            <button class="submit-whatsapp-btn" style="background:#ea4335;" onclick="submitNewLocation()"><i class="fa-solid fa-paper-plane"></i> إرسال الطلب</button>
-            <button class="close-modal" onclick="toggleModal('addLocationModal', false)">إغلاق</button>
+            <div class="modal-actions">
+                <button class="submit-whatsapp-btn" style="background:#ea4335;" onclick="submitNewLocation()"><i class="fa-solid fa-paper-plane"></i> إرسال الطلب</button>
+                <button class="close-modal" onclick="toggleModal('addLocationModal', false)">إغلاق</button>
+            </div>
         </div>
     </div>
-</div>
 
     <!-- نافذة تسجيل دخول الإدارة -->
     <div class="modal" id="adminLoginModal">
@@ -883,7 +883,6 @@
             <div class="admin-tabs">
                 <button class="admin-tab-btn active" id="tabApprovedBtn" onclick="switchAdminTab('approved')"><i class="fa-solid fa-circle-check"></i> الأنشطة المقبولة</button>
                 <button class="admin-tab-btn" id="tabPendingBtn" onclick="switchAdminTab('pending')"><i class="fa-solid fa-clock"></i> طلبات الأنشطة (الانتظار)</button>
-                <!-- التبويب الجديد لطلبات إضافة الموقع -->
                 <button class="admin-tab-btn" id="tabLocationPendingBtn" onclick="switchAdminTab('locationPending')"><i class="fa-solid fa-map-location-dot"></i> طلبات إضافة موقع</button>
             </div>
 
@@ -931,7 +930,7 @@
             <div class="form-group"><label>تفاصيل النشاط:</label><textarea id="editDetails" rows="2"></textarea></div>
             <div class="form-group"><label>مواعيد العمل:</label><input type="text" id="editWorkTime"></div>
             <div class="form-group"><label>الرقم:</label><input type="text" id="editPhone"></div>
-            <div class="form-group"><label>رابط الصورة (Drive):</label><input type="text" id="editDriveUrl"></div>
+            <div class="form-group"><label>رابط الصورة (ImgBB/Drive):</label><input type="text" id="editDriveUrl"></div>
 
             <div class="modal-actions">
                 <button class="submit-whatsapp-btn" onclick="saveEditedService()"><i class="fa-solid fa-floppy-disk"></i> حفظ التعديلات</button>
@@ -987,47 +986,45 @@
             changeAdhkar();
             loadServicesData();
         };
-        // دالة لجلب الموقع الجغرافي الحالي للمستخدم عبر المتصفح
-function getCurrentLocation() {
-    if (navigator.geolocation) {
-        // إظهار رسالة تنبيه جاري الجلب
-        const mapInput = document.getElementById('locationMapUrl');
-        mapInput.placeholder = "جاري تحديد موقعك الحالي... برجاء السماح للمتصفح";
-        
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                const lat = position.coords.latitude;
-                const lng = position.coords.longitude;
-                // إنشاء رابط جوجل ماب للإحداثيات الحالية مباشرة
-                const mapsUrl = `https://www.google.com/maps?q=${lat},${lng}`;
-                mapInput.value = mapsUrl;
-                alert("تم تحديث موقعك الحالي بنجاح! 📍");
-            },
-            (error) => {
-                mapInput.placeholder = "الصق رابط موقعك من جوجل ماب هنا";
-                switch(error.code) {
-                    case error.PERMISSION_DENIED:
-                        alert("تم رفض إذن الوصول للموقع من قبل المستخدم.");
-                        break;
-                    case error.POSITION_UNAVAILABLE:
-                        alert("معلومات الموقع غير متوفرة حالياً.");
-                        break;
-                    case error.TIMEOUT:
-                        alert("انتهت مهلة طلب تحديد الموقع.");
-                        break;
-                    default:
-                        alert("حدث خطأ غير معروف أثناء محاولة جلب الموقع.");
-                        break;
-                }
-            },
-            { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-        );
-    } else {
-        alert("متصفحك لا يدعم خاصية تحديد الموقع الجغرافي (Geolocation).");
-    }
-}
 
-        function calculateStars(views) {
+        function getCurrentLocation() {
+            if (navigator.geolocation) {
+                const mapInput = document.getElementById('locationMapUrl');
+                mapInput.placeholder = "جاري تحديد موقعك الحالي... برجاء السماح للمتصفح";
+                
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const lat = position.coords.latitude;
+                        const lng = position.coords.longitude;
+                        const mapsUrl = `https://www.google.com/maps?q=${lat},${lng}`;
+                        mapInput.value = mapsUrl;
+                        alert("تم تحديث موقعك الحالي بنجاح! 📍");
+                    },
+                    (error) => {
+                        mapInput.placeholder = "الصق رابط موقعك من جوجل ماب هنا";
+                        switch(error.code) {
+                            case error.PERMISSION_DENIED:
+                                alert("تم رفض إذن الوصول للموقع من قبل المستخدم.");
+                                break;
+                            case error.POSITION_UNAVAILABLE:
+                                alert("معلومات الموقع غير متوفرة حالياً.");
+                                break;
+                            case error.TIMEOUT:
+                                alert("انتهت مهلة طلب تحديد الموقع.");
+                                break;
+                            default:
+                                alert("حدث خطأ غير معروف أثناء محاولة جلب الموقع.");
+                                break;
+                        }
+                    },
+                    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+                );
+            } else {
+                alert("متصفحك لا يدعم خاصية تحديد الموقع الجغرافي (Geolocation).");
+            }
+        }
+
+        function getStarCount(views) {
             let count = 0;
             if (views >= 10000) count = 7;
             else if (views >= 5000) count = 6;
@@ -1036,7 +1033,11 @@ function getCurrentLocation() {
             else if (views >= 1000) count = 3;
             else if (views >= 250) count = 2;
             else if (views >= 100) count = 1;
+            return count;
+        }
 
+        function calculateStars(views) {
+            let count = getStarCount(views);
             let starsHTML = '';
             for (let i = 0; i < count; i++) starsHTML += '<i class="fas fa-star"></i>';
             for (let i = count; i < 7; i++) starsHTML += '<i class="far fa-star" style="opacity: 0.3;"></i>';
@@ -1120,31 +1121,49 @@ function getCurrentLocation() {
             renderStarsTable(servicesList);
         }
 
-        function renderStarsTable(listToRender) {
-            const tbody = document.getElementById('starsRankingTableBody');
-            tbody.innerHTML = "";
-            let sortedFullList = [...servicesList].sort((a, b) => {
+        function sortItemsByCriteria(list) {
+            return [...list].sort((a, b) => {
                 let statsA = servicesStatsCache[a.id] || { views: 0, likes: 0 };
                 let statsB = servicesStatsCache[b.id] || { views: 0, likes: 0 };
+                
+                let starsA = getStarCount(statsA.views || 0);
+                let starsB = getStarCount(statsB.views || 0);
+
+                // 1. الترتيب الأول حسب النجوم
+                if (starsB !== starsA) {
+                    return starsB - starsA;
+                }
+                // 2. الترتيب الثاني حسب المشاهدات
                 if ((statsB.views || 0) !== (statsA.views || 0)) {
                     return (statsB.views || 0) - (statsA.views || 0);
                 }
+                // 3. الترتيب الثالث حسب الإعجابات
                 return (statsB.likes || 0) - (statsA.likes || 0);
             });
+        }
+
+        function renderStarsTable(listToRender) {
+            const tbody = document.getElementById('starsRankingTableBody');
+            tbody.innerHTML = "";
+            
+            // الترتيب العام لكل الأقسام (نجوم ثم مشاهدات ثم إعجابات)
+            let sortedFullList = sortItemsByCriteria(servicesList);
+
+            const query = document.getElementById('stars-search-input').value.toLowerCase().trim();
 
             let listToDisplay = sortedFullList.filter(item => {
-                const query = document.getElementById('stars-search-input').value.toLowerCase().trim();
                 if (!query) return true;
                 let name = item.doctor ? item.doctor.toLowerCase() : "";
                 let type = item.type ? item.type.toLowerCase() : "";
-                let phone = item.phone ? item.phone.toLowerCase() : "";
-                return name.includes(query) || type.includes(query) || phone.includes(query);
+                // البحث بالاسم أو بالقسم
+                return name.includes(query) || type.includes(query);
             });
 
             if (listToDisplay.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">لا توجد نتائج مطابقة للبحث</td></tr>`;
             } else {
                 listToDisplay.forEach((item) => {
+                    // إيجاد الترتيب الحقيقي للعنصر في الترتيب العام لكل الأقسام
                     let globalIndex = sortedFullList.findIndex(i => i.id === item.id);
                     let stats = servicesStatsCache[item.id] || { views: 0, likes: 0 };
                     let views = stats.views || 0;
@@ -1154,8 +1173,7 @@ function getCurrentLocation() {
                     row.innerHTML = `
                         <td><strong style="color:var(--primary);">#${globalIndex + 1}</strong></td>
                         <td>
-                            <div style="font-weight:700;">${item.doctor}</div>
-                            <div style="font-size:11px; color:var(--text-muted);">${item.type} ${item.phone ? ' | 📞 ' + item.phone : ''}</div>
+                            <div style="font-weight:700; color:var(--text-main);">${item.doctor || 'بدون اسم'}</div>
                         </td>
                         <td><div class="rating-stars">${calculateStars(views)}</div></td>
                         <td><i class="far fa-eye" style="color:var(--text-muted);"></i> ${views}</td>
@@ -1463,47 +1481,46 @@ function getCurrentLocation() {
         }
 
         function submitNewLocation() {
-    let mapUrl = document.getElementById('locationMapUrl').value.trim();
-    let phone = document.getElementById('locationPhone').value.trim();
+            let mapUrl = document.getElementById('locationMapUrl').value.trim();
+            let phone = document.getElementById('locationPhone').value.trim();
 
-    if (!mapUrl || !phone) {
-        alert("برجاء إدخال رابط الخريطة ورقم التلفون");
-        return;
-    }
+            if (!mapUrl || !phone) {
+                alert("برجاء إدخال رابط الخريطة ورقم التلفون");
+                return;
+            }
 
-    let newLocationEntry = {
-        mapUrl: mapUrl,
-        phone: phone,
-        timestamp: Date.now()
-    };
+            let newLocationEntry = {
+                mapUrl: mapUrl,
+                phone: phone,
+                timestamp: Date.now()
+            };
 
-    if (window.FB) {
-        window.FB.push(window.FB.ref(window.FB.db, 'location_pending_requests'), newLocationEntry)
-            .then(() => {
-                // إرسال واتساب بالصيغة المطلوبة والرقم المطلوب
-                let cleanPhone = "201023745774"; 
-                let message = encodeURIComponent(`برجاء اضف موقعى\nموقعه: ${mapUrl}\nورقمه: ${phone}`);
-                window.open(`https://wa.me/${cleanPhone}?text=${message}`, '_blank');
+            if (window.FB) {
+                window.FB.push(window.FB.ref(window.FB.db, 'location_pending_requests'), newLocationEntry)
+                    .then(() => {
+                        let cleanPhone = "201023745774"; 
+                        let message = encodeURIComponent(`برجاء اضف موقعى\nموقعه: ${mapUrl}\nورقمه: ${phone}`);
+                        window.open(`https://wa.me/${cleanPhone}?text=${message}`, '_blank');
 
-                toggleModal('addLocationModal', false);
-                alert("تم إرسال طلب موقعك لقائمة الانتظار بنجاح!");
-                
-                document.getElementById('locationMapUrl').value = '';
-                document.getElementById('locationPhone').value = '';
-            })
-            .catch((error) => {
-                console.error("Firebase Error:", error);
-                alert("حدث خطأ أثناء حفظ الموقع في قاعدة البيانات: " + error.message);
-            });
-    } else {
-        alert("خطأ: لم يتم الاتصال بقاعدة البيانات بشكل صحيح.");
-    }
-}
+                        toggleModal('addLocationModal', false);
+                        alert("تم إرسال طلب موقعك لقائمة الانتظار بنجاح وتم فتح الواتساب لإبلاغ الإدارة!");
+                        
+                        document.getElementById('locationMapUrl').value = '';
+                        document.getElementById('locationPhone').value = '';
+                    })
+                    .catch((error) => {
+                        console.error("Firebase Error:", error);
+                        alert("حدث خطأ أثناء حفظ الموقع في قاعدة البيانات: " + error.message);
+                    });
+            } else {
+                alert("خطأ: لم يتم الاتصال بقاعدة البيانات بشكل صحيح.");
+            }
+        }
+
         function approveLocationRequest(key) {
             window.FB.get(window.FB.ref(window.FB.db, 'location_pending_requests/' + key)).then((snapshot) => {
                 let val = snapshot.val();
                 if (val) {
-                    // يحفظ مع رقم الكارت تلقائياً في approved_services
                     let newApprovedItem = {
                         type: "موقع خارجي",
                         doctor: "موقع معتمد (" + val.phone + ")",
@@ -1639,22 +1656,28 @@ function getCurrentLocation() {
             }
 
             if (window.FB) {
-                window.FB.push(window.FB.ref(window.FB.db, 'pending_requests'), newEntry);
+                window.FB.push(window.FB.ref(window.FB.db, 'pending_requests'), newEntry)
+                    .then(() => {
+                        toggleModal('addModal', false);
+                        alert("تم إرسال نشاطك بنجاح إلى قائمة الانتظار للمراجعة!");
+                        
+                        document.getElementById('addType').value = '';
+                        document.getElementById('addName').value = '';
+                        document.getElementById('addAddress').value = '';
+                        document.getElementById('addMapUrl').value = '';
+                        document.getElementById('addFirstPrice').value = '';
+                        document.getElementById('addFollowPrice').value = '';
+                        document.getElementById('addDetails').value = '';
+                        document.getElementById('addWorkTime').value = '';
+                        document.getElementById('addPhone').value = '';
+                        document.getElementById('addDriveUrl').value = '';
+                    })
+                    .catch((error) => {
+                        alert("حدث خطأ أثناء حفظ الطلب: " + error.message);
+                    });
+            } else {
+                alert("خطأ: لم يتم الاتصال بقاعدة البيانات.");
             }
-
-            toggleModal('addModal', false);
-            alert("تم إرسال طلبك بنجاح للمراجعة!");
-            
-            document.getElementById('addType').value = '';
-            document.getElementById('addName').value = '';
-            document.getElementById('addAddress').value = '';
-            document.getElementById('addMapUrl').value = '';
-            document.getElementById('addFirstPrice').value = '';
-            document.getElementById('addFollowPrice').value = '';
-            document.getElementById('addDetails').value = '';
-            document.getElementById('addWorkTime').value = '';
-            document.getElementById('addPhone').value = '';
-            document.getElementById('addDriveUrl').value = '';
         }
 
         function parseCSV(text) {
@@ -1796,14 +1819,7 @@ function getCurrentLocation() {
                 return matchCat && matchSearch;
             });
 
-            filtered.sort((a, b) => {
-                let statsA = servicesStatsCache[a.id] || { views: 0, likes: 0 };
-                let statsB = servicesStatsCache[b.id] || { views: 0, likes: 0 };
-                if ((statsB.views || 0) !== (statsA.views || 0)) {
-                    return (statsB.views || 0) - (statsA.views || 0);
-                }
-                return (statsB.likes || 0) - (statsA.likes || 0);
-            });
+            filtered = sortItemsByCriteria(filtered);
 
             if (filtered.length === 0) {
                 let msg = onlyFavorites ? "لا توجد عناصر في قائمة المفضلة لديك حالياً." : "لا توجد نتائج مطابقة للبحث";

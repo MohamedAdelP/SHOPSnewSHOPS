@@ -903,7 +903,13 @@
             
             <div class="form-group">
                 <label>📞 رقم التلفون: <span style="color: #e74c3c;">*</span></label>
-                <input type="text" id="updateLocPhone" placeholder="01xxxxxxxxxx" maxlength="11">
+                <div class="location-input-group">
+                    <input type="text" id="updateLocPhone" placeholder="01xxxxxxxxxx" maxlength="11">
+                    <button type="button" class="current-loc-btn" onclick="checkPhoneExistsForLocation()" title="التحقق من وجود الرقم">
+                        <i class="fa-solid fa-circle-check"></i> تأكيد الرقم
+                    </button>
+                </div>
+                <small id="locPhoneStatus" style="font-weight: 700; margin-top: 4px;"></small>
             </div>
 
             <div class="form-group">
@@ -932,7 +938,13 @@
             
             <div class="form-group">
                 <label>📞 رقمه: <span style="color: #e74c3c;">*</span></label>
-                <input type="text" id="updateImgPhone" placeholder="01xxxxxxxxxx" maxlength="11">
+                <div class="location-input-group">
+                    <input type="text" id="updateImgPhone" placeholder="01xxxxxxxxxx" maxlength="11">
+                    <button type="button" class="current-loc-btn" onclick="checkPhoneExistsForImage()" title="التحقق من وجود الرقم">
+                        <i class="fa-solid fa-circle-check"></i> تأكيد الرقم
+                    </button>
+                </div>
+                <small id="imgPhoneStatus" style="font-weight: 700; margin-top: 4px;"></small>
             </div>
 
             <div class="form-group">
@@ -1078,6 +1090,9 @@
         let currentCategory = "الكل";
         let onlyFavorites = false;
         let generatedOTP = "";
+        
+        let displayedCount = 10;
+        let filteredCache = [];
 
         window.initApp = function() {
             const slider = document.getElementById('categories-container');
@@ -1098,11 +1113,26 @@
                 slider.scrollLeft = scrollLeft - ((x - startX) * 2);
             });
 
+            window.addEventListener('scroll', () => {
+                if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 500) {
+                    if (displayedCount < filteredCache.length) {
+                        displayedCount += 10;
+                        renderCardsSlice();
+                    }
+                }
+            });
+
             changeAdhkar();
             loadServicesData();
         };
 
         function openEditActivityChoiceModal() {
+            document.getElementById('updateLocPhone').value = '';
+            document.getElementById('updateLocMapUrl').value = '';
+            document.getElementById('locPhoneStatus').innerText = '';
+            document.getElementById('updateImgPhone').value = '';
+            document.getElementById('updateImgUrl').value = '';
+            document.getElementById('imgPhoneStatus').innerText = '';
             toggleModal('editActivityChoiceModal', true);
         }
 
@@ -1149,6 +1179,49 @@
             }
         }
 
+        // دالة التأكد من الرقم قبل تعديل الموقع
+        function checkPhoneExistsForLocation() {
+            let phone = document.getElementById('updateLocPhone').value.trim();
+            let statusEl = document.getElementById('locPhoneStatus');
+            if (!phone) {
+                statusEl.style.color = "#ef4444";
+                statusEl.innerText = "❌ أدخل رقم الهاتف أولاً";
+                return false;
+            }
+            let existingItem = servicesList.find(i => i.phone === phone);
+            if (existingItem) {
+                statusEl.style.color = "#25d366";
+                statusEl.innerText = "✅ الرقم موجود بالفعل (${existingItem.doctor})";
+                return true;
+            } else {
+                statusEl.style.color = "#ef4444";
+                statusEl.innerText = "❌ هذا الرقم غير موجود في الكروت!";
+                return false;
+            }
+        }
+
+        // دالة التأكد من الرقم قبل تعديل الصورة
+        function checkPhoneExistsForImage() {
+            let phone = document.getElementById('updateImgPhone').value.trim();
+            let statusEl = document.getElementById('imgPhoneStatus');
+            if (!phone) {
+                statusEl.style.color = "#ef4444";
+                statusEl.innerText = "❌ أدخل رقم الهاتف أولاً";
+                return false;
+            }
+            let existingItem = servicesList.find(i => i.phone === phone);
+            if (existingItem) {
+                statusEl.style.color = "#25d366";
+                statusEl.innerText = "✅ الرقم موجود بالفعل (${existingItem.doctor})";
+                return true;
+            } else {
+                statusEl.style.color = "#ef4444";
+                statusEl.innerText = "❌ هذا الرقم غير موجود في الكروت!";
+                return false;
+            }
+        }
+
+        // تحديث موقعي
         function submitUpdateLocation() {
             let phone = document.getElementById('updateLocPhone').value.trim();
             let mapUrl = document.getElementById('updateLocMapUrl').value.trim();
@@ -1160,7 +1233,7 @@
 
             let existingItem = servicesList.find(i => i.phone === phone);
             if (!existingItem) {
-                alert("لم يتم الموافقة: رقم الهاتف غير مسجل أو غير موجود ضمن الأنشطة المقبولة!");
+                alert("خطأ: هذا الرقم غير موجود في الكروت الحالية!");
                 return;
             }
 
@@ -1180,12 +1253,11 @@
 
                     toggleModal('updateLocationModal', false);
                     alert("تم إرسال طلب تحديث الموقع إلى قائمة الانتظار بنجاح!");
-                    document.getElementById('updateLocPhone').value = '';
-                    document.getElementById('updateLocMapUrl').value = '';
                 });
             }
         }
 
+        // تحديث صورتي
         function submitUpdateImage() {
             let phone = document.getElementById('updateImgPhone').value.trim();
             let imageUrl = document.getElementById('updateImgUrl').value.trim();
@@ -1197,7 +1269,7 @@
 
             let existingItem = servicesList.find(i => i.phone === phone);
             if (!existingItem) {
-                alert("لم يتم الموافقة: رقم الهاتف غير مسجل أو غير موجود ضمن الأنشطة المقبولة!");
+                alert("خطأ: هذا الرقم غير موجود في الكروت الحالية!");
                 return;
             }
 
@@ -1217,8 +1289,6 @@
 
                     toggleModal('updateImageModal', false);
                     alert("تم إرسال طلب تحديث الصورة إلى قائمة الانتظار بنجاح!");
-                    document.getElementById('updateImgPhone').value = '';
-                    document.getElementById('updateImgUrl').value = '';
                 });
             }
         }
@@ -1821,6 +1891,12 @@
                 return;
             }
 
+            let phoneExists = servicesList.some(item => item.phone === phone);
+            if (phoneExists) {
+                alert("خطأ: الرقم موجود بالفعل!");
+                return;
+            }
+
             let newEntry = { 
                 type: type, 
                 doctor: doctor, 
@@ -1974,9 +2050,7 @@
 
         function filterAndDisplay() {
             const searchText = document.getElementById('search-input').value.toLowerCase().trim();
-            const grid = document.getElementById('cards-grid');
-            grid.innerHTML = "";
-
+            
             let filtered = servicesList.filter(item => {
                 let isLiked = localStorage.getItem('user_liked_' + item.id) === 'true';
                 if (onlyFavorites && !isLiked) return false;
@@ -1991,15 +2065,24 @@
                 return matchCat && matchSearch;
             });
 
-            filtered = sortItemsByCriteria(filtered);
+            filteredCache = sortItemsByCriteria(filtered);
+            displayedCount = 10;
+            renderCardsSlice();
+        }
 
-            if (filtered.length === 0) {
+        function renderCardsSlice() {
+            const grid = document.getElementById('cards-grid');
+            grid.innerHTML = "";
+
+            if (filteredCache.length === 0) {
                 let msg = onlyFavorites ? "لا توجد عناصر في قائمة المفضلة لديك حالياً." : "لا توجد نتائج مطابقة للبحث";
                 grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-muted); font-weight: 700;">${msg}</div>`;
                 return;
             }
 
-            filtered.forEach(item => {
+            let currentSlice = filteredCache.slice(0, displayedCount);
+
+            currentSlice.forEach(item => {
                 const card = document.createElement('div');
                 card.className = 'service-card';
 

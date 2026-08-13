@@ -490,7 +490,32 @@
             text-align: right;
             max-height: 90vh;
             overflow-y: auto;
+            position: relative;
         }
+        
+        .modal-close-icon {
+            position: absolute;
+            top: 18px;
+            left: 18px;
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+        .modal-close-icon:hover {
+            background: #ef4444;
+            color: #fff;
+            border-color: #ef4444;
+        }
+
         .modal-content img { width: 100%; max-height: 300px; object-fit: contain; margin: 15px 0; background: #000; border-radius: 12px; border: 1px solid var(--border-color); }
         
         .form-group { margin-bottom: 12px; }
@@ -524,6 +549,26 @@
             gap: 6px;
         }
         .close-modal { background: #ef4444; color: #fff; border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer; font-weight: 600; }
+        .back-modal-btn {
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+        .back-modal-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: rgba(56, 189, 248, 0.05);
+        }
+
         .admin-card { background: var(--bg-color); border: 1px solid var(--border-color); padding: 15px; border-radius: 12px; margin-bottom: 12px; }
         
         .info-box-item {
@@ -613,6 +658,29 @@
             background: var(--primary);
             color: var(--btn-text);
         }
+
+        .choice-option-btn {
+            width: 100%;
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 15px;
+            border-radius: 14px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            transition: all 0.2s ease;
+        }
+        .choice-option-btn:hover {
+            border-color: var(--primary);
+            background: rgba(56, 189, 248, 0.05);
+            color: var(--primary);
+        }
     </style>
 </head>
 <body>
@@ -630,8 +698,8 @@
                 <button class="action-btn whatsapp-add-btn" onclick="toggleModal('addModal', true)">
                     <i class="fa-brands fa-whatsapp"></i> اضف مجالك
                 </button>
-                <button class="action-btn map-add-btn" onclick="toggleModal('addLocationModal', true)">
-                    <i class="fa-solid fa-map-location-dot"></i> اضف مكانك
+                <button class="action-btn map-add-btn" onclick="openEditActivityChoiceModal()">
+                    <i class="fa-solid fa-pen-to-square"></i> تعديل نشاط
                 </button>
                 <button class="action-btn admin-nav-btn" onclick="openAdminPanel()">
                     <i class="fa-solid fa-lock"></i> الإدارة
@@ -676,12 +744,27 @@
         <div class="cards-grid" id="cards-grid"></div>
     </div>
 
-    <!-- نافذة أبرز النجوم والترتيب (محدثة حسب الطلب) -->
+    <!-- نافذة اختيار تعديل النشاط (تحديث موقعي أو تحديث صورتي) -->
+    <div class="modal" id="editActivityChoiceModal">
+        <div class="modal-content" style="max-width: 400px; text-align: center;">
+            <div class="modal-close-icon" onclick="toggleModal('editActivityChoiceModal', false)" title="إغلاق"><i class="fa-solid fa-xmark"></i></div>
+            <h3 style="margin-bottom: 20px; font-size: 18px; color: var(--primary);"><i class="fa-solid fa-pen-to-square"></i> تعديل نشاط</h3>
+            <button class="choice-option-btn" onclick="selectEditChoice('location')">
+                <i class="fa-solid fa-map-location-dot" style="color: #ea4335;"></i> تحديث موقعي
+            </button>
+            <button class="choice-option-btn" onclick="selectEditChoice('image')">
+                <i class="fa-solid fa-image" style="color: #38bdf8;"></i> تحديث صورتي
+            </button>
+            <button class="close-modal" style="width: 100%; margin-top: 10px;" onclick="toggleModal('editActivityChoiceModal', false)">إغلاق</button>
+        </div>
+    </div>
+
+    <!-- نافذة أبرز النجوم والترتيب -->
     <div class="modal" id="starsRankingModal">
         <div class="modal-content" style="max-width: 580px;">
+            <div class="modal-close-icon" onclick="toggleModal('starsRankingModal', false)" title="إغلاق"><i class="fa-solid fa-xmark"></i></div>
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
                 <h3 style="color: #fbbf24; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-ranking-star"></i> قائمة أبرز النجوم والترتيب</h3>
-                <button class="close-modal" onclick="toggleModal('starsRankingModal', false)">إغلاق</button>
             </div>
             
             <div class="search-box" style="margin-bottom: 12px;">
@@ -711,9 +794,9 @@
     <!-- نافذة إحصائيات الأقسام -->
     <div class="modal" id="statsModal">
         <div class="modal-content" style="max-width: 520px;">
+            <div class="modal-close-icon" onclick="toggleModal('statsModal', false)" title="إغلاق"><i class="fa-solid fa-xmark"></i></div>
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
                 <h3 style="color: var(--primary); display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-chart-pie"></i> إحصائيات الأقسام والأشخاص</h3>
-                <button class="close-modal" onclick="toggleModal('statsModal', false)">إغلاق</button>
             </div>
             
             <div class="search-box" style="margin-bottom: 12px;">
@@ -739,9 +822,9 @@
     <!-- نافذة دليل النظام والتقييمات والفوائد -->
     <div class="modal" id="infoModal">
         <div class="modal-content" style="max-width: 580px;">
+            <div class="modal-close-icon" onclick="toggleModal('infoModal', false)" title="إغلاق"><i class="fa-solid fa-xmark"></i></div>
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
                 <h3 style="color: #f59e0b; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-circle-info"></i> دليل نظام المنصة والتقييمات</h3>
-                <button class="close-modal" onclick="toggleModal('infoModal', false)">إغلاق</button>
             </div>
             
             <div class="info-box-item">
@@ -781,6 +864,7 @@
     <!-- نافذة أضف مجالك -->
     <div class="modal" id="addModal">
         <div class="modal-content">
+            <div class="modal-close-icon" onclick="toggleModal('addModal', false)" title="إغلاق"><i class="fa-solid fa-xmark"></i></div>
             <h3 style="margin-bottom: 15px; font-size: 18px; color: var(--primary); text-align: center;"><i class="fa-solid fa-store"></i> طلب إضافة نشاط جديد</h3>
             
             <div class="form-group"><label>1- النوع: <span style="color: #e74c3c;">*</span></label><input type="text" id="addType" placeholder="مثال: عيادة / سباك"></div>
@@ -797,7 +881,7 @@
             <div class="form-group"><label>5- سعر المتابعة:</label><input type="text" id="addFollowPrice" placeholder="مثال: 600"></div>
             <div class="form-group"><label>6- تفاصيل النشاط:</label><textarea id="addDetails" rows="2" placeholder="تفاصيل الخدمة..."></textarea></div>
             <div class="form-group"><label>7- مواعيد العمل:</label><input type="text" id="addWorkTime" placeholder="من السبت للخميس"></div>
-            <div class="form-group"><label>8- الرقم (11 رقم בדיוק): <span style="color: #e74c3c;">*</span></label><input type="text" id="addPhone" placeholder="01xxxxxxxxxx" maxlength="11"></div>
+            <div class="form-group"><label>8- الرقم (11 رقم): <span style="color: #e74c3c;">*</span></label><input type="text" id="addPhone" placeholder="01xxxxxxxxxx" maxlength="11"></div>
             <div class="form-group">
                 <label>9- رابط الصورة (ارفعها على موقع ImgBB وأرفق رابط jpg):</label>
                 <input type="text" id="addDriveUrl" placeholder="https://i.ibb.co/.........../image.jpg">
@@ -811,31 +895,56 @@
         </div>
     </div>
 
-    <!-- نافذة "اضف مكانك" -->
-    <div class="modal" id="addLocationModal">
+    <!-- نافذة تحديث موقعي -->
+    <div class="modal" id="updateLocationModal">
         <div class="modal-content" style="max-width: 450px;">
-            <h3 style="margin-bottom: 20px; font-size: 18px; color: #ea4335; text-align: center;"><i class="fa-solid fa-map-location-dot"></i> طلب إضافة موقعك</h3>
-            
-            <div class="form-group">
-                <label>📍 رابط موقعك من Google Maps أو حدده تلقائياً: <span style="color: #e74c3c;">*</span></label>
-                <div class="location-input-group">
-                    <input type="text" id="locationMapUrl" placeholder="الصق رابط موقعك أو اضغط الزر لجلب موقعك">
-                    <button type="button" class="current-loc-btn" onclick="getCurrentLocation()" title="الحصول على موقعي الحالي">
-                        <i class="fa-solid fa-location-crosshairs"></i> موقعي الحالي
-                    </button>
-                </div>
-                <small>يمكنك لصق الرابط يدوياً أو الضغط على زر "موقعي الحالي" لتحديده بضغطة زر.</small>
-            </div>
+            <div class="modal-close-icon" onclick="toggleModal('updateLocationModal', false)" title="إغلاق"><i class="fa-solid fa-xmark"></i></div>
+            <h3 style="margin-bottom: 20px; font-size: 18px; color: #ea4335; text-align: center;"><i class="fa-solid fa-map-location-dot"></i> تحديث موقعي</h3>
             
             <div class="form-group">
                 <label>📞 رقم التلفون: <span style="color: #e74c3c;">*</span></label>
-                <input type="text" id="locationPhone" placeholder="01xxxxxxxxxx">
-                <small>رقم الهاتف المرتبط بهذا الموقع.</small>
+                <input type="text" id="updateLocPhone" placeholder="01xxxxxxxxxx" maxlength="11">
+            </div>
+
+            <div class="form-group">
+                <label>📍 الموقع (رابط Google Maps): <span style="color: #e74c3c;">*</span></label>
+                <div class="location-input-group">
+                    <input type="text" id="updateLocMapUrl" placeholder="الصق رابط موقعك أو اضغط الزر لجلب موقعك">
+                    <button type="button" class="current-loc-btn" onclick="getCurrentLocationForUpdate()" title="الحصول على موقعي الحالي">
+                        <i class="fa-solid fa-location-crosshairs"></i> موقعي الحالي
+                    </button>
+                </div>
             </div>
 
             <div class="modal-actions">
-                <button class="submit-whatsapp-btn" style="background:#ea4335;" onclick="submitNewLocation()"><i class="fa-solid fa-paper-plane"></i> إرسال الطلب</button>
-                <button class="close-modal" onclick="toggleModal('addLocationModal', false)">إغلاق</button>
+                <button class="back-modal-btn" onclick="goBackToEditChoiceFromLocation()"><i class="fa-solid fa-arrow-right"></i> رجوع</button>
+                <button class="submit-whatsapp-btn" style="background:#ea4335;" onclick="submitUpdateLocation()"><i class="fa-solid fa-paper-plane"></i> تأكيد وإرسال</button>
+                <button class="close-modal" onclick="toggleModal('updateLocationModal', false)">إغلاق</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة تحديث صورتي -->
+    <div class="modal" id="updateImageModal">
+        <div class="modal-content" style="max-width: 450px;">
+            <div class="modal-close-icon" onclick="toggleModal('updateImageModal', false)" title="إغلاق"><i class="fa-solid fa-xmark"></i></div>
+            <h3 style="margin-bottom: 20px; font-size: 18px; color: #38bdf8; text-align: center;"><i class="fa-solid fa-image"></i> تحديث صورتي</h3>
+            
+            <div class="form-group">
+                <label>📞 رقمه: <span style="color: #e74c3c;">*</span></label>
+                <input type="text" id="updateImgPhone" placeholder="01xxxxxxxxxx" maxlength="11">
+            </div>
+
+            <div class="form-group">
+                <label>🖼️ لينك صورته: <span style="color: #e74c3c;">*</span></label>
+                <input type="text" id="updateImgUrl" placeholder="https://i.ibb.co/.........../image.jpg">
+                <small>يرجى رفع الصورة على <a href="https://imgbb.com" target="_blank" style="color:var(--primary);">موقع ImgBB</a> وإرفاق الرابط.</small>
+            </div>
+
+            <div class="modal-actions">
+                <button class="back-modal-btn" onclick="goBackToEditChoiceFromImage()"><i class="fa-solid fa-arrow-right"></i> رجوع</button>
+                <button class="submit-whatsapp-btn" onclick="submitUpdateImage()"><i class="fa-solid fa-paper-plane"></i> تأكيد وإرسال</button>
+                <button class="close-modal" onclick="toggleModal('updateImageModal', false)">إغلاق</button>
             </div>
         </div>
     </div>
@@ -843,6 +952,7 @@
     <!-- نافذة تسجيل دخول الإدارة -->
     <div class="modal" id="adminLoginModal">
         <div class="modal-content">
+            <div class="modal-close-icon" onclick="toggleModal('adminLoginModal', false)" title="إغلاق"><i class="fa-solid fa-xmark"></i></div>
             <h3 style="margin-bottom: 15px; color: #ef4444; text-align: center;"><i class="fa-solid fa-lock"></i> دخول لوحة الإدارة</h3>
             <div class="form-group"><label>البريد الإلكتروني للأدمن:</label><input type="email" id="adminEmail" placeholder="name@example.com"></div>
             <div class="form-group" style="position: relative;">
@@ -860,6 +970,7 @@
     <!-- نافذة إدخال الكود (OTP Modal) -->
     <div class="modal" id="otpModal">
         <div class="modal-content">
+            <div class="modal-close-icon" onclick="toggleModal('otpModal', false)" title="إغلاق"><i class="fa-solid fa-xmark"></i></div>
             <h3 style="margin-bottom: 15px; color: var(--primary); text-align: center;"><i class="fa-solid fa-shield-halved"></i> أدخل كود التحقق</h3>
             <div class="form-group">
                 <label>تم إرسال كود من 6 أرقام إلى بريدك الإلكتروني:</label>
@@ -875,15 +986,15 @@
     <!-- لوحة التحكم المتقدمة للأدمن -->
     <div class="modal" id="adminDashboardModal">
         <div class="modal-content" style="max-width: 750px;">
+            <div class="modal-close-icon" onclick="toggleModal('adminDashboardModal', false)" title="إغلاق"><i class="fa-solid fa-xmark"></i></div>
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                 <h3 style="color: var(--primary);"><i class="fa-solid fa-user-shield"></i> لوحة التحكم المتقدمة للأدمن</h3>
-                <button class="close-modal" onclick="toggleModal('adminDashboardModal', false)">إغلاق</button>
             </div>
 
             <div class="admin-tabs">
                 <button class="admin-tab-btn active" id="tabApprovedBtn" onclick="switchAdminTab('approved')"><i class="fa-solid fa-circle-check"></i> الأنشطة المقبولة</button>
                 <button class="admin-tab-btn" id="tabPendingBtn" onclick="switchAdminTab('pending')"><i class="fa-solid fa-clock"></i> طلبات الأنشطة (الانتظار)</button>
-                <button class="admin-tab-btn" id="tabLocationPendingBtn" onclick="switchAdminTab('locationPending')"><i class="fa-solid fa-map-location-dot"></i> طلبات إضافة موقع</button>
+                <button class="admin-tab-btn" id="tabEditPendingBtn" onclick="switchAdminTab('editPending')"><i class="fa-solid fa-pen-to-square"></i> طلبات التعديل (الانتظار)</button>
             </div>
 
             <div id="adminSectionApproved">
@@ -894,8 +1005,8 @@
                 <div id="pendingCardsContainer">جاري التحميل...</div>
             </div>
 
-            <div id="adminSectionLocationPending" style="display: none;">
-                <div id="locationPendingCardsContainer">جاري التحميل...</div>
+            <div id="adminSectionEditPending" style="display: none;">
+                <div id="editPendingCardsContainer">جاري التحميل...</div>
             </div>
         </div>
     </div>
@@ -903,6 +1014,7 @@
     <!-- نافذة تأكيد الحذف النهائي -->
     <div class="modal" id="confirmDeleteModal">
         <div class="modal-content" style="max-width: 380px; text-align: center;">
+            <div class="modal-close-icon" onclick="toggleModal('confirmDeleteModal', false)" title="إغلاق"><i class="fa-solid fa-xmark"></i></div>
             <h3 style="color: #ef4444; margin-bottom: 15px;"><i class="fa-solid fa-triangle-exclamation"></i> تأكيد الحذف</h3>
             <p style="font-size: 14px; margin-bottom: 20px; color: var(--text-muted);">هل أنت متأكد من حذف هذا العنصر نهائياً؟</p>
             <input type="hidden" id="deleteTargetKey">
@@ -919,6 +1031,7 @@
     <!-- نافذة تعديل نشاط منشور -->
     <div class="modal" id="editServiceModal">
         <div class="modal-content">
+            <div class="modal-close-icon" onclick="toggleModal('editServiceModal', false)" title="إغلاق"><i class="fa-solid fa-xmark"></i></div>
             <h3 style="margin-bottom: 15px; font-size: 18px; color: var(--primary); text-align: center;"><i class="fa-solid fa-pen-to-square"></i> تعديل تفاصيل النشاط</h3>
             <input type="hidden" id="editServiceKey">
             <div class="form-group"><label>النوع:</label><input type="text" id="editType"></div>
@@ -942,6 +1055,7 @@
     <!-- معاينة الصورة -->
     <div class="modal" id="imageModal">
         <div class="modal-content" style="text-align: center;">
+            <div class="modal-close-icon" onclick="toggleModal('imageModal', false)" title="إغلاق"><i class="fa-solid fa-xmark"></i></div>
             <h3 id="modalTitle" style="font-size: 16px;">معاينة الصورة</h3>
             <img src="" id="previewImage" alt="المعاينة">
             <button class="close-modal" onclick="toggleModal('imageModal', false)">إغلاق</button>
@@ -951,6 +1065,7 @@
     <!-- الباركود -->
     <div class="modal" id="qrModal">
         <div class="modal-content" style="text-align: center;">
+            <div class="modal-close-icon" onclick="toggleModal('qrModal', false)" title="إغلاق"><i class="fa-solid fa-xmark"></i></div>
             <h3>باركود الصفحة</h3>
             <img src="" id="qrImage" alt="QR Code" style="background:#fff; padding:10px; width:170px; height:170px; margin: 15px auto; border-radius: 12px;">
             <button class="close-modal" onclick="toggleModal('qrModal', false)">إغلاق</button>
@@ -987,9 +1102,32 @@
             loadServicesData();
         };
 
-        function getCurrentLocation() {
+        function openEditActivityChoiceModal() {
+            toggleModal('editActivityChoiceModal', true);
+        }
+
+        function selectEditChoice(type) {
+            toggleModal('editActivityChoiceModal', false);
+            if (type === 'location') {
+                toggleModal('updateLocationModal', true);
+            } else if (type === 'image') {
+                toggleModal('updateImageModal', true);
+            }
+        }
+
+        function goBackToEditChoiceFromLocation() {
+            toggleModal('updateLocationModal', false);
+            toggleModal('editActivityChoiceModal', true);
+        }
+
+        function goBackToEditChoiceFromImage() {
+            toggleModal('updateImageModal', false);
+            toggleModal('editActivityChoiceModal', true);
+        }
+
+        function getCurrentLocationForUpdate() {
             if (navigator.geolocation) {
-                const mapInput = document.getElementById('locationMapUrl');
+                const mapInput = document.getElementById('updateLocMapUrl');
                 mapInput.placeholder = "جاري تحديد موقعك الحالي... برجاء السماح للمتصفح";
                 
                 navigator.geolocation.getCurrentPosition(
@@ -1002,25 +1140,86 @@
                     },
                     (error) => {
                         mapInput.placeholder = "الصق رابط موقعك من جوجل ماب هنا";
-                        switch(error.code) {
-                            case error.PERMISSION_DENIED:
-                                alert("تم رفض إذن الوصول للموقع من قبل المستخدم.");
-                                break;
-                            case error.POSITION_UNAVAILABLE:
-                                alert("معلومات الموقع غير متوفرة حالياً.");
-                                break;
-                            case error.TIMEOUT:
-                                alert("انتهت مهلة طلب تحديد الموقع.");
-                                break;
-                            default:
-                                alert("حدث خطأ غير معروف أثناء محاولة جلب الموقع.");
-                                break;
-                        }
+                        alert("تعذر جلب الموقع الحالي، تأكد من إذن المتصفح.");
                     },
                     { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
                 );
             } else {
-                alert("متصفحك لا يدعم خاصية تحديد الموقع الجغرافي (Geolocation).");
+                alert("متصفحك لا يدعم خاصية تحديد الموقع.");
+            }
+        }
+
+        function submitUpdateLocation() {
+            let phone = document.getElementById('updateLocPhone').value.trim();
+            let mapUrl = document.getElementById('updateLocMapUrl').value.trim();
+
+            if (!phone || !mapUrl) {
+                alert("برجاء إدخال رقم الهاتف ورابط الموقع");
+                return;
+            }
+
+            let existingItem = servicesList.find(i => i.phone === phone);
+            if (!existingItem) {
+                alert("لم يتم الموافقة: رقم الهاتف غير مسجل أو غير موجود ضمن الأنشطة المقبولة!");
+                return;
+            }
+
+            let editRequest = {
+                type: 'location',
+                phone: phone,
+                mapUrl: mapUrl,
+                itemId: existingItem.id,
+                timestamp: Date.now()
+            };
+
+            if (window.FB) {
+                window.FB.push(window.FB.ref(window.FB.db, 'edit_pending_requests'), editRequest).then(() => {
+                    let adminWhatsapp = "201023745774";
+                    let msg = encodeURIComponent(`يريد يغير موقعه\nرقم صاحبه: ${phone}\nالموقع الجديد: ${mapUrl}`);
+                    window.open(`https://wa.me/${adminWhatsapp}?text=${msg}`, '_blank');
+
+                    toggleModal('updateLocationModal', false);
+                    alert("تم إرسال طلب تحديث الموقع إلى قائمة الانتظار بنجاح!");
+                    document.getElementById('updateLocPhone').value = '';
+                    document.getElementById('updateLocMapUrl').value = '';
+                });
+            }
+        }
+
+        function submitUpdateImage() {
+            let phone = document.getElementById('updateImgPhone').value.trim();
+            let imageUrl = document.getElementById('updateImgUrl').value.trim();
+
+            if (!phone || !imageUrl) {
+                alert("برجاء إدخال الرقم ولينك الصورة");
+                return;
+            }
+
+            let existingItem = servicesList.find(i => i.phone === phone);
+            if (!existingItem) {
+                alert("لم يتم الموافقة: رقم الهاتف غير مسجل أو غير موجود ضمن الأنشطة المقبولة!");
+                return;
+            }
+
+            let editRequest = {
+                type: 'image',
+                phone: phone,
+                image: imageUrl,
+                itemId: existingItem.id,
+                timestamp: Date.now()
+            };
+
+            if (window.FB) {
+                window.FB.push(window.FB.ref(window.FB.db, 'edit_pending_requests'), editRequest).then(() => {
+                    let adminWhatsapp = "201023745774";
+                    let msg = encodeURIComponent(`يريد يغير صورته\nرقم صاحبه: ${phone}\nلينك الصورة الجديد: ${imageUrl}`);
+                    window.open(`https://wa.me/${adminWhatsapp}?text=${msg}`, '_blank');
+
+                    toggleModal('updateImageModal', false);
+                    alert("تم إرسال طلب تحديث الصورة إلى قائمة الانتظار بنجاح!");
+                    document.getElementById('updateImgPhone').value = '';
+                    document.getElementById('updateImgUrl').value = '';
+                });
             }
         }
 
@@ -1290,7 +1489,7 @@
             if (sessionStorage.getItem('admin_logged_in') === 'true') {
                 loadApprovedServicesForAdmin();
                 loadPendingRequestsForAdmin();
-                loadLocationPendingRequestsForAdmin();
+                loadEditPendingRequestsForAdmin();
                 toggleModal('adminDashboardModal', true);
             } else {
                 toggleModal('adminLoginModal', true);
@@ -1333,7 +1532,7 @@
                 toggleModal('otpModal', false);
                 loadApprovedServicesForAdmin();
                 loadPendingRequestsForAdmin();
-                loadLocationPendingRequestsForAdmin();
+                loadEditPendingRequestsForAdmin();
                 toggleModal('adminDashboardModal', true);
                 document.getElementById('otpInput').value = '';
                 document.getElementById('adminPassword').value = '';
@@ -1345,35 +1544,35 @@
         function switchAdminTab(tab) {
             const tabPendingBtn = document.getElementById('tabPendingBtn');
             const tabApprovedBtn = document.getElementById('tabApprovedBtn');
-            const tabLocationPendingBtn = document.getElementById('tabLocationPendingBtn');
+            const tabEditPendingBtn = document.getElementById('tabEditPendingBtn');
             const sectionPending = document.getElementById('adminSectionPending');
             const sectionApproved = document.getElementById('adminSectionApproved');
-            const sectionLocationPending = document.getElementById('adminSectionLocationPending');
+            const sectionEditPending = document.getElementById('adminSectionEditPending');
 
             if (tab === 'approved') {
                 tabApprovedBtn.classList.add('active');
                 tabPendingBtn.classList.remove('active');
-                tabLocationPendingBtn.classList.remove('active');
+                tabEditPendingBtn.classList.remove('active');
                 sectionApproved.style.display = 'block';
                 sectionPending.style.display = 'none';
-                sectionLocationPending.style.display = 'none';
+                sectionEditPending.style.display = 'none';
                 loadApprovedServicesForAdmin();
             } else if (tab === 'pending') {
                 tabPendingBtn.classList.add('active');
                 tabApprovedBtn.classList.remove('active');
-                tabLocationPendingBtn.classList.remove('active');
+                tabEditPendingBtn.classList.remove('active');
                 sectionPending.style.display = 'block';
                 sectionApproved.style.display = 'none';
-                sectionLocationPending.style.display = 'none';
+                sectionEditPending.style.display = 'none';
                 loadPendingRequestsForAdmin();
-            } else if (tab === 'locationPending') {
-                tabLocationPendingBtn.classList.add('active');
+            } else if (tab === 'editPending') {
+                tabEditPendingBtn.classList.add('active');
                 tabApprovedBtn.classList.remove('active');
                 tabPendingBtn.classList.remove('active');
-                sectionLocationPending.style.display = 'block';
+                sectionEditPending.style.display = 'block';
                 sectionApproved.style.display = 'none';
                 sectionPending.style.display = 'none';
-                loadLocationPendingRequestsForAdmin();
+                loadEditPendingRequestsForAdmin();
             }
         }
 
@@ -1442,30 +1641,34 @@
             });
         }
 
-        function loadLocationPendingRequestsForAdmin() {
-            const container = document.getElementById('locationPendingCardsContainer');
+        function loadEditPendingRequestsForAdmin() {
+            const container = document.getElementById('editPendingCardsContainer');
             container.innerHTML = "جاري التحميل...";
             if (!window.FB) return;
 
-            window.FB.get(window.FB.ref(window.FB.db, 'location_pending_requests')).then((snapshot) => {
+            window.FB.get(window.FB.ref(window.FB.db, 'edit_pending_requests')).then((snapshot) => {
                 const data = snapshot.val();
                 container.innerHTML = "";
                 if (!data) {
-                    container.innerHTML = "<p style='text-align:center; color:var(--text-muted);'>لا توجد طلبات إضافة مواقع جديدة.</p>";
+                    container.innerHTML = "<p style='text-align:center; color:var(--text-muted);'>لا توجد طلبات تعديل معلقة حالياً.</p>";
                     return;
                 }
 
                 Object.keys(data).forEach(key => {
                     let item = data[key];
+                    let isImageEdit = item.type === 'image';
+                    let titleText = isImageEdit ? 'طلب تحديث صورة' : 'طلب تحديث موقع';
+                    let contentDetail = isImageEdit ? `<strong>لينك الصورة الجديد:</strong> <a href="${item.image}" target="_blank" style="color:var(--primary);">${item.image}</a>` : `<strong>رابط الموقع الجديد:</strong> <a href="${item.mapUrl}" target="_blank" style="color:var(--primary);">${item.mapUrl}</a>`;
+
                     let cardDiv = document.createElement('div');
                     cardDiv.className = 'admin-card';
                     cardDiv.innerHTML = `
-                        <div style="font-weight:900; font-size:16px; color:#ea4335; margin-bottom:5px;"><i class="fa-solid fa-map-pin"></i> طلب إضافة موقع جديد</div>
-                        <div style="font-size:12.5px; color:var(--text-main); margin-bottom:4px;"><strong>رابط الخريطة:</strong> <a href="${item.mapUrl}" target="_blank" style="color:var(--primary);">${item.mapUrl}</a></div>
-                        <div style="font-size:12.5px; color:var(--text-muted); margin-bottom:10px;"><strong>رقم التلفون:</strong> ${item.phone}</div>
+                        <div style="font-weight:900; font-size:16px; color:#f59e0b; margin-bottom:5px;"><i class="fa-solid fa-pen-to-square"></i> ${titleText}</div>
+                        <div style="font-size:12.5px; color:var(--text-main); margin-bottom:4px;"><strong>رقم التلفون:</strong> ${item.phone}</div>
+                        <div style="font-size:12.5px; color:var(--text-main); margin-bottom:10px;">${contentDetail}</div>
                         <div style="display:flex; gap:10px;">
-                            <button onclick="approveLocationRequest('${key}')" style="background:#25d366; color:#fff; border:none; padding:6px 15px; border-radius:8px; cursor:pointer; font-weight:700;"><i class="fa-solid fa-check"></i> قبول وإضافة</button>
-                            <button onclick="rejectLocationRequest('${key}')" style="background:#ef4444; color:#fff; border:none; padding:6px 15px; border-radius:8px; cursor:pointer; font-weight:700;"><i class="fa-solid fa-xmark"></i> رفض (حذف نهائي)</button>
+                            <button onclick="approveEditRequest('${key}')" style="background:#25d366; color:#fff; border:none; padding:6px 15px; border-radius:8px; cursor:pointer; font-weight:700;"><i class="fa-solid fa-check"></i> موافق</button>
+                            <button onclick="rejectEditRequest('${key}')" style="background:#ef4444; color:#fff; border:none; padding:6px 15px; border-radius:8px; cursor:pointer; font-weight:700;"><i class="fa-solid fa-xmark"></i> رفض (حذف)</button>
                         </div>
                     `;
                     container.appendChild(cardDiv);
@@ -1473,71 +1676,40 @@
             });
         }
 
-        function submitNewLocation() {
-            let mapUrl = document.getElementById('locationMapUrl').value.trim();
-            let phone = document.getElementById('locationPhone').value.trim();
-
-            if (!mapUrl || !phone) {
-                alert("برجاء إدخال رابط الخريطة ورقم التلفون");
-                return;
-            }
-
-            let newLocationEntry = {
-                mapUrl: mapUrl,
-                phone: phone,
-                timestamp: Date.now()
-            };
-
-            if (window.FB) {
-                window.FB.push(window.FB.ref(window.FB.db, 'location_pending_requests'), newLocationEntry)
-                    .then(() => {
-                        let cleanPhone = "201023745774"; 
-                        let message = encodeURIComponent(`برجاء اضف موقعى\nموقعه: ${mapUrl}\nورقمه: ${phone}`);
-                        window.open(`https://wa.me/${cleanPhone}?text=${message}`, '_blank');
-
-                        toggleModal('addLocationModal', false);
-                        alert("تم إرسال طلب موقعك لقائمة الانتظار بنجاح وتم فتح الواتساب لإبلاغ الإدارة!");
-                        
-                        document.getElementById('locationMapUrl').value = '';
-                        document.getElementById('locationPhone').value = '';
-                    })
-                    .catch((error) => {
-                        console.error("Firebase Error:", error);
-                        alert("حدث خطأ أثناء حفظ الموقع في قاعدة البيانات: " + error.message);
+        function approveEditRequest(key) {
+            window.FB.get(window.FB.ref(window.FB.db, 'edit_pending_requests/' + key)).then((snapshot) => {
+                let req = snapshot.val();
+                if (req) {
+                    let targetId = req.itemId;
+                    window.FB.get(window.FB.ref(window.FB.db, 'approved_services/' + targetId)).then((itemSnap) => {
+                        let itemData = itemSnap.val();
+                        if (itemData) {
+                            let updatePayload = {};
+                            if (req.type === 'image') {
+                                updatePayload.image = req.image;
+                            } else if (req.type === 'location') {
+                                updatePayload.mapUrl = req.mapUrl;
+                            }
+                            window.FB.update(window.FB.ref(window.FB.db, 'approved_services/' + targetId), updatePayload).then(() => {
+                                window.FB.remove(window.FB.ref(window.FB.db, 'edit_pending_requests/' + key));
+                                alert("تم الموافقة وتحديث البيانات وإزالة القديم من Firebase بنجاح!");
+                                loadEditPendingRequestsForAdmin();
+                                loadApprovedServicesForAdmin();
+                                loadServicesData();
+                            });
+                        } else {
+                            alert("خطأ: لم يتم العثور على النشاط المراد تعديله.");
+                        }
                     });
-            } else {
-                alert("خطأ: لم يتم الاتصال بقاعدة البيانات بشكل صحيح.");
-            }
-        }
-
-        function approveLocationRequest(key) {
-            window.FB.get(window.FB.ref(window.FB.db, 'location_pending_requests/' + key)).then((snapshot) => {
-                let val = snapshot.val();
-                if (val) {
-                    let newApprovedItem = {
-                        type: "موقع خارجي",
-                        doctor: "موقع معتمد (" + val.phone + ")",
-                        address: "عرض الموقع على الخريطة",
-                        mapUrl: val.mapUrl,
-                        phone: val.phone,
-                        details: "تمت الإضافة عبر خدمة اضف مكانك",
-                        timestamp: Date.now()
-                    };
-                    window.FB.push(window.FB.ref(window.FB.db, 'approved_services'), newApprovedItem);
-                    window.FB.remove(window.FB.ref(window.FB.db, 'location_pending_requests/' + key));
-                    alert("تم قبول الموقع وربطه بالمنصة بنجاح!");
-                    loadLocationPendingRequestsForAdmin();
-                    loadApprovedServicesForAdmin();
-                    loadServicesData();
                 }
             });
         }
 
-        function rejectLocationRequest(key) {
-            if (confirm("هل أنت متأكد من رفض وحذف الموقع نهائياً من فايربيس؟")) {
-                window.FB.remove(window.FB.ref(window.FB.db, 'location_pending_requests/' + key)).then(() => {
-                    alert("تم حذف الموقع نهائياً من قاعدة البيانات!");
-                    loadLocationPendingRequestsForAdmin();
+        function rejectEditRequest(key) {
+            if (confirm("هل أنت متأكد من رفض هذا الطلب؟")) {
+                window.FB.remove(window.FB.ref(window.FB.db, 'edit_pending_requests/' + key)).then(() => {
+                    alert("تم رفض وحذف الطلب بنجاح!");
+                    loadEditPendingRequestsForAdmin();
                 });
             }
         }
@@ -1644,7 +1816,6 @@
                 return;
             }
 
-            // شرط التحقق من أن رقم الهاتف 11 رقم בדיוק
             if (phone.length !== 11 || isNaN(phone)) {
                 alert("خطأ: رقم الهاتف يجب أن يتكون من 11 رقم בדיוק!");
                 return;
@@ -1668,30 +1839,16 @@
             if (window.FB) {
                 window.FB.push(window.FB.ref(window.FB.db, 'pending_requests'), newEntry)
                     .then(() => {
-                        // فتح الواتساب لإرسال البيانات للرقم المطلوب لتأكيد البيانات
                         let targetWhatsapp = "201023745774";
                         let waMessage = encodeURIComponent(`طلب إضافة نشاط جديد (قيد الانتظار):\n- النوع: ${type}\n- الاسم: ${doctor}\n- العنوان: ${address}\n- الهاتف: ${phone}`);
                         window.open(`https://wa.me/${targetWhatsapp}?text=${waMessage}`, '_blank');
 
                         toggleModal('addModal', false);
-                        alert("تم إرسال نشاطك بنجاح إلى قائمة الانتظار، وتم فتح الواتساب لتأكيد البيانات مع الإدارة[cite: 2]!");
-                        
-                        document.getElementById('addType').value = '';
-                        document.getElementById('addName').value = '';
-                        document.getElementById('addAddress').value = '';
-                        document.getElementById('addMapUrl').value = '';
-                        document.getElementById('addFirstPrice').value = '';
-                        document.getElementById('addFollowPrice').value = '';
-                        document.getElementById('addDetails').value = '';
-                        document.getElementById('addWorkTime').value = '';
-                        document.getElementById('addPhone').value = '';
-                        document.getElementById('addDriveUrl').value = '';
+                        alert("تم إرسال نشاطك بنجاح إلى قائمة الانتظار، وتم فتح الواتساب لتأكيد البيانات مع الإدارة!");
                     })
                     .catch((error) => {
                         alert("حدث خطأ أثناء حفظ الطلب: " + error.message);
                     });
-            } else {
-                alert("خطأ: لم يتم الاتصال بقاعدة البيانات.");
             }
         }
 

@@ -1179,19 +1179,26 @@
             }
         }
 
-        // دالة التأكد من الرقم قبل تعديل الموقع
+        // دالة التأكد من الرقم قبل تعديل الموقع مع إزالة الصفر الأول تلقائياً
         function checkPhoneExistsForLocation() {
-            let phone = document.getElementById('updateLocPhone').value.trim();
+            let phoneInput = document.getElementById('updateLocPhone');
+            let rawPhone = phoneInput.value.trim();
             let statusEl = document.getElementById('locPhoneStatus');
-            if (!phone) {
+            
+            if (!rawPhone) {
                 statusEl.style.color = "#ef4444";
                 statusEl.innerText = "❌ أدخل رقم الهاتف أولاً";
                 return false;
             }
-            let existingItem = servicesList.find(i => i.phone === phone);
+
+            // إزالة الصفر من البداية لو موجود
+            let processedPhone = rawPhone.replace(/^0/, '');
+            phoneInput.value = processedPhone; // تحديث حقل الإدخال ليظهر بدون صفر
+
+            let existingItem = servicesList.find(i => i.phone === processedPhone || i.phone === rawPhone);
             if (existingItem) {
                 statusEl.style.color = "#25d366";
-                statusEl.innerText = "✅ الرقم موجود بالفعل (${existingItem.doctor})";
+                statusEl.innerText = `✅ الرقم موجود بالفعل (${existingItem.doctor})`;
                 return true;
             } else {
                 statusEl.style.color = "#ef4444";
@@ -1200,19 +1207,26 @@
             }
         }
 
-        // دالة التأكد من الرقم قبل تعديل الصورة
+        // دالة التأكد من الرقم قبل تعديل الصورة مع إزالة الصفر الأول تلقائياً
         function checkPhoneExistsForImage() {
-            let phone = document.getElementById('updateImgPhone').value.trim();
+            let phoneInput = document.getElementById('updateImgPhone');
+            let rawPhone = phoneInput.value.trim();
             let statusEl = document.getElementById('imgPhoneStatus');
-            if (!phone) {
+            
+            if (!rawPhone) {
                 statusEl.style.color = "#ef4444";
                 statusEl.innerText = "❌ أدخل رقم الهاتف أولاً";
                 return false;
             }
-            let existingItem = servicesList.find(i => i.phone === phone);
+
+            // إزالة الصفر من البداية لو موجود
+            let processedPhone = rawPhone.replace(/^0/, '');
+            phoneInput.value = processedPhone; // تحديث حقل الإدخال ليظهر بدون صفر
+
+            let existingItem = servicesList.find(i => i.phone === processedPhone || i.phone === rawPhone);
             if (existingItem) {
                 statusEl.style.color = "#25d366";
-                statusEl.innerText = "✅ الرقم موجود بالفعل (${existingItem.doctor})";
+                statusEl.innerText = `✅ الرقم موجود بالفعل (${existingItem.doctor})`;
                 return true;
             } else {
                 statusEl.style.color = "#ef4444";
@@ -1221,9 +1235,10 @@
             }
         }
 
-        // تحديث موقعي
+        // تحديث موقعي وتسجيله في قائمة الانتظار للرقم بدون صفر
         function submitUpdateLocation() {
-            let phone = document.getElementById('updateLocPhone').value.trim();
+            let phoneInput = document.getElementById('updateLocPhone');
+            let phone = phoneInput.value.trim().replace(/^0/, '');
             let mapUrl = document.getElementById('updateLocMapUrl').value.trim();
 
             if (!phone || !mapUrl) {
@@ -1257,9 +1272,10 @@
             }
         }
 
-        // تحديث صورتي
+        // تحديث صورتي وتسجيله في قائمة الانتظار للرقم بدون صفر
         function submitUpdateImage() {
-            let phone = document.getElementById('updateImgPhone').value.trim();
+            let phoneInput = document.getElementById('updateImgPhone');
+            let phone = phoneInput.value.trim().replace(/^0/, '');
             let imageUrl = document.getElementById('updateImgUrl').value.trim();
 
             if (!phone || !imageUrl) {
@@ -1878,16 +1894,11 @@
             let followPrice = document.getElementById('addFollowPrice').value.trim();
             let details = document.getElementById('addDetails').value.trim();
             let workTime = document.getElementById('addWorkTime').value.trim();
-            let phone = document.getElementById('addPhone').value.trim();
+            let phone = document.getElementById('addPhone').value.trim().replace(/^0/, '');
             let image = document.getElementById('addDriveUrl').value.trim();
 
             if (!type || !doctor || !address || !phone) {
                 alert("برجاء إدخال الحقول الأساسية (النوع، الاسم، العنوان، ورقم الهاتف)");
-                return;
-            }
-
-            if (phone.length !== 11 || isNaN(phone)) {
-                alert("خطأ: رقم الهاتف يجب أن يتكون من 11 رقم בדיוק!");
                 return;
             }
 
@@ -1960,7 +1971,7 @@
                         let followPrice = cols[3] ? cols[3].trim() : ""; 
                         let details = cols[4] ? cols[4].trim() : "";     
                         let workTime = cols[5] ? cols[5].trim() : "";     
-                        let phone = cols[6] ? cols[6].trim() : "";         
+                        let phone = cols[6] ? cols[6].trim().replace(/^0/, '') : "";         
                         let image = cols[7] ? cols[7].trim() : "";         
                         let mapUrl = cols[8] ? cols[8].trim() : "";
 
@@ -1976,7 +1987,9 @@
                             const approvedData = snapshot.val();
                             if (approvedData) {
                                 Object.keys(approvedData).forEach(k => {
-                                    if (!servicesList.some(item => item.phone === approvedData[k].phone && item.doctor === approvedData[k].doctor)) {
+                                    let cleanApprovedPhone = approvedData[k].phone ? approvedData[k].phone.replace(/^0/, '') : "";
+                                    approvedData[k].phone = cleanApprovedPhone;
+                                    if (!servicesList.some(item => item.phone === cleanApprovedPhone && item.doctor === approvedData[k].doctor)) {
                                         servicesList.push({ id: k, ...approvedData[k] });
                                     }
                                 });
@@ -2092,7 +2105,7 @@
                     let waMsg = encodeURIComponent(`السلام عليكم، اطلعت على إعلانكم في دليل كفر شكر وأرغب في التواصل للتفاصيل.`);
                     actionBtnHTML = `
                         <div style="display: flex; gap: 8px; margin-top: 8px; align-items: center;">
-                            <a onclick="handleActionClick('${item.id}', 'tel:${item.phone}', 'tel')" class="action-link-btn"><i class="fa-solid fa-phone"></i> اتصال</a>
+                            <a onclick="handleActionClick('${item.id}', 'tel:0${item.phone}', 'tel')" class="action-link-btn"><i class="fa-solid fa-phone"></i> اتصال</a>
                             <a onclick="handleActionClick('${item.id}', 'https://wa.me/${cleanPhone}?text=${waMsg}', 'whatsapp')" class="action-link-btn whatsapp"><i class="fa-brands fa-whatsapp"></i> واتساب</a>
                             <button onclick="shareCard('${item.id}', '${item.doctor || 'نشاط'}', '${item.type}', event)" class="share-card-btn" title="مشاركة كارتي"><i class="fa-solid fa-share-nodes"></i></button>
                         </div>

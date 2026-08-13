@@ -1463,37 +1463,42 @@ function getCurrentLocation() {
         }
 
         function submitNewLocation() {
-            let mapUrl = document.getElementById('locationMapUrl').value.trim();
-            let phone = document.getElementById('locationPhone').value.trim();
+    let mapUrl = document.getElementById('locationMapUrl').value.trim();
+    let phone = document.getElementById('locationPhone').value.trim();
 
-            if (!mapUrl || !phone) {
-                alert("برجاء إدخال رابط الخريطة ورقم التلفون");
-                return;
-            }
+    if (!mapUrl || !phone) {
+        alert("برجاء إدخال رابط الخريطة ورقم التلفون");
+        return;
+    }
 
-            let newLocationEntry = {
-                mapUrl: mapUrl,
-                phone: phone,
-                timestamp: Date.now()
-            };
+    let newLocationEntry = {
+        mapUrl: mapUrl,
+        phone: phone,
+        timestamp: Date.now()
+    };
 
-            if (window.FB) {
-                window.FB.push(window.FB.ref(window.FB.db, 'location_pending_requests'), newLocationEntry)
-                    .then(() => {
-                        // إرسال واتساب بالصيغة المطلوبة
-                        let cleanPhone = "201012345678"; // يمكنك تغيير هذا الرقم لرقمك الخاص باستقبال الطلبات
-                        let message = encodeURIComponent(`برجاء اضف موقعى\nموقعه: ${mapUrl}\nورقمه: ${phone}`);
-                        window.open(`https://wa.me/${cleanPhone}?text=${message}`, '_blank');
+    if (window.FB) {
+        window.FB.push(window.FB.ref(window.FB.db, 'location_pending_requests'), newLocationEntry)
+            .then(() => {
+                // إرسال واتساب بالصيغة المطلوبة والرقم المطلوب
+                let cleanPhone = "201023745774"; 
+                let message = encodeURIComponent(`برجاء اضف موقعى\nموقعه: ${mapUrl}\nورقمه: ${phone}`);
+                window.open(`https://wa.me/${cleanPhone}?text=${message}`, '_blank');
 
-                        toggleModal('addLocationModal', false);
-                        alert("تم إرسال طلب موقعك لقائمة الانتظار بنجاح!");
-                        
-                        document.getElementById('locationMapUrl').value = '';
-                        document.getElementById('locationPhone').value = '';
-                    });
-            }
-        }
-
+                toggleModal('addLocationModal', false);
+                alert("تم إرسال طلب موقعك لقائمة الانتظار بنجاح!");
+                
+                document.getElementById('locationMapUrl').value = '';
+                document.getElementById('locationPhone').value = '';
+            })
+            .catch((error) => {
+                console.error("Firebase Error:", error);
+                alert("حدث خطأ أثناء حفظ الموقع في قاعدة البيانات: " + error.message);
+            });
+    } else {
+        alert("خطأ: لم يتم الاتصال بقاعدة البيانات بشكل صحيح.");
+    }
+}
         function approveLocationRequest(key) {
             window.FB.get(window.FB.ref(window.FB.db, 'location_pending_requests/' + key)).then((snapshot) => {
                 let val = snapshot.val();

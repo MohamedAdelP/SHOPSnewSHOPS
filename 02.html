@@ -124,6 +124,13 @@
         }
         .whatsapp-add-btn:hover { background: #25d366; color: #fff; }
 
+        .map-add-btn {
+            background: rgba(234, 67, 53, 0.1);
+            border-color: #ea4335;
+            color: #ea4335;
+        }
+        .map-add-btn:hover { background: #ea4335; color: #fff; }
+
         .admin-nav-btn {
             background: rgba(239, 68, 68, 0.1);
             border-color: #ef4444;
@@ -137,6 +144,13 @@
             color: #f59e0b;
         }
         .info-nav-btn:hover { background: #f59e0b; color: #fff; }
+
+        .stars-ranking-btn {
+            background: rgba(251, 191, 36, 0.1);
+            border-color: #fbbf24;
+            color: #fbbf24;
+        }
+        .stars-ranking-btn:hover { background: #fbbf24; color: #0f172a; }
 
         .adhkar-banner {
             background: rgba(56, 189, 248, 0.07);
@@ -190,6 +204,14 @@
             align-items: center;
             gap: 10px;
             width: 100%;
+            flex-wrap: wrap;
+        }
+
+        .filter-group-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex-shrink: 0;
         }
 
         .favorites-filter-btn {
@@ -202,16 +224,39 @@
             font-size: 13px;
             cursor: pointer;
             white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+        .favorites-filter-btn.active {
+            background: #e74c3c;
+            color: #fff;
+            border-color: #e74c3c;
+        }
+        .favorites-filter-btn:hover {
+            border-color: #e74c3c;
+        }
+
+        .stats-tab-btn {
+            background: var(--bg-color);
+            border: 1px solid rgba(56, 189, 248, 0.4);
+            color: var(--primary);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            white-space: nowrap;
             flex-shrink: 0;
             display: inline-flex;
             align-items: center;
             gap: 6px;
             transition: all 0.2s;
         }
-        .favorites-filter-btn.active, .favorites-filter-btn:hover {
-            background: #e74c3c;
-            color: #fff;
-            border-color: #e74c3c;
+        .stats-tab-btn:hover {
+            background: var(--primary);
+            color: var(--btn-text);
         }
 
         .categories-container { 
@@ -496,13 +541,78 @@
             margin-bottom: 8px; 
             font-size: 14.5px; 
         }
-        .info-box-item ul { padding-right: 22px; margin-top: 8px; }
-        .info-box-item li { margin-bottom: 6px; color: var(--text-muted); }
-        .info-box-item li strong { display: inline; color: var(--text-main); font-size: 13.5px; }
+        .info-box-item ul { 
+            padding-right: 22px; 
+            margin-top: 8px; 
+        }
+        .info-box-item li { 
+            margin-bottom: 6px; 
+            color: var(--text-muted);
+        }
+        .info-box-item li strong {
+            display: inline;
+            color: var(--text-main);
+            font-size: 13.5px;
+        }
 
-        .admin-tabs { display: flex; gap: 10px; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
-        .admin-tab-btn { background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-main); padding: 8px 15px; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 13px; }
+        .admin-tabs { display: flex; gap: 10px; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; flex-wrap: wrap; }
+        .admin-tab-btn { background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-main); padding: 8px 12px; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 12px; }
         .admin-tab-btn.active { background: var(--primary); color: var(--btn-text); border-color: var(--primary); }
+
+        .stats-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 13.5px;
+        }
+        .stats-table th, .stats-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border-color);
+            text-align: right;
+        }
+        .stats-table th {
+            color: var(--primary);
+            font-weight: 700;
+            background: rgba(56, 189, 248, 0.05);
+        }
+        .stats-table tr:hover {
+            background: rgba(56, 189, 248, 0.02);
+        }
+        /* ... باقي التنسیقات بتاعتك الموجودة في الملف ... */
+
+    /* حط التنسيقات الجديدة هنا */
+    .location-input-group {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        width: 100%;
+    }
+
+    .location-input-group input {
+        flex: 1;
+    }
+
+    .current-loc-btn {
+        background: rgba(56, 189, 248, 0.1);
+        border: 1px solid var(--primary);
+        color: var(--primary);
+        padding: 10px 14px;
+        border-radius: 10px;
+        font-weight: 700;
+        font-size: 12.5px;
+        cursor: pointer;
+        white-space: nowrap;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        flex-shrink: 0;
+        transition: all 0.2s ease;
+    }
+
+    .current-loc-btn:hover {
+        background: var(--primary);
+        color: var(--btn-text);
+    }
     </style>
 </head>
 <body>
@@ -511,11 +621,18 @@
         <div class="top-nav">
             <a href="index.html" class="back-link"><i class="fa-solid fa-arrow-right"></i> العودة للرئيسية</a>
             <div class="top-actions">
+                <button class="action-btn stars-ranking-btn" onclick="openStarsRankingModal()">
+                    <i class="fa-solid fa-ranking-star"></i> أبرز النجوم
+                </button>
                 <button class="action-btn info-nav-btn" onclick="toggleModal('infoModal', true)">
                     <i class="fa-solid fa-circle-info"></i> كيف يعمل النظام؟
                 </button>
                 <button class="action-btn whatsapp-add-btn" onclick="toggleModal('addModal', true)">
                     <i class="fa-brands fa-whatsapp"></i> اضف مجالك
+                </button>
+                <!-- زر اضف مكانك الجديد -->
+                <button class="action-btn map-add-btn" onclick="toggleModal('addLocationModal', true)">
+                    <i class="fa-solid fa-map-location-dot"></i> اضف مكانك
                 </button>
                 <button class="action-btn admin-nav-btn" onclick="openAdminPanel()">
                     <i class="fa-solid fa-lock"></i> الإدارة
@@ -531,7 +648,7 @@
         </div>
         
         <div class="hero-banner">
-            <h1>🌐 منصة كفر شكر المجتمعية</h1>
+            <h1>🌐 منصة كفر شكر</h1>
             <p>منصتك المجتمعية للوصول السريع إلى كافة الأنشطة الخدمية، التجارية، والمهنية بكفر شكر في مكان واحد.</p>
         </div>
 
@@ -543,14 +660,81 @@
             </div>
             
             <div class="categories-wrapper">
-                <button class="favorites-filter-btn" id="favoritesFilterBtn" onclick="toggleFavoritesFilter()">
-                    <i class="fa-solid fa-heart"></i> المفضلة
+                <div class="filter-group-container">
+                    <button class="favorites-filter-btn" id="favoritesFilterBtn" onclick="toggleFavoritesFilter()">
+                        <i class="fa-solid fa-heart"></i> المفضلة
+                    </button>
+                </div>
+
+                <button class="stats-tab-btn" onclick="openStatsModal()">
+                    <i class="fa-solid fa-chart-pie"></i> إحصائيات الأقسام والأشخاص
                 </button>
+
                 <div class="categories-container" id="categories-container"></div>
             </div>
         </div>
 
         <div class="cards-grid" id="cards-grid"></div>
+    </div>
+
+    <!-- نافذة أبرز النجوم والترتيب -->
+    <div class="modal" id="starsRankingModal">
+        <div class="modal-content" style="max-width: 580px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+                <h3 style="color: #fbbf24; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-ranking-star"></i> قائمة أبرز النجوم والترتيب</h3>
+                <button class="close-modal" onclick="toggleModal('starsRankingModal', false)">إغلاق</button>
+            </div>
+            
+            <div class="search-box" style="margin-bottom: 12px;">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input type="text" id="stars-search-input" placeholder="ابحث بالاسم، القسم، أو رقم الهاتف..." oninput="filterStarsRankingTable()" style="padding: 9px 40px 9px 15px; font-size: 13px;">
+            </div>
+
+            <p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 12px;"><i class="fa-solid fa-circle-info" style="color:var(--primary);"></i> الترتيب يعتمد أولاً على **المشاهدات**، ثم **الإعجابات**:</p>
+            
+            <div style="max-height: 320px; overflow-y: auto;">
+                <table class="stats-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th><i class="fa-solid fa-user"></i> الاسم والنشاط</th>
+                            <th><i class="fa-solid fa-star" style="color:#fbbf24;"></i> النجوم</th>
+                            <th><i class="fa-regular fa-eye"></i> المشاهدات</th>
+                            <th><i class="fa-solid fa-heart" style="color:#e74c3c;"></i> الإعجابات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="starsRankingTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة إحصائيات الأقسام -->
+    <div class="modal" id="statsModal">
+        <div class="modal-content" style="max-width: 520px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+                <h3 style="color: var(--primary); display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-chart-pie"></i> إحصائيات الأقسام والأشخاص</h3>
+                <button class="close-modal" onclick="toggleModal('statsModal', false)">إغلاق</button>
+            </div>
+            
+            <div class="search-box" style="margin-bottom: 12px;">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input type="text" id="stats-search-input" placeholder="ابحث باسم القسم أو التخصص..." oninput="filterStatsTable()" style="padding: 9px 40px 9px 15px; font-size: 13px;">
+            </div>
+
+            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;"><i class="fa-solid fa-circle-info" style="color:var(--primary);"></i> نظرة عامة ومفصلة على توزيع الأنشطة والأشخاص داخل أقسام المنصة:</p>
+            <div style="max-height: 320px; overflow-y: auto;">
+                <table class="stats-table">
+                    <thead>
+                        <tr>
+                            <th><i class="fa-solid fa-folder-open"></i> القسم / التخصص</th>
+                            <th><i class="fa-solid fa-users-rectangle"></i> العدد الإجمالي</th>
+                        </tr>
+                    </thead>
+                    <tbody id="statsTableBody"></tbody>
+                </table>
+            </div>
+        </div>
     </div>
 
     <!-- نافذة دليل النظام والتقييمات والفوائد -->
@@ -602,19 +786,22 @@
             
             <div class="form-group"><label>1- النوع: <span style="color: #e74c3c;">*</span></label><input type="text" id="addType" placeholder="مثال: عيادة / سباك"></div>
             <div class="form-group"><label>2- الاسم: <span style="color: #e74c3c;">*</span></label><input type="text" id="addName" placeholder="مثال: د. أحمد السيد"></div>
-            <div class="form-group"><label>3- العنوان: <span style="color: #e74c3c;">*</span></label><input type="text" id="addAddress" placeholder="مثال: شارع المركز - بجوار المحطة"></div>
+            <div class="form-group"><label>3- العنوان النصي: <span style="color: #e74c3c;">*</span></label><input type="text" id="addAddress" placeholder="مثال: شارع المركز - بجوار المحطة"></div>
+            
+            <div class="form-group">
+                <label>📍 رابط موقع Google Maps (اختياري):</label>
+                <input type="text" id="addMapUrl" placeholder="الصق رابط موقعك من Google Maps هنا">
+                <small>افتح خريطة جوجل، اضغط مشاركة (Share)، وانسخ رابط الموقع هنا لكي يفتح للعملاء مباشرة.</small>
+            </div>
+
             <div class="form-group"><label>4- سعر أول مرة:</label><input type="text" id="addFirstPrice" placeholder="مثال: 1500"></div>
             <div class="form-group"><label>5- سعر المتابعة:</label><input type="text" id="addFollowPrice" placeholder="مثال: 600"></div>
             <div class="form-group"><label>6- تفاصيل النشاط:</label><textarea id="addDetails" rows="2" placeholder="تفاصيل الخدمة..."></textarea></div>
             <div class="form-group"><label>7- مواعيد العمل:</label><input type="text" id="addWorkTime" placeholder="من السبت للخميس"></div>
             <div class="form-group"><label>8- الرقم: <span style="color: #e74c3c;">*</span></label><input type="text" id="addPhone" placeholder="01xxxxxxxxxx"></div>
-            
-            <!-- حقل اختيار الصورة من المعرض ورفعها تلقائياً إلى ImgBB -->
             <div class="form-group">
-                <label>9- صورة النشاط الشخصية أو اللوجو:</label>
-                <input type="file" id="addImageFile" accept="image/*" onchange="uploadImageToImgBB(this)" style="padding: 7px;">
-                <input type="hidden" id="addImgbbUrl" value="">
-                <small id="imgUploadStatus" style="color: var(--primary);">اختر صورة من هاتفك وسيتم رفعها تلقائياً.</small>
+                <label>9- رابط صورة Google Drive:</label>
+                <input type="text" id="addDriveUrl" placeholder="الصق رابط مشاركة الصورة من درايف هنا">
             </div>
 
             <div class="modal-actions">
@@ -624,7 +811,36 @@
         </div>
     </div>
 
-    <!-- نافذة تسجيل دخول الإدارة عبر البريد وكلمة المرور مع ميزة إظهار الباسورد -->
+    <!-- نافذة "اضف مكانك" المحسنة -->
+<div class="modal" id="addLocationModal">
+    <div class="modal-content" style="max-width: 450px;">
+        <h3 style="margin-bottom: 20px; font-size: 18px; color: #ea4335; text-align: center;"><i class="fa-solid fa-map-location-dot"></i> طلب إضافة موقعك</h3>
+        
+        <div class="form-group">
+            <label>📍 رابط موقعك من Google Maps أو حدده تلقائياً: <span style="color: #e74c3c;">*</span></label>
+            <div class="location-input-group">
+                <input type="text" id="locationMapUrl" placeholder="الصق رابط موقعك أو اضغط الزر لجلب موقعك">
+                <button type="button" class="current-loc-btn" onclick="getCurrentLocation()" title="الحصول على موقعي الحالي">
+                    <i class="fa-solid fa-location-crosshairs"></i> موقعي الحالي
+                </button>
+            </div>
+            <small>يمكنك لصق الرابط يدوياً أو الضغط على زر "موقعي الحالي" لتحديده بضغطة زر.</small>
+        </div>
+        
+        <div class="form-group">
+            <label>📞 رقم التلفون: <span style="color: #e74c3c;">*</span></label>
+            <input type="text" id="locationPhone" placeholder="01xxxxxxxxxx">
+            <small>رقم الهاتف المرتبط بهذا الموقع.</small>
+        </div>
+
+        <div class="modal-actions">
+            <button class="submit-whatsapp-btn" style="background:#ea4335;" onclick="submitNewLocation()"><i class="fa-solid fa-paper-plane"></i> إرسال الطلب</button>
+            <button class="close-modal" onclick="toggleModal('addLocationModal', false)">إغلاق</button>
+        </div>
+    </div>
+</div>
+
+    <!-- نافذة تسجيل دخول الإدارة -->
     <div class="modal" id="adminLoginModal">
         <div class="modal-content">
             <h3 style="margin-bottom: 15px; color: #ef4444; text-align: center;"><i class="fa-solid fa-lock"></i> دخول لوحة الإدارة</h3>
@@ -666,7 +882,9 @@
 
             <div class="admin-tabs">
                 <button class="admin-tab-btn active" id="tabApprovedBtn" onclick="switchAdminTab('approved')"><i class="fa-solid fa-circle-check"></i> الأنشطة المقبولة</button>
-                <button class="admin-tab-btn" id="tabPendingBtn" onclick="switchAdminTab('pending')"><i class="fa-solid fa-clock"></i> طلبات الانتظار</button>
+                <button class="admin-tab-btn" id="tabPendingBtn" onclick="switchAdminTab('pending')"><i class="fa-solid fa-clock"></i> طلبات الأنشطة (الانتظار)</button>
+                <!-- التبويب الجديد لطلبات إضافة الموقع -->
+                <button class="admin-tab-btn" id="tabLocationPendingBtn" onclick="switchAdminTab('locationPending')"><i class="fa-solid fa-map-location-dot"></i> طلبات إضافة موقع</button>
             </div>
 
             <div id="adminSectionApproved">
@@ -676,6 +894,10 @@
             <div id="adminSectionPending" style="display: none;">
                 <div id="pendingCardsContainer">جاري التحميل...</div>
             </div>
+
+            <div id="adminSectionLocationPending" style="display: none;">
+                <div id="locationPendingCardsContainer">جاري التحميل...</div>
+            </div>
         </div>
     </div>
 
@@ -683,13 +905,13 @@
     <div class="modal" id="confirmDeleteModal">
         <div class="modal-content" style="max-width: 380px; text-align: center;">
             <h3 style="color: #ef4444; margin-bottom: 15px;"><i class="fa-solid fa-triangle-exclamation"></i> تأكيد الحذف</h3>
-            <p style="font-size: 14px; margin-bottom: 20px; color: var(--text-muted);">هل أنت متأكد من حذف هذا الكارت نهائياً؟ سيتم إرسال رسالة واتساب بتأكيد الحذف.</p>
+            <p style="font-size: 14px; margin-bottom: 20px; color: var(--text-muted);">هل أنت متأكد من حذف هذا العنصر نهائياً؟</p>
             <input type="hidden" id="deleteTargetKey">
             <input type="hidden" id="deleteTargetType">
             <input type="hidden" id="deleteTargetName">
             <input type="hidden" id="deleteTargetPhone">
             <div class="modal-actions">
-                <button onclick="executeFinalDelete()" style="background:#ef4444; color:#fff; border:none; padding:10px 20px; border-radius:10px; cursor:pointer; font-weight:700; flex:1;">نعم، حذف وإرسال إشعار</button>
+                <button onclick="executeFinalDelete()" style="background:#ef4444; color:#fff; border:none; padding:10px 20px; border-radius:10px; cursor:pointer; font-weight:700; flex:1;">نعم، حذف نهائي</button>
                 <button class="close-modal" onclick="toggleModal('confirmDeleteModal', false)">إلغاء</button>
             </div>
         </div>
@@ -703,12 +925,13 @@
             <div class="form-group"><label>النوع:</label><input type="text" id="editType"></div>
             <div class="form-group"><label>الاسم:</label><input type="text" id="editName"></div>
             <div class="form-group"><label>العنوان:</label><input type="text" id="editAddress"></div>
+            <div class="form-group"><label>رابط Google Maps:</label><input type="text" id="editMapUrl" placeholder="رابط الخريطة"></div>
             <div class="form-group"><label>سعر أول مرة:</label><input type="text" id="editFirstPrice"></div>
             <div class="form-group"><label>سعر المتابعة:</label><input type="text" id="editFollowPrice"></div>
             <div class="form-group"><label>تفاصيل النشاط:</label><textarea id="editDetails" rows="2"></textarea></div>
             <div class="form-group"><label>مواعيد العمل:</label><input type="text" id="editWorkTime"></div>
             <div class="form-group"><label>الرقم:</label><input type="text" id="editPhone"></div>
-            <div class="form-group"><label>رابط الصورة (ImgBB):</label><input type="text" id="editDriveUrl"></div>
+            <div class="form-group"><label>رابط الصورة (Drive):</label><input type="text" id="editDriveUrl"></div>
 
             <div class="modal-actions">
                 <button class="submit-whatsapp-btn" onclick="saveEditedService()"><i class="fa-solid fa-floppy-disk"></i> حفظ التعديلات</button>
@@ -742,51 +965,6 @@
         let onlyFavorites = false;
         let generatedOTP = "";
 
-        // دالة رفع الصورة إلى ImgBB تلقائياً باستخدام مفتاحك API
-        function uploadImageToImgBB(inputElement) {
-            const file = inputElement.files[0];
-            const statusLabel = document.getElementById('imgUploadStatus');
-            const urlInput = document.getElementById('addImgbbUrl');
-
-            if (!file) return;
-
-            statusLabel.innerText = "جاري رفع الصورة إلى ImgBB...";
-            statusLabel.style.color = "#f59e0b";
-
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = function () {
-                // استخراج Base64 بدون البادئة
-                const base64Image = reader.result.split(',')[1];
-                
-                const formData = new FormData();
-                formData.append("key", "5bdbf78203283c14812e5b92c86833fd");
-                formData.append("image", base64Image);
-
-                fetch("https://api.imgbb.com/1/upload", {
-                    method: "POST",
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(result => {
-                    if (result.success) {
-                        const directUrl = result.data.url; // مثال: https://i.ibb.co/...
-                        urlInput.value = directUrl;
-                        statusLabel.innerText = "تم رفع الصورة بنجاح! (" + directUrl + ")";
-                        statusLabel.style.color = "#25d366";
-                    } else {
-                        statusLabel.innerText = "فشل الرفع، حاول مرة أخرى.";
-                        statusLabel.style.color = "#ef4444";
-                    }
-                })
-                .catch(error => {
-                    console.error("Error uploading to ImgBB:", error);
-                    statusLabel.innerText = "حدث خطأ أثناء الاتصال بخادم الرفع.";
-                    statusLabel.style.color = "#ef4444";
-                });
-            };
-        }
-
         window.initApp = function() {
             const slider = document.getElementById('categories-container');
             let isDown = false, startX, scrollLeft;
@@ -809,6 +987,45 @@
             changeAdhkar();
             loadServicesData();
         };
+        // دالة لجلب الموقع الجغرافي الحالي للمستخدم عبر المتصفح
+function getCurrentLocation() {
+    if (navigator.geolocation) {
+        // إظهار رسالة تنبيه جاري الجلب
+        const mapInput = document.getElementById('locationMapUrl');
+        mapInput.placeholder = "جاري تحديد موقعك الحالي... برجاء السماح للمتصفح";
+        
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const lat = position.coords.latitude;
+                const lng = position.coords.longitude;
+                // إنشاء رابط جوجل ماب للإحداثيات الحالية مباشرة
+                const mapsUrl = `https://www.google.com/maps?q=${lat},${lng}`;
+                mapInput.value = mapsUrl;
+                alert("تم تحديث موقعك الحالي بنجاح! 📍");
+            },
+            (error) => {
+                mapInput.placeholder = "الصق رابط موقعك من جوجل ماب هنا";
+                switch(error.code) {
+                    case error.PERMISSION_DENIED:
+                        alert("تم رفض إذن الوصول للموقع من قبل المستخدم.");
+                        break;
+                    case error.POSITION_UNAVAILABLE:
+                        alert("معلومات الموقع غير متوفرة حالياً.");
+                        break;
+                    case error.TIMEOUT:
+                        alert("انتهت مهلة طلب تحديد الموقع.");
+                        break;
+                    default:
+                        alert("حدث خطأ غير معروف أثناء محاولة جلب الموقع.");
+                        break;
+                }
+            },
+            { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+        );
+    } else {
+        alert("متصفحك لا يدعم خاصية تحديد الموقع الجغرافي (Geolocation).");
+    }
+}
 
         function calculateStars(views) {
             let count = 0;
@@ -839,9 +1056,114 @@
         function toggleFavoritesFilter() {
             onlyFavorites = !onlyFavorites;
             const favBtn = document.getElementById('favoritesFilterBtn');
-            if (onlyFavorites) favBtn.classList.add('active');
-            else favBtn.classList.remove('active');
+            if (onlyFavorites) {
+                favBtn.classList.add('active');
+            } else {
+                favBtn.classList.remove('active');
+            }
             filterAndDisplay();
+        }
+
+        let statsMapCache = {}; 
+
+        function openStatsModal() {
+            document.getElementById('stats-search-input').value = '';
+            statsMapCache = {};
+            servicesList.forEach(item => {
+                let cat = item.type ? item.type.trim() : "أخرى";
+                statsMapCache[cat] = (statsMapCache[cat] || 0) + 1;
+            });
+            renderStatsTable(statsMapCache);
+            toggleModal('statsModal', true);
+        }
+
+        function filterStatsTable() {
+            const query = document.getElementById('stats-search-input').value.toLowerCase().trim();
+            let filteredMap = {};
+            Object.keys(statsMapCache).forEach(cat => {
+                if (cat.toLowerCase().includes(query)) {
+                    filteredMap[cat] = statsMapCache[cat];
+                }
+            });
+            renderStatsTable(filteredMap);
+        }
+
+        function renderStatsTable(statsMap) {
+            const tbody = document.getElementById('statsTableBody');
+            tbody.innerHTML = "";
+            let totalCount = servicesList.length;
+            const query = document.getElementById('stats-search-input') ? document.getElementById('stats-search-input').value.trim() : "";
+            if (!query) {
+                let totalRow = document.createElement('tr');
+                totalRow.innerHTML = `<td><i class="fa-solid fa-globe" style="color:var(--primary);"></i> <strong>إجمالي كافة الأقسام</strong></td><td><strong style="color:var(--primary);">${totalCount} نشاط/شخص</strong></td>`;
+                tbody.appendChild(totalRow);
+            }
+            let keys = Object.keys(statsMap);
+            if (keys.length === 0) {
+                tbody.innerHTML += `<tr><td colspan="2" style="text-align:center; color:var(--text-muted);">لا توجد نتائج مطابقة للبحث</td></tr>`;
+                return;
+            }
+            keys.forEach(cat => {
+                let row = document.createElement('tr');
+                row.innerHTML = `<td><i class="fa-solid fa-tag" style="color:var(--text-muted); font-size:11px;"></i> ${cat}</td><td>${statsMap[cat]} نشاط</td>`;
+                tbody.appendChild(row);
+            });
+        }
+
+        function openStarsRankingModal() {
+            document.getElementById('stars-search-input').value = '';
+            renderStarsTable(servicesList);
+            toggleModal('starsRankingModal', true);
+        }
+
+        function filterStarsRankingTable() {
+            renderStarsTable(servicesList);
+        }
+
+        function renderStarsTable(listToRender) {
+            const tbody = document.getElementById('starsRankingTableBody');
+            tbody.innerHTML = "";
+            let sortedFullList = [...servicesList].sort((a, b) => {
+                let statsA = servicesStatsCache[a.id] || { views: 0, likes: 0 };
+                let statsB = servicesStatsCache[b.id] || { views: 0, likes: 0 };
+                if ((statsB.views || 0) !== (statsA.views || 0)) {
+                    return (statsB.views || 0) - (statsA.views || 0);
+                }
+                return (statsB.likes || 0) - (statsA.likes || 0);
+            });
+
+            let listToDisplay = sortedFullList.filter(item => {
+                const query = document.getElementById('stars-search-input').value.toLowerCase().trim();
+                if (!query) return true;
+                let name = item.doctor ? item.doctor.toLowerCase() : "";
+                let type = item.type ? item.type.toLowerCase() : "";
+                let phone = item.phone ? item.phone.toLowerCase() : "";
+                return name.includes(query) || type.includes(query) || phone.includes(query);
+            });
+
+            if (listToDisplay.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">لا توجد نتائج مطابقة للبحث</td></tr>`;
+            } else {
+                listToDisplay.forEach((item) => {
+                    let globalIndex = sortedFullList.findIndex(i => i.id === item.id);
+                    let stats = servicesStatsCache[item.id] || { views: 0, likes: 0 };
+                    let views = stats.views || 0;
+                    let likes = stats.likes || 0;
+                    
+                    let row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td><strong style="color:var(--primary);">#${globalIndex + 1}</strong></td>
+                        <td>
+                            <div style="font-weight:700;">${item.doctor}</div>
+                            <div style="font-size:11px; color:var(--text-muted);">${item.type} ${item.phone ? ' | 📞 ' + item.phone : ''}</div>
+                        </td>
+                        <td><div class="rating-stars">${calculateStars(views)}</div></td>
+                        <td><i class="far fa-eye" style="color:var(--text-muted);"></i> ${views}</td>
+                        <td><i class="fas fa-heart" style="color:#e74c3c;"></i> ${likes}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            }
         }
 
         function toggleLike(itemId, event) {
@@ -928,6 +1250,17 @@
             toggleModal('imageModal', true);
         }
 
+        function formatDriveImage(url) {
+            if (!url) return "";
+            if (url.includes('drive.google.com')) {
+                let match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+                if (match && match[1]) {
+                    return `https://lh3.googleusercontent.com/d/${match[1]}`;
+                }
+            }
+            return url;
+        }
+
         function togglePasswordVisibility() {
             let passwordInput = document.getElementById('adminPassword');
             let icon = document.getElementById('togglePasswordIcon');
@@ -946,6 +1279,7 @@
             if (sessionStorage.getItem('admin_logged_in') === 'true') {
                 loadApprovedServicesForAdmin();
                 loadPendingRequestsForAdmin();
+                loadLocationPendingRequestsForAdmin();
                 toggleModal('adminDashboardModal', true);
             } else {
                 toggleModal('adminLoginModal', true);
@@ -961,15 +1295,9 @@
                 return;
             }
 
-            if (!window.FB) {
-                alert("جاري الاتصال بقاعدة البيانات، حاول بعد قليل");
-                return;
-            }
-
             window.FB.signInWithEmailAndPassword(window.FB.auth, email, password)
                 .then((userCredential) => {
                     generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
-
                     emailjs.send("service_k7ftnle", "template_60xuzhi", {
                         email: email,
                         passcode: generatedOTP
@@ -978,13 +1306,11 @@
                         toggleModal('adminLoginModal', false);
                         toggleModal('otpModal', true);
                     }, (err) => {
-                        console.error("EmailJS Error:", err);
                         alert("خطأ في إرسال الإيميل: " + (err.text || JSON.stringify(err)));
                     });
                 })
                 .catch((error) => {
                     alert("خطأ في بيانات الدخول: البريد الإلكتروني أو كلمة المرور غير صحيحة!");
-                    console.error(error);
                 });
         }
 
@@ -992,11 +1318,11 @@
             let enteredOTP = document.getElementById('otpInput').value.trim();
             if (enteredOTP === generatedOTP) {
                 sessionStorage.setItem('admin_logged_in', 'true');
-
                 alert("تم التحقق من الكود بنجاح! جارٍ فتح لوحة الإدارة...");
                 toggleModal('otpModal', false);
                 loadApprovedServicesForAdmin();
                 loadPendingRequestsForAdmin();
+                loadLocationPendingRequestsForAdmin();
                 toggleModal('adminDashboardModal', true);
                 document.getElementById('otpInput').value = '';
                 document.getElementById('adminPassword').value = '';
@@ -1008,28 +1334,41 @@
         function switchAdminTab(tab) {
             const tabPendingBtn = document.getElementById('tabPendingBtn');
             const tabApprovedBtn = document.getElementById('tabApprovedBtn');
+            const tabLocationPendingBtn = document.getElementById('tabLocationPendingBtn');
             const sectionPending = document.getElementById('adminSectionPending');
             const sectionApproved = document.getElementById('adminSectionApproved');
+            const sectionLocationPending = document.getElementById('adminSectionLocationPending');
 
             if (tab === 'approved') {
                 tabApprovedBtn.classList.add('active');
                 tabPendingBtn.classList.remove('active');
+                tabLocationPendingBtn.classList.remove('active');
                 sectionApproved.style.display = 'block';
                 sectionPending.style.display = 'none';
+                sectionLocationPending.style.display = 'none';
                 loadApprovedServicesForAdmin();
-            } else {
+            } else if (tab === 'pending') {
                 tabPendingBtn.classList.add('active');
                 tabApprovedBtn.classList.remove('active');
+                tabLocationPendingBtn.classList.remove('active');
                 sectionPending.style.display = 'block';
                 sectionApproved.style.display = 'none';
+                sectionLocationPending.style.display = 'none';
                 loadPendingRequestsForAdmin();
+            } else if (tab === 'locationPending') {
+                tabLocationPendingBtn.classList.add('active');
+                tabApprovedBtn.classList.remove('active');
+                tabPendingBtn.classList.remove('active');
+                sectionLocationPending.style.display = 'block';
+                sectionApproved.style.display = 'none';
+                sectionPending.style.display = 'none';
+                loadLocationPendingRequestsForAdmin();
             }
         }
 
         function loadApprovedServicesForAdmin() {
             const container = document.getElementById('approvedCardsContainer');
             container.innerHTML = "جاري التحميل...";
-            
             let allApproved = [...servicesList];
 
             if (allApproved.length === 0) {
@@ -1039,23 +1378,23 @@
 
             container.innerHTML = "";
             allApproved.forEach(item => {
-                let imageHTML = item.image ? `<img src="${item.image}" style="width:100%; height:120px; object-fit:cover; border-radius:8px; margin-bottom:8px;" alt="صورة">` : '';
+                let processedImgUrl = formatDriveImage(item.image);
+                let imageHTML = processedImgUrl ? `<img src="${processedImgUrl}" style="width:100%; height:120px; object-fit:cover; border-radius:8px; margin-bottom:8px;" alt="صورة">` : '';
 
                 let cardDiv = document.createElement('div');
                 cardDiv.className = 'admin-card';
                 cardDiv.innerHTML = `
                     ${imageHTML}
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
-                        <div style="font-weight:900; font-size:16px; color:var(--primary);">${item.doctor} (${item.type})</div>
+                        <div style="font-weight:900; font-size:16px; color:var(--primary);">${item.doctor || 'بدون اسم'} (${item.type || 'موقع'})</div>
                         <div style="font-size:12px; background:rgba(56,189,248,0.1); padding:3px 8px; border-radius:6px; color:var(--primary); border:1px solid rgba(56,189,248,0.2);">
                             📞 ${item.phone || '---'}
                         </div>
                     </div>
-                    <div style="font-size:12.5px; color:var(--text-muted); margin-bottom:10px;">العنوان: ${item.address || '---'} | تفاصيل: ${item.details || '---'}</div>
+                    <div style="font-size:12.5px; color:var(--text-muted); margin-bottom:10px;">العنوان: ${item.address || '---'} | الخريطة: ${item.mapUrl ? 'موجود' : 'غير متوفر'}</div>
                     <div style="display:flex; gap:10px;">
-                        ${item.id.startsWith('doc_') ? '<span style="font-size:12px; color:#10b981; align-self:center;">(مستورد من الشيت)</span>' : ''}
                         <button onclick="openEditModal('${item.id}')" style="background:#f59e0b; color:#fff; border:none; padding:6px 15px; border-radius:8px; cursor:pointer; font-weight:700;"><i class="fa-solid fa-pen"></i> تعديل</button>
-                        <button onclick="promptDelete('${item.id}', 'approved', '${item.doctor}', '${item.phone}')" style="background:#ef4444; color:#fff; border:none; padding:6px 15px; border-radius:8px; cursor:pointer; font-weight:700;"><i class="fa-solid fa-trash"></i> حذف وإرسال إشعار</button>
+                        <button onclick="promptDelete('${item.id}', 'approved', '${item.doctor || 'موقع'}', '${item.phone}')" style="background:#ef4444; color:#fff; border:none; padding:6px 15px; border-radius:8px; cursor:pointer; font-weight:700;"><i class="fa-solid fa-trash"></i> حذف</button>
                     </div>
                 `;
                 container.appendChild(cardDiv);
@@ -1071,7 +1410,7 @@
                 const data = snapshot.val();
                 container.innerHTML = "";
                 if (!data) {
-                    container.innerHTML = "<p style='text-align:center; color:var(--text-muted);'>لا توجد طلبات انتظار جديدة.</p>";
+                    container.innerHTML = "<p style='text-align:center; color:var(--text-muted);'>لا توجد طلبات انتظار جديدة للأنشطة.</p>";
                     return;
                 }
 
@@ -1081,7 +1420,7 @@
                     cardDiv.className = 'admin-card';
                     cardDiv.innerHTML = `
                         <div style="font-weight:900; font-size:16px; color:var(--primary); margin-bottom:5px;">${item.doctor} (${item.type})</div>
-                        <div style="font-size:12.5px; color:var(--text-muted); margin-bottom:8px;">العنوان: ${item.address || '---'} | الهاتف: ${item.phone}</div>
+                        <div style="font-size:12.5px; color:var(--text-muted); margin-bottom:8px;">العنوان: ${item.address || '---'} | خريطة: ${item.mapUrl ? 'موجود' : 'لا'}</div>
                         <div style="display:flex; gap:10px;">
                             <button onclick="approveRequest('${key}')" style="background:#25d366; color:#fff; border:none; padding:6px 15px; border-radius:8px; cursor:pointer; font-weight:700;"><i class="fa-solid fa-check"></i> قبول</button>
                             <button onclick="promptDelete('${key}', 'pending', '${item.doctor}', '${item.phone}')" style="background:#ef4444; color:#fff; border:none; padding:6px 15px; border-radius:8px; cursor:pointer; font-weight:700;"><i class="fa-solid fa-xmark"></i> رفض</button>
@@ -1090,6 +1429,102 @@
                     container.appendChild(cardDiv);
                 });
             });
+        }
+
+        function loadLocationPendingRequestsForAdmin() {
+            const container = document.getElementById('locationPendingCardsContainer');
+            container.innerHTML = "جاري التحميل...";
+            if (!window.FB) return;
+
+            window.FB.get(window.FB.ref(window.FB.db, 'location_pending_requests')).then((snapshot) => {
+                const data = snapshot.val();
+                container.innerHTML = "";
+                if (!data) {
+                    container.innerHTML = "<p style='text-align:center; color:var(--text-muted);'>لا توجد طلبات إضافة مواقع جديدة.</p>";
+                    return;
+                }
+
+                Object.keys(data).forEach(key => {
+                    let item = data[key];
+                    let cardDiv = document.createElement('div');
+                    cardDiv.className = 'admin-card';
+                    cardDiv.innerHTML = `
+                        <div style="font-weight:900; font-size:16px; color:#ea4335; margin-bottom:5px;"><i class="fa-solid fa-map-pin"></i> طلب إضافة موقع جديد</div>
+                        <div style="font-size:12.5px; color:var(--text-main); margin-bottom:4px;"><strong>رابط الخريطة:</strong> <a href="${item.mapUrl}" target="_blank" style="color:var(--primary);">${item.mapUrl}</a></div>
+                        <div style="font-size:12.5px; color:var(--text-muted); margin-bottom:10px;"><strong>رقم التلفون:</strong> ${item.phone}</div>
+                        <div style="display:flex; gap:10px;">
+                            <button onclick="approveLocationRequest('${key}')" style="background:#25d366; color:#fff; border:none; padding:6px 15px; border-radius:8px; cursor:pointer; font-weight:700;"><i class="fa-solid fa-check"></i> قبول وإضافة</button>
+                            <button onclick="rejectLocationRequest('${key}')" style="background:#ef4444; color:#fff; border:none; padding:6px 15px; border-radius:8px; cursor:pointer; font-weight:700;"><i class="fa-solid fa-xmark"></i> رفض (حذف نهائي)</button>
+                        </div>
+                    `;
+                    container.appendChild(cardDiv);
+                });
+            });
+        }
+
+        function submitNewLocation() {
+            let mapUrl = document.getElementById('locationMapUrl').value.trim();
+            let phone = document.getElementById('locationPhone').value.trim();
+
+            if (!mapUrl || !phone) {
+                alert("برجاء إدخال رابط الخريطة ورقم التلفون");
+                return;
+            }
+
+            let newLocationEntry = {
+                mapUrl: mapUrl,
+                phone: phone,
+                timestamp: Date.now()
+            };
+
+            if (window.FB) {
+                window.FB.push(window.FB.ref(window.FB.db, 'location_pending_requests'), newLocationEntry)
+                    .then(() => {
+                        // إرسال واتساب بالصيغة المطلوبة
+                        let cleanPhone = "201012345678"; // يمكنك تغيير هذا الرقم لرقمك الخاص باستقبال الطلبات
+                        let message = encodeURIComponent(`برجاء اضف موقعى\nموقعه: ${mapUrl}\nورقمه: ${phone}`);
+                        window.open(`https://wa.me/${cleanPhone}?text=${message}`, '_blank');
+
+                        toggleModal('addLocationModal', false);
+                        alert("تم إرسال طلب موقعك لقائمة الانتظار بنجاح!");
+                        
+                        document.getElementById('locationMapUrl').value = '';
+                        document.getElementById('locationPhone').value = '';
+                    });
+            }
+        }
+
+        function approveLocationRequest(key) {
+            window.FB.get(window.FB.ref(window.FB.db, 'location_pending_requests/' + key)).then((snapshot) => {
+                let val = snapshot.val();
+                if (val) {
+                    // يحفظ مع رقم الكارت تلقائياً في approved_services
+                    let newApprovedItem = {
+                        type: "موقع خارجي",
+                        doctor: "موقع معتمد (" + val.phone + ")",
+                        address: "عرض الموقع على الخريطة",
+                        mapUrl: val.mapUrl,
+                        phone: val.phone,
+                        details: "تمت الإضافة عبر خدمة اضف مكانك",
+                        timestamp: Date.now()
+                    };
+                    window.FB.push(window.FB.ref(window.FB.db, 'approved_services'), newApprovedItem);
+                    window.FB.remove(window.FB.ref(window.FB.db, 'location_pending_requests/' + key));
+                    alert("تم قبول الموقع وربطه بالمنصة بنجاح!");
+                    loadLocationPendingRequestsForAdmin();
+                    loadApprovedServicesForAdmin();
+                    loadServicesData();
+                }
+            });
+        }
+
+        function rejectLocationRequest(key) {
+            if (confirm("هل أنت متأكد من رفض وحذف الموقع نهائياً من فايربيس؟")) {
+                window.FB.remove(window.FB.ref(window.FB.db, 'location_pending_requests/' + key)).then(() => {
+                    alert("تم حذف الموقع نهائياً من قاعدة البيانات!");
+                    loadLocationPendingRequestsForAdmin();
+                });
+            }
         }
 
         function promptDelete(key, type, name, phone) {
@@ -1103,24 +1538,12 @@
         function executeFinalDelete() {
             let key = document.getElementById('deleteTargetKey').value;
             let type = document.getElementById('deleteTargetType').value;
-            let targetName = document.getElementById('deleteTargetName').value;
-            let targetPhone = document.getElementById('deleteTargetPhone').value;
             let path = type === 'approved' ? 'approved_services/' + key : 'pending_requests/' + key;
 
             if (window.FB) {
                 window.FB.remove(window.FB.ref(window.FB.db, path)).then(() => {
                     toggleModal('confirmDeleteModal', false);
-                    
-                    let waText = `⚠️ *تنبيه إداري: تم حذف نشاط من المنصة*\n\n` +
-                                 `👤 *اسم النشاط/الشخص:* ${targetName}\n` +
-                                 `📞 *رقم الهاتف:* ${targetPhone || 'غير محدد'}\n` +
-                                 `🗑️ *الحالة:* تم إزالة الكارت نهائياً بواسطة الأدمن.`;
-                    
-                    let ownerPhone = "201023745774"; 
-                    let whatsappUrl = `https://wa.me/${ownerPhone}?text=` + encodeURIComponent(waText);
-                    window.open(whatsappUrl, '_blank');
-
-                    alert("تم الحذف نهائياً وإرسال رسالة تأكيد الحذف عبر الواتساب بنجاح!");
+                    alert("تم الحذف نهائياً بنجاح!");
                     if (type === 'approved') loadApprovedServicesForAdmin();
                     else loadPendingRequestsForAdmin();
                     loadServicesData();
@@ -1134,7 +1557,7 @@
                 if (val) {
                     window.FB.push(window.FB.ref(window.FB.db, 'approved_services'), val);
                     window.FB.remove(window.FB.ref(window.FB.db, 'pending_requests/' + key));
-                    alert("تم قبول الكارت بنجاح ليراه الزائر الجديد!");
+                    alert("تم قبول الكارت بنجاح!");
                     loadPendingRequestsForAdmin();
                     loadApprovedServicesForAdmin();
                     loadServicesData();
@@ -1151,6 +1574,7 @@
                     document.getElementById('editType').value = item.type || '';
                     document.getElementById('editName').value = item.doctor || '';
                     document.getElementById('editAddress').value = item.address || '';
+                    document.getElementById('editMapUrl').value = item.mapUrl || '';
                     document.getElementById('editFirstPrice').value = item.firstPrice || '';
                     document.getElementById('editFollowPrice').value = item.followPrice || '';
                     document.getElementById('editDetails').value = item.details || '';
@@ -1168,6 +1592,7 @@
                 type: document.getElementById('editType').value.trim(),
                 doctor: document.getElementById('editName').value.trim(),
                 address: document.getElementById('editAddress').value.trim(),
+                mapUrl: document.getElementById('editMapUrl').value.trim(),
                 firstPrice: document.getElementById('editFirstPrice').value.trim(),
                 followPrice: document.getElementById('editFollowPrice').value.trim(),
                 details: document.getElementById('editDetails').value.trim(),
@@ -1176,11 +1601,6 @@
                 image: document.getElementById('editDriveUrl').value.trim()
             };
 
-            if (!updatedData.type || !updatedData.doctor || !updatedData.address || !updatedData.phone) {
-                alert("برجاء إدخال الحقول الأساسية (النوع، الاسم، العنوان، ورقم الهاتف)");
-                return;
-            }
-
             if (window.FB) {
                 window.FB.update(window.FB.ref(window.FB.db, 'approved_services/' + key), updatedData)
                     .then(() => {
@@ -1188,24 +1608,22 @@
                         toggleModal('editServiceModal', false);
                         loadApprovedServicesForAdmin();
                         loadServicesData();
-                    })
-                    .catch(err => alert("حدث خطأ أثناء التحديث: " + err.message));
+                    });
             }
         }
 
         function submitNewActivity() {
-            let imgUrl = document.getElementById('addImgbbUrl').value.trim();
-            
             let newEntry = { 
                 type: document.getElementById('addType').value.trim(), 
                 doctor: document.getElementById('addName').value.trim(), 
                 address: document.getElementById('addAddress').value.trim(),
+                mapUrl: document.getElementById('addMapUrl').value.trim(),
                 firstPrice: document.getElementById('addFirstPrice').value.trim(), 
                 followPrice: document.getElementById('addFollowPrice').value.trim(), 
                 details: document.getElementById('addDetails').value.trim(), 
                 workTime: document.getElementById('addWorkTime').value.trim(), 
                 phone: document.getElementById('addPhone').value.trim(), 
-                image: imgUrl, 
+                image: document.getElementById('addDriveUrl').value.trim(), 
                 status: "قيد الانتظار", 
                 timestamp: Date.now() 
             };
@@ -1219,37 +1637,19 @@
                 window.FB.push(window.FB.ref(window.FB.db, 'pending_requests'), newEntry);
             }
 
-            let waText = `🔔 *طلب إضافة نشاط جديد بالمنصة:*\n\n` +
-                         `📌 *النوع:* ${newEntry.type}\n` +
-                         `👤 *الاسم:* ${newEntry.doctor}\n` +
-                         `📍 *العنوان:* ${newEntry.address}\n` +
-                         `💰 *سعر أول مرة:* ${newEntry.firstPrice || 'غير محدد'}\n` +
-                         `💵 *سعر المتابعة:* ${newEntry.followPrice || 'غير محدد'}\n` +
-                         `📝 *التفاصيل:* ${newEntry.details || 'لا توجد'}\n` +
-                         `⏰ *مواعيد العمل:* ${newEntry.workTime || 'غير محددة'}\n` +
-                         `📞 *رقم الهاتف:* ${newEntry.phone}\n` +
-                         `🖼️ *رابط ImgBB:* ${newEntry.image || 'لا توجد'}\n\n` +
-                         `_تم إرسال هذا الطلب تلقائياً للمراجعة._`;
-
-            let encodedMsg = encodeURIComponent(waText);
-            let ownerPhone = "201023745774"; 
-            let whatsappUrl = `https://wa.me/${ownerPhone}?text=${encodedMsg}`;
-
-            window.open(whatsappUrl, '_blank');
             toggleModal('addModal', false);
-            alert("تم حفظ البيانات وإرسالها لقائمة الانتظار بنجاح، وتم تجهيز رسالة الواتساب لتصلك فوراً!");
+            alert("تم إرسال طلبك بنجاح للمراجعة!");
             
             document.getElementById('addType').value = '';
             document.getElementById('addName').value = '';
             document.getElementById('addAddress').value = '';
+            document.getElementById('addMapUrl').value = '';
             document.getElementById('addFirstPrice').value = '';
             document.getElementById('addFollowPrice').value = '';
             document.getElementById('addDetails').value = '';
             document.getElementById('addWorkTime').value = '';
             document.getElementById('addPhone').value = '';
-            document.getElementById('addImageFile').value = '';
-            document.getElementById('addImgbbUrl').value = '';
-            document.getElementById('imgUploadStatus').innerText = "اختر صورة من هاتفك وسيتم رفعها تلقائياً.";
+            document.getElementById('addDriveUrl').value = '';
         }
 
         function parseCSV(text) {
@@ -1286,12 +1686,12 @@
                         let workTime = cols[5] ? cols[5].trim() : "";     
                         let phone = cols[6] ? cols[6].trim() : "";         
                         let image = cols[7] ? cols[7].trim() : "";         
+                        let mapUrl = cols[8] ? cols[8].trim() : "";
 
                         if (type && type !== "نوع") {
                             let cleanPhoneId = phone ? phone.replace(/\D/g, '') : ('doc_' + index);
                             let uniqueId = "person_" + cleanPhoneId; 
-
-                            servicesList.push({ id: uniqueId, type, doctor, firstPrice, followPrice, details, workTime, phone, image });
+                            servicesList.push({ id: uniqueId, type, doctor, firstPrice, followPrice, details, workTime, phone, image, mapUrl });
                         }
                     });
 
@@ -1382,14 +1782,18 @@
                 if (onlyFavorites && !isLiked) return false;
 
                 const matchCat = (currentCategory === "الكل" || item.type === currentCategory);
-                const matchSearch = item.doctor.toLowerCase().includes(searchText) || (item.address && item.address.toLowerCase().includes(searchText)) || item.details.toLowerCase().includes(searchText) || item.type.toLowerCase().includes(searchText);
+                const docName = item.doctor ? item.doctor.toLowerCase() : "";
+                const itemAddr = item.address ? item.address.toLowerCase() : "";
+                const itemDet = item.details ? item.details.toLowerCase() : "";
+                const itemType = item.type ? item.type.toLowerCase() : "";
+
+                const matchSearch = docName.includes(searchText) || itemAddr.includes(searchText) || itemDet.includes(searchText) || itemType.includes(searchText);
                 return matchCat && matchSearch;
             });
 
             filtered.sort((a, b) => {
                 let statsA = servicesStatsCache[a.id] || { views: 0, likes: 0 };
                 let statsB = servicesStatsCache[b.id] || { views: 0, likes: 0 };
-                
                 if ((statsB.views || 0) !== (statsA.views || 0)) {
                     return (statsB.views || 0) - (statsA.views || 0);
                 }
@@ -1414,17 +1818,31 @@
                         <div style="display: flex; gap: 8px; margin-top: 8px; align-items: center;">
                             <a onclick="handleActionClick('${item.id}', 'tel:${item.phone}', 'tel')" class="action-link-btn"><i class="fa-solid fa-phone"></i> اتصال</a>
                             <a onclick="handleActionClick('${item.id}', 'https://wa.me/${cleanPhone}?text=${waMsg}', 'whatsapp')" class="action-link-btn whatsapp"><i class="fa-brands fa-whatsapp"></i> واتساب</a>
-                            <button onclick="shareCard('${item.id}', '${item.doctor}', '${item.type}', event)" class="share-card-btn" title="مشاركة كارتي"><i class="fa-solid fa-share-nodes"></i></button>
+                            <button onclick="shareCard('${item.id}', '${item.doctor || 'نشاط'}', '${item.type}', event)" class="share-card-btn" title="مشاركة كارتي"><i class="fa-solid fa-share-nodes"></i></button>
                         </div>
                     `;
                 }
 
-                let imageHTML = item.image ? `
-                    <div class="card-img-container" onclick="openImagePreview('${item.image}', '${item.doctor}', '${item.id}')">
-                        <img src="${item.image}" class="card-img" alt="صورة">
+                let processedImgUrl = formatDriveImage(item.image);
+                let imageHTML = processedImgUrl ? `
+                    <div class="card-img-container" onclick="openImagePreview('${processedImgUrl}', '${item.doctor}', '${item.id}')">
+                        <img src="${processedImgUrl}" class="card-img" alt="صورة">
                         <div class="img-badge"><i class="fa-solid fa-magnifying-glass"></i> اضغط للمعاينة</div>
                     </div>
                 ` : '';
+
+                let addressHTML = '';
+                if (item.address || item.mapUrl) {
+                    let finalMapLink = item.mapUrl ? item.mapUrl : `https://www.google.com/maps/search/?api=1&query=` + encodeURIComponent(item.address + " كفر شكر");
+                    addressHTML = `
+                        <div style="font-size: 13px; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+                            <a href="${finalMapLink}" target="_blank" title="افتح الموقع على خريطة جوجل" style="color: var(--primary); text-decoration: none; display: inline-flex; align-items: center; gap: 6px; font-weight: 700;">
+                                <i class="fa-solid fa-map-location-dot" style="font-size: 15px; color: #ef4444;"></i> ${item.address || 'عرض الموقع على الخريطة'} 
+                                <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 10px; opacity: 0.7;"></i>
+                            </a>
+                        </div>
+                    `;
+                }
 
                 let isLiked = localStorage.getItem('user_liked_' + item.id) === 'true';
                 let stats = servicesStatsCache[item.id] || { views: 0, likes: 0 };
@@ -1435,9 +1853,9 @@
                     <div class="card-body">
                         <div>
                             <span class="service-tag">${item.type}</span>
-                            <div class="service-title">${item.doctor}</div>
+                            <div class="service-title">${item.doctor || 'بدون اسم'}</div>
                             <div class="rating-stars" id="stars-${item.id}">${currentStarsHTML}</div>
-                            ${item.address ? `<div style="font-size: 13px; color: var(--primary); margin-bottom: 8px;"><i class="fa-solid fa-location-dot"></i> ${item.address}</div>` : ''}
+                            ${addressHTML}
                             ${item.details ? `<div class="service-details">${item.details}</div>` : ''}
                         </div>
                         <div style="margin-top: 15px;">
@@ -1460,7 +1878,7 @@
                             <div class="interaction-bar">
                                 <span style="color: var(--text-muted);"><i class="far fa-eye"></i> المشاهدات: <span id="views-${item.id}">${stats.views || 0}</span></span>
                                 <button id="like-btn-${item.id}" class="like-btn ${isLiked ? 'liked' : ''}" onclick="toggleLike('${item.id}', event)">
-                                    <i class="fas fa-heart"></i> إعجاب: <span id="likes-${item.id}">${stats.likes || 0}</span>
+                                    <i class="fas fa-heart"></i> إعجاب: <span id="likes-${item.id}">${stats.likes === undefined ? 0 : stats.likes}</span>
                                 </button>
                             </div>
                             ${actionBtnHTML}

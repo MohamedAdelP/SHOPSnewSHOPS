@@ -1,0 +1,2412 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة كفر شكر المجتمعية</title>
+    <!-- أيقونة الموقع -->
+    <link rel="icon" type="image/png" href="https://i.ibb.co/5X79X05/map-pin.png">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- مكتبة EmailJS -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script type="text/javascript">
+       (function(){
+          emailjs.init("FQFGijHqvlbXqbtWq");
+       })();
+    </script>
+    <link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#2563eb">
+
+    <!-- مكتبات Firebase الإصدار المعياري (Modular SDKs) عبر CDN -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, onValue, get, push, update, remove, runTransaction } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        
+        const firebaseConfig = {
+            apiKey: "AIzaSyAU-H5PM8i9ptXC9d3id1wTiOIwEvAFBNQ",
+            authDomain: "kafr-shokr.firebaseapp.com",
+            databaseURL: "https://kafr-shokr-default-rtdb.firebaseio.com",
+            projectId: "kafr-shokr",
+            storageBucket: "kafr-shokr.firebasestorage.app",
+            messagingSenderId: "271572065923",
+            appId: "1:271572065923:web:e116ec6ae8319f623245b6",
+            measurementId: "G-X9HJV2F09R"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const auth = getAuth(app);
+
+        window.FB = { db, auth, ref, onValue, get, push, update, remove, runTransaction, signInWithEmailAndPassword };
+        
+        if (typeof window.initApp === 'function') {
+            window.initApp();
+        }
+    </script>
+
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(56, 189, 248, 0.4);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --primary: #38bdf8;
+            --primary-hover: #0ea5e9;
+            --btn-text: #0f172a;
+            --hero-gradient: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+        }
+
+        [data-theme="light"] {
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --border-color: rgba(0, 0, 0, 0.06);
+            --border-hover: rgba(0, 119, 182, 0.3);
+            --text-main: #212529;
+            --text-muted: #6c757d;
+            --primary: #0077b6;
+            --primary-hover: #023e8a;
+            --btn-text: #ffffff;
+            --hero-gradient: linear-gradient(135deg, #ffffff 0%, #f1f3f5 100%);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease; }
+        body { background-color: var(--bg-color); color: var(--text-main); min-height: 100vh; padding: 25px 15px; }
+        .container { width: 100%; max-width: 1100px; margin: 0 auto; }
+
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .back-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 13.5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .back-link:hover { text-decoration: underline; }
+
+        .top-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            background: rgba(56, 189, 248, 0.08);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            padding: 6px 14px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+        .action-btn:hover { background: var(--primary); color: var(--btn-text); }
+        
+        .whatsapp-add-btn {
+            background: rgba(37, 211, 102, 0.1);
+            border-color: #25d366;
+            color: #25d366;
+        }
+        .whatsapp-add-btn:hover { background: #25d366; color: #fff; }
+
+        .map-add-btn {
+            background: rgba(234, 67, 53, 0.1);
+            border-color: #ea4335;
+            color: #ea4335;
+        }
+        .map-add-btn:hover { background: #ea4335; color: #fff; }
+
+        .admin-nav-btn {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: #ef4444;
+            color: #ef4444;
+        }
+        .admin-nav-btn:hover { background: #ef4444; color: #fff; }
+
+        .info-nav-btn {
+            background: rgba(245, 158, 11, 0.1);
+            border-color: #f59e0b;
+            color: #f59e0b;
+        }
+        .info-nav-btn:hover { background: #f59e0b; color: #fff; }
+
+        .stars-ranking-btn {
+            background: rgba(251, 191, 36, 0.1);
+            border-color: #fbbf24;
+            color: #fbbf24;
+        }
+        .stars-ranking-btn:hover { background: #fbbf24; color: #0f172a; }
+
+        .adhkar-banner {
+            background: rgba(56, 189, 248, 0.07);
+            border: 1px dashed rgba(56, 189, 248, 0.3);
+            color: var(--primary);
+            padding: 10px 18px;
+            border-radius: 16px;
+            font-size: 13.5px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .hero-banner {
+            background: var(--hero-gradient);
+            border: 1px solid var(--border-color);
+            padding: 30px 20px;
+            border-radius: 24px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+            margin-bottom: 25px;
+        }
+        .hero-banner h1 { font-size: 24px; font-weight: 900; margin-bottom: 8px; }
+        .hero-banner p { color: var(--text-muted); font-size: 13.5px; }
+
+        .controls-section { background: var(--card-bg); padding: 20px; border-radius: 20px; border: 1px solid var(--border-color); margin-bottom: 25px; display: flex; flex-direction: column; gap: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.02); }
+        
+        .search-box { position: relative; width: 100%; }
+        .search-box input {
+            width: 100%;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            padding: 12px 45px 12px 40px;
+            border-radius: 14px;
+            color: var(--text-main);
+            font-size: 14px;
+            outline: none;
+        }
+        .search-box input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15); }
+        .search-icon { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); font-size: 15px; color: var(--text-muted); }
+        .clear-search { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); font-size: 13px; color: var(--text-muted); cursor: pointer; display: none; background: none; border: none; }
+        .clear-search:hover { color: var(--primary); }
+
+        .categories-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            flex-wrap: wrap;
+        }
+
+        .filter-group-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .favorites-filter-btn {
+            background: var(--bg-color);
+            border: 1px solid rgba(231, 76, 60, 0.4);
+            color: #e74c3c;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+        .favorites-filter-btn.active {
+            background: #e74c3c;
+            color: #fff;
+            border-color: #e74c3c;
+        }
+        .favorites-filter-btn:hover {
+            border-color: #e74c3c;
+        }
+
+        .stats-tab-btn {
+            background: var(--bg-color);
+            border: 1px solid rgba(56, 189, 248, 0.4);
+            color: var(--primary);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            white-space: nowrap;
+            flex-shrink: 0;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+        .stats-tab-btn:hover {
+            background: var(--primary);
+            color: var(--btn-text);
+        }
+
+        .categories-container { 
+            display: flex; 
+            gap: 8px; 
+            overflow-x: auto; 
+            padding-bottom: 5px; 
+            scrollbar-width: thin; 
+            scrollbar-color: var(--border-color) transparent;
+            cursor: grab;
+            user-select: none;
+            scroll-behavior: smooth;
+            flex-grow: 1;
+        }
+        .categories-container:active { cursor: grabbing; }
+        .categories-container::-webkit-scrollbar { height: 6px; }
+        .categories-container::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 10px; }
+        
+        .cat-btn {
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 13px;
+            color: var(--text-main);
+            cursor: pointer;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .cat-btn.active, .cat-btn:hover { background: var(--primary); color: var(--btn-text); border-color: var(--primary); }
+
+        .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+        
+        .service-card {
+            background-color: var(--card-bg);
+            border: 1.5px solid var(--border-color);
+            border-radius: 22px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+        .service-card:hover { 
+            transform: translateY(-6px); 
+            border-color: var(--border-hover); 
+            box-shadow: 0 18px 35px rgba(56, 189, 248, 0.1); 
+        }
+
+        /* -------------------------------------------------------------------------- */
+        /* تصميم الإطارات الخاصة بكل نجمة (مستوحاة بدقة من ألعاب الأبطال والنيون والهالة) */
+        /* -------------------------------------------------------------------------- */
+
+        /* ضبط عام لكل الكارتات لتكون ناعمة وبدون إضاءات مزعجة */
+
+/* ضبط عام لشكل وملمس الكروت */
+.service-card {
+    border-radius: 16px;
+    transition: all 0.3s ease;
+    background-color: var(--card-bg, #0f172a);
+    position: relative;
+}
+
+.service-card:hover {
+    transform: translateY(-4px);
+}
+
+/* 1 نجمة: برونزي */
+.service-card.star-1 {
+    border: 3px solid #b45309;
+    box-shadow: 0 0 15px rgba(180, 83, 9, 0.25);
+}
+
+/* 2 نجوم: أزرق */
+.service-card.star-2 {
+    border: 3px solid #2563eb;
+    box-shadow: 0 0 18px rgba(37, 99, 235, 0.3);
+}
+
+/* 3 نجوم: ذهبي كلاسيكي */
+.service-card.star-3 {
+    border: 3px solid #ca8a04;
+    box-shadow: 0 0 20px rgba(202, 138, 4, 0.35), inset 0 0 8px rgba(202, 138, 4, 0.2);
+}
+
+/* 4 نجوم: أزرق ملكي عميق */
+.service-card.star-4 {
+    border: 3.5px solid #1d4ed8;
+    box-shadow: 0 0 22px rgba(29, 78, 216, 0.4), inset 0 0 10px rgba(29, 78, 216, 0.25);
+}
+
+/* 5 نجوم: زمردي أخضر */
+.service-card.star-5 {
+    border: 3.5px solid #059669;
+    box-shadow: 0 0 25px rgba(5, 150, 105, 0.45), inset 0 0 12px rgba(5, 150, 105, 0.3);
+    animation: glow5 3s infinite alternate;
+}
+@keyframes glow5 {
+    0% { box-shadow: 0 0 20px rgba(5, 150, 105, 0.35); }
+    100% { box-shadow: 0 0 30px rgba(5, 150, 105, 0.6); }
+}
+
+/* 6 نجوم: بنفسجي كريستالي */
+.service-card.star-6 {
+    border: 4px solid #c026d3;
+    box-shadow: 0 0 28px rgba(192, 38, 211, 0.45), inset 0 0 14px rgba(192, 38, 211, 0.3);
+    animation: glow6 3s infinite alternate;
+}
+@keyframes glow6 {
+    0% { box-shadow: 0 0 22px rgba(192, 38, 211, 0.35); }
+    100% { box-shadow: 0 0 35px rgba(192, 38, 211, 0.65); }
+}
+
+/* 7 نجوم: التدرج الملكي الأسطوري */
+.service-card.star-7 {
+    border: 4px solid transparent;
+    background-image: linear-gradient(var(--card-bg, #0f172a), var(--card-bg, #0f172a)), linear-gradient(135deg, #e11d48, #9333ea, #2563eb);
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+    box-shadow: 0 0 32px rgba(147, 51, 234, 0.5), inset 0 0 15px rgba(225, 29, 72, 0.35);
+    animation: glow7 3s infinite alternate;
+}
+@keyframes glow7 {
+    0% { box-shadow: 0 0 25px rgba(147, 51, 234, 0.4); }
+    100% { box-shadow: 0 0 40px rgba(225, 29, 72, 0.7); }
+}
+
+/* 7 نجوم: التوهج الأسطوري الملكي الفاخر (أقصى فخامة بدون إزعاج) */
+.service-card.star-7 {
+    border: 3px solid transparent;
+    background-image: linear-gradient(var(--card-bg, #0f172a), var(--card-bg, #0f172a)), linear-gradient(135deg, #f43f5e, #a855f7, #3b82f6);
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+    box-shadow: 0 0 38px rgba(168, 85, 247, 0.6), inset 0 0 16px rgba(244, 63, 94, 0.4);
+    animation: ultimateGlow7 2.2s infinite alternate;
+}
+@keyframes ultimateGlow7 {
+    0% { box-shadow: 0 0 25px rgba(168, 85, 247, 0.45), inset 0 0 10px rgba(244, 63, 94, 0.25); }
+    100% { box-shadow: 0 0 48px rgba(244, 63, 94, 0.75), inset 0 0 22px rgba(59, 130, 246, 0.5); }
+}
+
+/* 7 نجوم: Mythic Glory (الأيقونة والقمة - تدرج لوني ملكي متناسق وفاخر) */
+.service-card.star-7 {
+    border: 3.5px solid transparent;
+    background-image: linear-gradient(var(--card-bg, #0f172a), var(--card-bg, #0f172a)), linear-gradient(135deg, rgba(244, 63, 94, 0.8), rgba(168, 85, 247, 0.8), rgba(59, 130, 246, 0.8));
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+    box-shadow: 0 8px 26px rgba(168, 85, 247, 0.3);
+    animation: pulseMythic 4s infinite alternate;
+}
+@keyframes pulseMythic {
+    0% { box-shadow: 0 4px 16px rgba(168, 85, 247, 0.25); }
+    100% { box-shadow: 0 10px 30px rgba(244, 63, 94, 0.4); }
+}
+
+/* 6 نجوم: Legend Crystal Style */
+.service-card.star-6 {
+    border: 3.5px solid rgba(217, 70, 239, 0.7);
+    box-shadow: 0 5px 20px rgba(217, 70, 239, 0.25);
+    animation: flameEffect6 3s infinite alternate;
+}
+@keyframes flameEffect6 {
+    0% { box-shadow: 0 4px 14px rgba(217, 70, 239, 0.15); }
+    100% { box-shadow: 0 6px 24px rgba(236, 72, 153, 0.35); }
+}
+
+/* 7 نجوم: Mythic Glory */
+.service-card.star-7 {
+    border: 3.5px solid transparent;
+    background-image: linear-gradient(var(--card-bg), var(--card-bg)), linear-gradient(135deg, rgba(244, 63, 94, 0.8), rgba(168, 85, 247, 0.8), rgba(59, 130, 246, 0.8));
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+    box-shadow: 0 6px 22px rgba(168, 85, 247, 0.3);
+    position: relative;
+    animation: ultimateGlow 3s infinite alternate;
+}
+@keyframes ultimateGlow {
+    0% { box-shadow: 0 4px 16px rgba(168, 85, 247, 0.25); }
+    100% { box-shadow: 0 6px 28px rgba(244, 63, 94, 0.4); }
+}
+
+/* 6 نجوم: Legend Crystal Style (بنفسجي ناعم ومتوازن) */
+.service-card.star-6 {
+    border: 2px solid rgba(217, 70, 239, 0.5);
+    box-shadow: 0 4px 18px rgba(217, 70, 239, 0.2);
+    animation: flameEffect6 3s infinite alternate;
+}
+@keyframes flameEffect6 {
+    0% { box-shadow: 0 4px 14px rgba(217, 70, 239, 0.15); }
+    100% { box-shadow: 0 6px 22px rgba(236, 72, 153, 0.3); }
+}
+
+/* 7 نجوم: Mythic Glory (تدرج لوني شيك جداً وبدون إضاءات مبالغ فيها) */
+.service-card.star-7 {
+    border: 2px solid transparent;
+    background-image: linear-gradient(var(--card-bg), var(--card-bg)), linear-gradient(135deg, rgba(244, 63, 94, 0.6), rgba(168, 85, 247, 0.6), rgba(59, 130, 246, 0.6));
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+    box-shadow: 0 5px 20px rgba(168, 85, 247, 0.25);
+    position: relative;
+    animation: ultimateGlow 3s infinite alternate;
+}
+@keyframes ultimateGlow {
+    0% { box-shadow: 0 4px 15px rgba(168, 85, 247, 0.2); }
+    100% { box-shadow: 0 6px 25px rgba(244, 63, 94, 0.35); }
+}
+        .card-img-container {
+            position: relative;
+            width: 100%;
+            height: 180px;
+            background: #000;
+            cursor: pointer;
+            overflow: hidden;
+        }
+        .card-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.92;
+            transition: transform 0.4s ease;
+        }
+        .card-img-container:hover .card-img { transform: scale(1.06); }
+        
+        .img-badge {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(15, 23, 42, 0.85);
+            color: #fff;
+            padding: 5px 12px;
+            border-radius: 8px;
+            font-size: 11.5px;
+            font-weight: 700;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .card-body {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            flex-grow: 1;
+            justify-content: space-between;
+        }
+
+        .service-tag { 
+            display: inline-block;
+            background: rgba(56, 189, 248, 0.1);
+            color: var(--primary);
+            padding: 4px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            width: fit-content;
+            margin-bottom: 6px;
+            border: 1px solid rgba(56, 189, 248, 0.2);
+        }
+        .service-title { font-size: 18px; font-weight: 900; color: var(--text-main); margin-bottom: 8px; }
+        
+        .rating-stars {
+            color: #fbbf24;
+            font-size: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            gap: 2px;
+            align-items: center;
+        }
+
+        .service-details {
+            font-size: 13px;
+            color: var(--text-muted);
+            background: var(--bg-color);
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            line-height: 1.5;
+        }
+
+        .prices-box { 
+            display: flex; 
+            flex-direction: column;
+            gap: 4px;
+            font-size: 12.5px; 
+            font-weight: 700; 
+            border-top: 1px dashed var(--border-color); 
+            padding-top: 10px; 
+        }
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .time-box { font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 5px; }
+
+        .action-link-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            background: var(--primary);
+            color: var(--btn-text);
+            text-decoration: none;
+            padding: 9px 10px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            flex: 1;
+        }
+        .action-link-btn:hover { opacity: 0.9; }
+        .action-link-btn.whatsapp { background-color: #25d366; color: #fff; }
+
+        .share-card-btn {
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 9px 12px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 12.5px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+        .share-card-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: rgba(56, 189, 248, 0.05);
+        }
+
+        .interaction-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: var(--bg-color);
+            border-radius: 10px;
+            margin-top: 10px;
+            border: 1px solid var(--border-color);
+            font-size: 12px;
+            font-weight: 700;
+            direction: rtl;
+        }
+        .like-btn { 
+            background: none; 
+            border: none; 
+            cursor: pointer; 
+            font-weight: 800; 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 5px; 
+            color: var(--text-muted); 
+            font-size: 12px; 
+        }
+        .like-btn.liked { color: #e74c3c; }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(4px);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 15px;
+            overflow-y: auto;
+        }
+        .modal-content {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 24px;
+            border: 1px solid var(--border-color);
+            max-width: 480px; width: 100%;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            text-align: right;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+        
+        .modal-close-icon {
+            position: absolute;
+            top: 18px;
+            left: 18px;
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+        .modal-close-icon:hover {
+            background: #ef4444;
+            color: #fff;
+            border-color: #ef4444;
+        }
+
+        .modal-content img { width: 100%; max-height: 300px; object-fit: contain; margin: 15px 0; background: #000; border-radius: 12px; border: 1px solid var(--border-color); }
+        
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; font-size: 12.5px; font-weight: 700; margin-bottom: 5px; color: var(--primary); }
+        .form-group input, .form-group textarea {
+            width: 100%;
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            padding: 10px 12px;
+            border-radius: 10px;
+            color: var(--text-main);
+            font-size: 13px;
+            outline: none;
+        }
+        .form-group input:focus, .form-group textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15); }
+        .form-group small { display: block; font-size: 11px; color: var(--text-muted); margin-top: 3px; }
+
+        .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+        .submit-whatsapp-btn {
+            background: #25d366;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 700;
+            flex: 1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .close-modal { background: #ef4444; color: #fff; border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer; font-weight: 600; }
+        .back-modal-btn {
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+        .back-modal-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: rgba(56, 189, 248, 0.05);
+        }
+
+        .admin-card { background: var(--bg-color); border: 1px solid var(--border-color); padding: 15px; border-radius: 12px; margin-bottom: 12px; }
+        
+        .info-box-item {
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            padding: 16px 18px;
+            border-radius: 16px;
+            margin-bottom: 15px;
+            font-size: 13.5px;
+            line-height: 1.7;
+        }
+        .info-box-item strong { 
+            color: var(--primary); 
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+            margin-bottom: 8px; 
+            font-size: 14.5px; 
+        }
+        .info-box-item ul { 
+            padding-right: 22px; 
+            margin-top: 8px; 
+        }
+        .info-box-item li { 
+            margin-bottom: 6px; 
+            color: var(--text-muted);
+        }
+        .info-box-item li strong {
+            display: inline;
+            color: var(--text-main);
+            font-size: 13.5px;
+        }
+
+        .admin-tabs { display: flex; gap: 10px; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; flex-wrap: wrap; }
+        .admin-tab-btn { background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-main); padding: 8px 12px; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 12px; }
+        .admin-tab-btn.active { background: var(--primary); color: var(--btn-text); border-color: var(--primary); }
+
+        .stats-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 13.5px;
+        }
+        .stats-table th, .stats-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border-color);
+            text-align: right;
+        }
+        .stats-table th {
+            color: var(--primary);
+            font-weight: 700;
+            background: rgba(56, 189, 248, 0.05);
+        }
+        .stats-table tr:hover {
+            background: rgba(56, 189, 248, 0.02);
+        }
+
+        .location-input-group {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            width: 100%;
+        }
+
+        .location-input-group input {
+            flex: 1;
+        }
+
+        .current-loc-btn {
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 12.5px;
+            cursor: pointer;
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+            transition: all 0.2s ease;
+        }
+
+        .current-loc-btn:hover {
+            background: var(--primary);
+            color: var(--btn-text);
+        }
+
+        .choice-option-btn {
+            width: 100%;
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 15px;
+            border-radius: 14px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            transition: all 0.2s ease;
+        }
+        .choice-option-btn:hover {
+            border-color: var(--primary);
+            background: rgba(56, 189, 248, 0.05);
+            color: var(--primary);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="top-nav">
+            <a href="index.html" class="back-link"><i class="fa-solid fa-arrow-right"></i> العودة للرئيسية</a>
+            <div class="top-actions">
+                <button class="action-btn" id="installAppBtn" style="background: rgba(34, 197, 94, 0.1); border-color: #22c55e; color: #22c55e;">
+                    <i class="fa-solid fa-download"></i> تثبيت التطبيق
+                </button>
+                <button class="action-btn stars-ranking-btn" onclick="openStarsRankingModal()">
+                    <i class="fa-solid fa-ranking-star"></i> أبرز النجوم
+                </button>
+                <button class="action-btn info-nav-btn" onclick="toggleModal('infoModal', true)">
+                    <i class="fa-solid fa-circle-info"></i> كيف يعمل النظام؟
+                </button>
+                <button class="action-btn whatsapp-add-btn" onclick="toggleModal('addModal', true)">
+                    <i class="fa-brands fa-whatsapp"></i> اضف مجالك
+                </button>
+                <button class="action-btn map-add-btn" onclick="openEditActivityChoiceModal()">
+                    <i class="fa-solid fa-pen-to-square"></i> تعديل نشاط
+                </button>
+                <button class="action-btn admin-nav-btn" onclick="openAdminPanel()">
+                    <i class="fa-solid fa-lock"></i> الإدارة
+                </button>
+                <button class="action-btn" onclick="toggleTheme()" id="themeToggleBtn">☀️ فاتح</button>
+                <button class="action-btn" onclick="toggleModal('qrModal', true)"><i class="fa-solid fa-qrcode"></i> باركود الصفحة</button>
+            </div>
+        </div>
+
+        <div class="adhkar-banner" onclick="changeAdhkar()" title="اضغط لتغيير الذكر">
+            <i class="fa-solid fa-heart-pulse" style="color: #38bdf8;"></i>
+            <span id="adhkarText">سبحان الله وبحمده، سبحان الله العظيم</span>
+        </div>
+        
+        <div class="hero-banner">
+            <h1>🌐 منصة كفر شكر</h1>
+            <p>منصتك المجتمعية للوصول السريع إلى كافة الأنشطة الخدمية، التجارية، والمهنية بكفر شكر في مكان واحد.</p>
+        </div>
+
+        <div class="controls-section">
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input type="text" id="search-input" placeholder="ابحث باسم الخدمة، الدكتور، أو التخصص..." oninput="handleSearchInput()">
+                <button id="clearSearchBtn" class="clear-search" onclick="clearSearchField()" title="مسح البحث"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <div class="categories-wrapper">
+                <div class="filter-group-container">
+                    <button class="favorites-filter-btn" id="favoritesFilterBtn" onclick="toggleFavoritesFilter()">
+                        <i class="fa-solid fa-heart"></i> المفضلة
+                    </button>
+                </div>
+
+                <button class="stats-tab-btn" onclick="openStatsModal()">
+                    <i class="fa-solid fa-chart-pie"></i> إحصائيات الأقسام والأشخاص
+                </button>
+
+                <div class="categories-container" id="categories-container"></div>
+            </div>
+        </div>
+
+        <div class="cards-grid" id="cards-grid"></div>
+    </div>
+
+    <!-- نافذة اختيار تعديل النشاط (تحديث موقعي أو تحديث صورتي) -->
+    <div class="modal" id="editActivityChoiceModal">
+        <div class="modal-content" style="max-width: 400px; text-align: center;">
+            <div class="modal-close-icon" onclick="toggleModal('editActivityChoiceModal', false)" title="إغلاق"><i class="fa-solid fa-xmark"></i></div>
+            <h3 style="margin-bottom: 20px; font-size: 18px; color: var(--primary);"><i class="fa-solid fa-pen-to-square"></i> تعديل نشاط</h3>
+            <button class="choice-option-btn" onclick="selectEditChoice('location')">
+                <i class="fa-solid fa-map-location-dot" style="color: #ea4335;"></i> تحديث موقعي
+            </button>
+            <button class="choice-option-btn" onclick="selectEditChoice('image')">
+                <i class="fa-solid fa-image" style="color: #38bdf8;"></i> تحديث صورتي
+            </button>
+            <button class="close-modal" style="width: 100%; margin-top: 10px;" onclick="toggleModal('editActivityChoiceModal', false)">إغلاق</button>
+        </div>
+    </div>
+
+    <!-- نافذة أبرز النجوم والترتيب -->
+    <div class="modal" id="starsRankingModal">
+        <div class="modal-content" style="max-width: 580px;">
+            <div class="modal-close-icon" onclick="toggleModal('starsRankingModal', false)" title="إغلاق"><i class="fa-solid fa-xmark"></i></div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+                <h3 style="color: #fbbf24; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-ranking-star"></i> قائمة أبرز النجوم والترتيب</h3>
+            </div>
+            
+            <div class="search-box" style="margin-bottom: 12px;">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input type="text" id="stars-search-input" placeholder="ابحث بالاسم أو القسم..." oninput="filterStarsRankingTable()" style="padding: 9px 40px 9px 15px; font-size: 13px;">
+            </div>
+
+            <p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 12px;"><i class="fa-solid fa-circle-info" style="color:var(--primary);"></i> الترتيب يعتمد أولاً على **النجوم**، ثم **المشاهدات**، ثم **الإعجابات**:</p>
+            
+            <div style="max-height: 320px; overflow-y: auto;">
+                <table class="stats-table">
+                    <thead>
+                        <tr>
+                            <th>الترتيب العام</th>
+                            <th><i class="fa-solid fa-user"></i> اسم الشخص</th>
+                            <th><i class="fa-solid fa-star" style="color:#fbbf24;"></i> النجوم</th>
+                            <th><i class="fa-regular fa-eye"></i> المشاهدات</th>
+                            <th><i class="fa-solid fa-heart" style="color:#e74c3c;"></i> الإعجابات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="starsRankingTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة إحصائيات الأقسام -->
+    <div class="modal" id="statsModal">
+        <div class="modal-content" style="max-width: 520px;">
+            <div class="modal-close-icon" onclick="toggleModal('statsModal', false)" title="إغلاق"><i class="fa-solid fa-xmark"></i></div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+                <h3 style="color: var(--primary); display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-chart-pie"></i> إحصائيات الأقسام والأشخاص</h3>
+            </div>
+            
+            <div class="search-box" style="margin-bottom: 12px;">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input type="text" id="stats-search-input" placeholder="ابحث باسم القسم أو التخصص..." oninput="filterStatsTable()" style="padding: 9px 40px 9px 15px; font-size: 13px;">
+            </div>
+
+            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;"><i class="fa-solid fa-circle-info" style="color:var(--primary);"></i> نظرة عامة ومفصلة على توزيع الأنشطة والأشخاص داخل أقسام المنصة:</p>
+            <div style="max-height: 320px; overflow-y: auto;">
+                <table class="stats-table">
+                    <thead>
+                        <tr>
+                            <th><i class="fa-solid fa-folder-open"></i> القسم / التخصص</th>
+                            <th><i class="fa-solid fa-users-rectangle"></i> العدد الإجمالي</th>
+                        </tr>
+                    </thead>
+                    <tbody id="statsTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة دليل النظام والتقييمات والفوائد -->
+    <div class="modal" id="infoModal">
+        <div class="modal-content" style="max-width: 580px;">
+            <div class="modal-close-icon" onclick="toggleModal('infoModal', false)" title="إغلاق"><i class="fa-solid fa-xmark"></i></div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+                <h3 style="color: #f59e0b; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-circle-info"></i> دليل نظام المنصة والتقييمات</h3>
+            </div>
+            
+            <div class="info-box-item">
+                <strong><i class="fa-solid fa-share-nodes"></i> دليل استخدام زر "مشاركة الكارت"</strong>
+                <ul>
+                    <li><strong>الفكرة ببساطة:</strong> الزر ليس مجرد رابط عادي للموقع، بل ينشئ <strong>رابطاً مخصصاً ومستقلاً</strong> لكل نشاط.</li>
+                    <li><strong>الدخول المباشر:</strong> عندما تشارك الرابط مع عملائك، سينتقلون إلى نشاطك مباشرة ويظهر لهم اسمك فوراً دون أي بحث يدوي.</li>
+                    <li><strong>توفير الوقت:</strong> يسهل على العميل الوصول لقائمتك ومنتجاتك بأسرع وقت ممكن.</li>
+                </ul>
+            </div>
+
+            <div class="info-box-item">
+                <strong><i class="fa-regular fa-eye"></i> كيف تزيد المشاهدات؟</strong>
+                تزداد مشاهدات كارت الخدمة تلقائياً عند قيام أي زائر بـ:
+                <ul>
+                    <li>فتح تفاصيل الصورة أو المعاينة.</li>
+                    <li>الضغط على أزرار الاتصال أو الواتساب (يتم احتساب مشاهدة واحدة لكل جهاز لمنع التكرار).</li>
+                </ul>
+            </div>
+
+            <div class="info-box-item">
+                <strong><i class="fa-solid fa-star"></i> كيف يتم حساب النجوم والتقييمات؟</strong>
+                يرتبط تقييم النشاط طردياً بعدد المشاهدات التصاعدية التي يحصل عليها تلقائياً:
+                <ul>
+                    <li><strong>100 مشاهدة:</strong> ⭐ (نجمة واحدة)</li>
+                    <li><strong>250 مشاهدة:</strong> ⭐⭐ (نجمتان)</li>
+                    <li><strong>1000 مشاهدة:</strong> ⭐⭐⭐ (3 نجوم)</li>
+                    <li><strong>2000 مشاهدة:</strong> ⭐⭐⭐⭐ (4 نجوم)</li>
+                    <li><strong>3000 مشاهدة:</strong> ⭐⭐⭐⭐⭐ (5 نجوم)</li>
+                    <li><strong>5000 مشاهدة:</strong> ⭐⭐⭐⭐⭐⭐ (6 نجوم)</li>
+                    <li><strong>أكثر من 10000 مشاهدة:</strong> ⭐⭐⭐⭐⭐⭐⭐ (7 نجوم كحد أقصى)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة أضف مجالك -->
+    <div class="modal" id="addModal">
+        <div class="modal-content">
+            <div class="modal-close-icon" onclick="toggleModal('addModal', false)" title="إغلاق"><i class="fa-solid fa-xmark"></i></div>
+            <h3 style="margin-bottom: 15px; font-size: 18px; color: var(--primary); text-align: center;"><i class="fa-solid fa-store"></i> طلب إضافة نشاط جديد</h3>
+            
+            <div class="form-group"><label>1- النوع: <span style="color: #e74c3c;">*</span></label><input type="text" id="addType" placeholder="مثال: عيادة / سباك"></div>
+            <div class="form-group"><label>2- الاسم: <span style="color: #e74c3c;">*</span></label><input type="text" id="addName" placeholder="مثال: د. أحمد السيد"></div>
+            <div class="form-group"><label>3- العنوان النصي: <span style="color: #e74c3c;">*</span></label><input type="text" id="addAddress" placeholder="مثال: شارع المركز - بجوار المحطة"></div>
+            
+            <div class="form-group">
+                <label>📍 رابط موقع Google Maps (اختياري):</label>
+                <input type="text" id="addMapUrl" placeholder="الصق رابط موقعك من Google Maps هنا">
+                <small>افتح خريطة جوجل، اضغط مشاركة (Share)، وانسخ رابط الموقع هنا لكي يفتح للعملاء مباشرة.</small>
+            </div>
+
+            <div class="form-group"><label>4- سعر أول مرة:</label><input type="text" id="addFirstPrice" placeholder="مثال: 1500"></div>
+            <div class="form-group"><label>5- سعر المتابعة:</label><input type="text" id="addFollowPrice" placeholder="مثال: 600"></div>
+            <div class="form-group"><label>6- تفاصيل النشاط:</label><textarea id="addDetails" rows="2" placeholder="تفاصيل الخدمة..."></textarea></div>
+            <div class="form-group"><label>7- مواعيد العمل:</label><input type="text" id="addWorkTime" placeholder="من السبت للخميس"></div>
+            <div class="form-group"><label>8- الرقم (11 رقم): <span style="color: #e74c3c;">*</span></label><input type="text" id="addPhone" placeholder="01xxxxxxxxxx" maxlength="11"></div>
+            <div class="form-group">
+                <label>9- رابط الصورة (ارفعها على موقع ImgBB وأرفق رابط jpg):</label>
+                <input type="text" id="addDriveUrl" placeholder="https://i.ibb.co/.........../image.jpg">
+                <small>يرجى رفع الصورة على <a href="https://imgbb.com" target="_blank" style="color:var(--primary);">موقع ImgBB</a> ونسخ الرابط المباشر (صيغة jpg).</small>
+            </div>
+
+            <div class="modal-actions">
+                <button class="submit-whatsapp-btn" onclick="submitNewActivity()"><i class="fa-solid fa-floppy-disk"></i> حفظ وإرسال للانتظار</button>
+                <button class="close-modal" onclick="toggleModal('addModal', false)">إغلاق</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة تحديث موقعي -->
+    <div class="modal" id="updateLocationModal">
+        <div class="modal-content" style="max-width: 450px;">
+            <div class="modal-close-icon" onclick="toggleModal('updateLocationModal', false)" title="إغلاق"><i class="fa-solid fa-xmark"></i></div>
+            <h3 style="margin-bottom: 20px; font-size: 18px; color: #ea4335; text-align: center;"><i class="fa-solid fa-map-location-dot"></i> تحديث موقعي</h3>
+            
+            <div class="form-group">
+                <label>📞 رقم التلفون: <span style="color: #e74c3c;">*</span></label>
+                <div class="location-input-group">
+                    <input type="text" id="updateLocPhone" placeholder="01xxxxxxxxxx" maxlength="11">
+                    <button type="button" class="current-loc-btn" onclick="checkPhoneExistsForLocation()" title="التحقق من وجود الرقم">
+                        <i class="fa-solid fa-circle-check"></i> تأكيد الرقم
+                    </button>
+                </div>
+                <small id="locPhoneStatus" style="font-weight: 700; margin-top: 4px;"></small>
+            </div>
+
+            <div class="form-group">
+                <label>📍 الموقع (رابط Google Maps): <span style="color: #e74c3c;">*</span></label>
+                <div class="location-input-group">
+                    <input type="text" id="updateLocMapUrl" placeholder="الصق رابط موقعك أو اضغط الزر لجلب موقعك">
+                    <button type="button" class="current-loc-btn" onclick="getCurrentLocationForUpdate()" title="الحصول على موقعي الحالي">
+                        <i class="fa-solid fa-location-crosshairs"></i> موقعي الحالي
+                    </button>
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button class="back-modal-btn" onclick="goBackToEditChoiceFromLocation()"><i class="fa-solid fa-arrow-right"></i> رجوع</button>
+                <button class="submit-whatsapp-btn" style="background:#ea4335;" onclick="submitUpdateLocation()"><i class="fa-solid fa-paper-plane"></i> تأكيد وإرسال</button>
+                <button class="close-modal" onclick="toggleModal('updateLocationModal', false)">إغلاق</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة تحديث صورتي -->
+    <div class="modal" id="updateImageModal">
+        <div class="modal-content" style="max-width: 450px;">
+            <div class="modal-close-icon" onclick="toggleModal('updateImageModal', false)" title="إغلاق"><i class="fa-solid fa-xmark"></i></div>
+            <h3 style="margin-bottom: 20px; font-size: 18px; color: #38bdf8; text-align: center;"><i class="fa-solid fa-image"></i> تحديث صورتي</h3>
+            
+            <div class="form-group">
+                <label>📞 رقمه: <span style="color: #e74c3c;">*</span></label>
+                <div class="location-input-group">
+                    <input type="text" id="updateImgPhone" placeholder="01xxxxxxxxxx" maxlength="11">
+                    <button type="button" class="current-loc-btn" onclick="checkPhoneExistsForImage()" title="التحقق من وجود الرقم">
+                        <i class="fa-solid fa-circle-check"></i> تأكيد الرقم
+                    </button>
+                </div>
+                <small id="imgPhoneStatus" style="font-weight: 700; margin-top: 4px;"></small>
+            </div>
+
+            <div class="form-group">
+                <label>🖼️ لينك صورته: <span style="color: #e74c3c;">*</span></label>
+                <input type="text" id="updateImgUrl" placeholder="https://i.ibb.co/.........../image.jpg">
+                <small>يرجى رفع الصورة على <a href="https://imgbb.com" target="_blank" style="color:var(--primary);">موقع ImgBB</a> وإرفاق الرابط.</small>
+            </div>
+
+            <div class="modal-actions">
+                <button class="back-modal-btn" onclick="goBackToEditChoiceFromImage()"><i class="fa-solid fa-arrow-right"></i> رجوع</button>
+                <button class="submit-whatsapp-btn" onclick="submitUpdateImage()"><i class="fa-solid fa-paper-plane"></i> تأكيد وإرسال</button>
+                <button class="close-modal" onclick="toggleModal('updateImageModal', false)">إغلاق</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة تسجيل دخول الإدارة -->
+    <div class="modal" id="adminLoginModal">
+        <div class="modal-content">
+            <div class="modal-close-icon" onclick="toggleModal('adminLoginModal', false)" title="إغلاق"><i class="fa-solid fa-xmark"></i></div>
+            <h3 style="margin-bottom: 15px; color: #ef4444; text-align: center;"><i class="fa-solid fa-lock"></i> دخول لوحة الإدارة</h3>
+            <div class="form-group"><label>البريد الإلكتروني للأدمن:</label><input type="email" id="adminEmail" placeholder="name@example.com"></div>
+            <div class="form-group" style="position: relative;">
+                <label>كلمة المرور:</label>
+                <input type="password" id="adminPassword" placeholder="********" style="padding-left: 40px;">
+                <i class="fa-solid fa-eye" id="togglePasswordIcon" onclick="togglePasswordVisibility()" style="position: absolute; left: 12px; top: 34px; cursor: pointer; color: var(--text-muted);"></i>
+            </div>
+            <div class="modal-actions">
+                <button class="submit-whatsapp-btn" style="background:#25d366;" onclick="loginAdminWithPassword()">التحقق وإرسال كود OTP</button>
+                <button class="close-modal" onclick="toggleModal('adminLoginModal', false)">إغلاق</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة إدخال الكود (OTP Modal) -->
+    <div class="modal" id="otpModal">
+        <div class="modal-content">
+            <div class="modal-close-icon" onclick="toggleModal('otpModal', false)" title="إغلاق"><i class="fa-solid fa-xmark"></i></div>
+            <h3 style="margin-bottom: 15px; color: var(--primary); text-align: center;"><i class="fa-solid fa-shield-halved"></i> أدخل كود التحقق</h3>
+            <div class="form-group">
+                <label>تم إرسال كود من 6 أرقام إلى بريدك الإلكتروني:</label>
+                <input type="text" id="otpInput" placeholder="------" maxlength="6" style="text-align:center; font-size: 22px; letter-spacing: 5px;">
+            </div>
+            <div class="modal-actions">
+                <button class="submit-whatsapp-btn" onclick="verifyOTP()">تأكيد الكود</button>
+                <button class="close-modal" onclick="toggleModal('otpModal', false)">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- لوحة التحكم المتقدمة للأدمن -->
+    <div class="modal" id="adminDashboardModal">
+        <div class="modal-content" style="max-width: 750px;">
+            <div class="modal-close-icon" onclick="toggleModal('adminDashboardModal', false)" title="إغلاق"><i class="fa-solid fa-xmark"></i></div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h3 style="color: var(--primary);"><i class="fa-solid fa-user-shield"></i> لوحة التحكم المتقدمة للأدمن</h3>
+            </div>
+
+            <div class="admin-tabs">
+                <button class="admin-tab-btn active" id="tabApprovedBtn" onclick="switchAdminTab('approved')"><i class="fa-solid fa-circle-check"></i> الأنشطة المقبولة</button>
+                <button class="admin-tab-btn" id="tabPendingBtn" onclick="switchAdminTab('pending')"><i class="fa-solid fa-clock"></i> طلبات الأنشطة (الانتظار)</button>
+                <button class="admin-tab-btn" id="tabEditPendingBtn" onclick="switchAdminTab('editPending')"><i class="fa-solid fa-pen-to-square"></i> طلبات التعديل (الانتظار)</button>
+            </div>
+
+            <div id="adminSectionApproved">
+                <!-- حقل البحث السريع بالاسم أو الرقم في الأنشطة المقبولة للأدمن -->
+                <div class="search-box" style="margin-bottom: 15px;">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    <input type="text" id="admin-search-input" placeholder="ابحث باسم الشخص أو رقمه للوصول السريع والتعديل..." oninput="loadApprovedServicesForAdmin()">
+                </div>
+                <div id="approvedCardsContainer">جاري التحميل...</div>
+            </div>
+
+            <div id="adminSectionPending" style="display: none;">
+                <div id="pendingCardsContainer">جاري التحميل...</div>
+            </div>
+
+            <div id="adminSectionEditPending" style="display: none;">
+                <div id="editPendingCardsContainer">جاري التحميل...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة تأكيد الحذف النهائي -->
+    <div class="modal" id="confirmDeleteModal">
+        <div class="modal-content" style="max-width: 380px; text-align: center;">
+            <div class="modal-close-icon" onclick="toggleModal('confirmDeleteModal', false)" title="إغلاق"><i class="fa-solid fa-xmark"></i></div>
+            <h3 style="color: #ef4444; margin-bottom: 15px;"><i class="fa-solid fa-triangle-exclamation"></i> تأكيد الحذف</h3>
+            <p style="font-size: 14px; margin-bottom: 20px; color: var(--text-muted);">هل أنت متأكد من حذف هذا العنصر نهائياً؟</p>
+            <input type="hidden" id="deleteTargetKey">
+            <input type="hidden" id="deleteTargetType">
+            <input type="hidden" id="deleteTargetName">
+            <input type="hidden" id="deleteTargetPhone">
+            <div class="modal-actions">
+                <button onclick="executeFinalDelete()" style="background:#ef4444; color:#fff; border:none; padding:10px 20px; border-radius:10px; cursor:pointer; font-weight:700; flex:1;">نعم، حذف نهائي</button>
+                <button class="close-modal" onclick="toggleModal('confirmDeleteModal', false)">إغلاق</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة تعديل نشاط منشور -->
+    <div class="modal" id="editServiceModal">
+        <div class="modal-content">
+            <div class="modal-close-icon" onclick="toggleModal('editServiceModal', false)" title="إغلاق"><i class="fa-solid fa-xmark"></i></div>
+            <h3 style="margin-bottom: 15px; font-size: 18px; color: var(--primary); text-align: center;"><i class="fa-solid fa-pen-to-square"></i> تعديل تفاصيل النشاط</h3>
+            <input type="hidden" id="editServiceKey">
+            <div class="form-group"><label>النوع:</label><input type="text" id="editType"></div>
+            <div class="form-group"><label>الاسم:</label><input type="text" id="editName"></div>
+            <div class="form-group"><label>العنوان:</label><input type="text" id="editAddress"></div>
+            <div class="form-group"><label>رابط Google Maps:</label><input type="text" id="editMapUrl" placeholder="رابط الخريطة"></div>
+            <div class="form-group"><label>سعر أول مرة:</label><input type="text" id="editFirstPrice"></div>
+            <div class="form-group"><label>سعر المتابعة:</label><input type="text" id="editFollowPrice"></div>
+            <div class="form-group"><label>تفاصيل النشاط:</label><textarea id="editDetails" rows="2"></textarea></div>
+            <div class="form-group"><label>مواعيد العمل:</label><input type="text" id="editWorkTime"></div>
+            <div class="form-group"><label>الرقم:</label><input type="text" id="editPhone"></div>
+            <div class="form-group"><label>رابط الصورة (ImgBB/Drive):</label><input type="text" id="editDriveUrl"></div>
+
+            <div class="modal-actions">
+                <button class="submit-whatsapp-btn" onclick="saveEditedService()"><i class="fa-solid fa-floppy-disk"></i> حفظ التعديلات</button>
+                <button class="close-modal" onclick="toggleModal('editServiceModal', false)">إغلاق</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- معاينة الصورة -->
+    <div class="modal" id="imageModal">
+        <div class="modal-content" style="text-align: center;">
+            <div class="modal-close-icon" onclick="toggleModal('imageModal', false)" title="إغلاق"><i class="fa-solid fa-xmark"></i></div>
+            <h3 id="modalTitle" style="font-size: 16px;">معاينة الصورة</h3>
+            <img src="" id="previewImage" alt="المعاينة">
+            <button class="close-modal" onclick="toggleModal('imageModal', false)">إغلاق</button>
+        </div>
+    </div>
+
+    <!-- الباركود -->
+    <div class="modal" id="qrModal">
+        <div class="modal-content" style="text-align: center;">
+            <div class="modal-close-icon" onclick="toggleModal('qrModal', false)" title="إغلاق"><i class="fa-solid fa-xmark"></i></div>
+            <h3>باركود الصفحة</h3>
+            <img src="" id="qrImage" alt="QR Code" style="background:#fff; padding:10px; width:170px; height:170px; margin: 15px auto; border-radius: 12px;">
+            <button class="close-modal" onclick="toggleModal('qrModal', false)">إغلاق</button>
+        </div>
+    </div>
+
+    <script>
+        let servicesStatsCache = {};
+        let servicesList = [];
+        let currentCategory = "الكل";
+        let onlyFavorites = false;
+        let generatedOTP = "";
+        
+        let displayedCount = 10;
+        let filteredCache = [];
+
+        window.initApp = function() {
+            const slider = document.getElementById('categories-container');
+            let isDown = false, startX, scrollLeft;
+
+            slider.addEventListener('mousedown', (e) => {
+                isDown = true;
+                slider.classList.add('active');
+                startX = e.pageX - slider.offsetLeft;
+                scrollLeft = slider.scrollLeft;
+            });
+            slider.addEventListener('mouseleave', () => { isDown = false; slider.classList.remove('active'); });
+            slider.addEventListener('mouseup', () => { isDown = false; slider.classList.remove('active'); });
+            slider.addEventListener('mousemove', (e) => {
+                if (!isDown) return;
+                e.preventDefault();
+                const x = e.pageX - slider.offsetLeft;
+                slider.scrollLeft = scrollLeft - ((x - startX) * 2);
+            });
+
+            window.addEventListener('scroll', () => {
+                if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 500) {
+                    if (displayedCount < filteredCache.length) {
+                        displayedCount += 10;
+                        renderCardsSlice();
+                    }
+                }
+            });
+
+            changeAdhkar();
+            loadServicesData();
+        };
+
+        function openEditActivityChoiceModal() {
+            document.getElementById('updateLocPhone').value = '';
+            document.getElementById('updateLocMapUrl').value = '';
+            document.getElementById('locPhoneStatus').innerText = '';
+            document.getElementById('updateImgPhone').value = '';
+            document.getElementById('updateImgUrl').value = '';
+            document.getElementById('imgPhoneStatus').innerText = '';
+            toggleModal('editActivityChoiceModal', true);
+        }
+
+        function selectEditChoice(type) {
+            toggleModal('editActivityChoiceModal', false);
+            if (type === 'location') {
+                toggleModal('updateLocationModal', true);
+            } else if (type === 'image') {
+                toggleModal('updateImageModal', true);
+            }
+        }
+
+        function goBackToEditChoiceFromLocation() {
+            toggleModal('updateLocationModal', false);
+            toggleModal('editActivityChoiceModal', true);
+        }
+
+        function goBackToEditChoiceFromImage() {
+            toggleModal('updateImageModal', false);
+            toggleModal('editActivityChoiceModal', true);
+        }
+
+        function getCurrentLocationForUpdate() {
+            if (navigator.geolocation) {
+                const mapInput = document.getElementById('updateLocMapUrl');
+                mapInput.placeholder = "جاري تحديد موقعك الحالي... برجاء السماح للمتصفح";
+                
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const lat = position.coords.latitude;
+                        const lng = position.coords.longitude;
+                        const mapsUrl = `https://www.google.com/maps?q=${lat},${lng}`;
+                        mapInput.value = mapsUrl;
+                        alert("تم تحديث موقعك الحالي بنجاح! 📍");
+                    },
+                    (error) => {
+                        mapInput.placeholder = "الصق رابط موقعك من جوجل ماب هنا";
+                        alert("تعذر جلب الموقع الحالي، تأكد من إذن المتصفح.");
+                    },
+                    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+                );
+            } else {
+                alert("متصفحك لا يدعم خاصية تحديد الموقع.");
+            }
+        }
+
+        function checkPhoneExistsForLocation() {
+            let phoneInput = document.getElementById('updateLocPhone');
+            let rawPhone = phoneInput.value.trim();
+            let statusEl = document.getElementById('locPhoneStatus');
+            
+            if (!rawPhone) {
+                statusEl.style.color = "#ef4444";
+                statusEl.innerText = "❌ أدخل رقم الهاتف أولاً";
+                return false;
+            }
+
+            let processedPhone = rawPhone.replace(/^0/, '');
+            phoneInput.value = processedPhone;
+
+            let existingItem = servicesList.find(i => i.phone === processedPhone || i.phone === rawPhone);
+            if (existingItem) {
+                statusEl.style.color = "#25d366";
+                statusEl.innerText = `✅ الرقم موجود بالفعل (${existingItem.doctor})`;
+                return true;
+            } else {
+                statusEl.style.color = "#ef4444";
+                statusEl.innerText = "❌ هذا الرقم غير موجود في الكروت!";
+                return false;
+            }
+        }
+
+        function checkPhoneExistsForImage() {
+            let phoneInput = document.getElementById('updateImgPhone');
+            let rawPhone = phoneInput.value.trim();
+            let statusEl = document.getElementById('imgPhoneStatus');
+            
+            if (!rawPhone) {
+                statusEl.style.color = "#ef4444";
+                statusEl.innerText = "❌ أدخل رقم الهاتف أولاً";
+                return false;
+            }
+
+            let processedPhone = rawPhone.replace(/^0/, '');
+            phoneInput.value = processedPhone;
+
+            let existingItem = servicesList.find(i => i.phone === processedPhone || i.phone === rawPhone);
+            if (existingItem) {
+                statusEl.style.color = "#25d366";
+                statusEl.innerText = `✅ الرقم موجود بالفعل (${existingItem.doctor})`;
+                return true;
+            } else {
+                statusEl.style.color = "#ef4444";
+                statusEl.innerText = "❌ هذا الرقم غير موجود في الكروت!";
+                return false;
+            }
+        }
+
+        function submitUpdateLocation() {
+            let phoneInput = document.getElementById('updateLocPhone');
+            let phone = phoneInput.value.trim().replace(/^0/, '');
+            let mapUrl = document.getElementById('updateLocMapUrl').value.trim();
+
+            if (!phone || !mapUrl) {
+                alert("برجاء إدخال رقم الهاتف ورابط الموقع");
+                return;
+            }
+
+            let existingItem = servicesList.find(i => i.phone === phone);
+            if (!existingItem) {
+                alert("خطأ: هذا الرقم غير موجود في الكروت الحالية!");
+                return;
+            }
+
+            let editRequest = {
+                type: 'location',
+                phone: phone,
+                mapUrl: mapUrl,
+                itemId: existingItem.id,
+                timestamp: Date.now()
+            };
+
+            if (window.FB) {
+                window.FB.push(window.FB.ref(window.FB.db, 'edit_pending_requests'), editRequest).then(() => {
+                    let adminWhatsapp = "201023745774";
+                    let msg = encodeURIComponent(`يريد يغير موقعه\nرقم صاحبه: ${phone}\nالموقع الجديد: ${mapUrl}`);
+                    window.open(`https://wa.me/${adminWhatsapp}?text=${msg}`, '_blank');
+
+                    toggleModal('updateLocationModal', false);
+                    alert("تم إرسال طلب تحديث الموقع إلى قائمة الانتظار بنجاح!");
+                });
+            }
+        }
+
+        function submitUpdateImage() {
+            let phoneInput = document.getElementById('updateImgPhone');
+            let phone = phoneInput.value.trim().replace(/^0/, '');
+            let imageUrl = document.getElementById('updateImgUrl').value.trim();
+
+            if (!phone || !imageUrl) {
+                alert("برجاء إدخال الرقم ولينك الصورة");
+                return;
+            }
+
+            let existingItem = servicesList.find(i => i.phone === phone);
+            if (!existingItem) {
+                alert("خطأ: هذا الرقم غير موجود في الكروت الحالية!");
+                return;
+            }
+
+            let editRequest = {
+                type: 'image',
+                phone: phone,
+                image: imageUrl,
+                itemId: existingItem.id,
+                timestamp: Date.now()
+            };
+
+            if (window.FB) {
+                window.FB.push(window.FB.ref(window.FB.db, 'edit_pending_requests'), editRequest).then(() => {
+                    let adminWhatsapp = "201023745774";
+                    let msg = encodeURIComponent(`يريد يغير صورته\nرقم صاحبه: ${phone}\nلينك الصورة الجديد: ${imageUrl}`);
+                    window.open(`https://wa.me/${adminWhatsapp}?text=${msg}`, '_blank');
+
+                    toggleModal('updateImageModal', false);
+                    alert("تم إرسال طلب تحديث الصورة إلى قائمة الانتظار بنجاح!");
+                });
+            }
+        }
+
+        function getStarCount(views) {
+            let count = 0;
+            if (views >= 10000) count = 7;
+            else if (views >= 5000) count = 6;
+            else if (views >= 3000) count = 5;
+            else if (views >= 2000) count = 4;
+            else if (views >= 1000) count = 3;
+            else if (views >= 250) count = 2;
+            else if (views >= 100) count = 1;
+            return count;
+        }
+
+        function calculateStars(views) {
+            let count = getStarCount(views);
+            let starsHTML = '';
+            for (let i = 0; i < count; i++) starsHTML += '<i class="fas fa-star"></i>';
+            for (let i = count; i < 7; i++) starsHTML += '<i class="far fa-star" style="opacity: 0.3;"></i>';
+            return starsHTML;
+        }
+
+        function incrementItemView(itemId) {
+            let deviceKey = 'user_viewed_' + itemId;
+            if (!localStorage.getItem(deviceKey)) {
+                localStorage.setItem(deviceKey, 'true');
+                if (window.FB) {
+                    window.FB.runTransaction(window.FB.ref(window.FB.db, 'items_stats/' + itemId + '/views'), (curr) => (curr || 0) + 1);
+                }
+            }
+        }
+
+        function toggleFavoritesFilter() {
+            onlyFavorites = !onlyFavorites;
+            const favBtn = document.getElementById('favoritesFilterBtn');
+            if (onlyFavorites) {
+                favBtn.classList.add('active');
+            } else {
+                favBtn.classList.remove('active');
+            }
+            filterAndDisplay();
+        }
+
+        let statsMapCache = {}; 
+
+        function openStatsModal() {
+            document.getElementById('stats-search-input').value = '';
+            statsMapCache = {};
+            servicesList.forEach(item => {
+                let cat = item.type ? item.type.trim() : "أخرى";
+                statsMapCache[cat] = (statsMapCache[cat] || 0) + 1;
+            });
+            renderStatsTable(statsMapCache);
+            toggleModal('statsModal', true);
+        }
+
+        function filterStatsTable() {
+            const query = document.getElementById('stats-search-input').value.toLowerCase().trim();
+            let filteredMap = {};
+            Object.keys(statsMapCache).forEach(cat => {
+                if (cat.toLowerCase().includes(query)) {
+                    filteredMap[cat] = statsMapCache[cat];
+                }
+            });
+            renderStatsTable(filteredMap);
+        }
+
+        function renderStatsTable(statsMap) {
+            const tbody = document.getElementById('statsTableBody');
+            tbody.innerHTML = "";
+            let totalCount = servicesList.length;
+            const query = document.getElementById('stats-search-input') ? document.getElementById('stats-search-input').value.trim() : "";
+            if (!query) {
+                let totalRow = document.createElement('tr');
+                totalRow.innerHTML = `<td><i class="fa-solid fa-globe" style="color:var(--primary);"></i> <strong>إجمالي كافة الأقسام</strong></td><td><strong style="color:var(--primary);">${totalCount} نشاط/شخص</strong></td>`;
+                tbody.appendChild(totalRow);
+            }
+            let keys = Object.keys(statsMap);
+            if (keys.length === 0) {
+                tbody.innerHTML += `<tr><td colspan="2" style="text-align:center; color:var(--text-muted);">لا توجد نتائج مطابقة للبحث</td></tr>`;
+                return;
+            }
+            keys.forEach(cat => {
+                let row = document.createElement('tr');
+                row.innerHTML = `<td><i class="fa-solid fa-tag" style="color:var(--text-muted); font-size:11px;"></i> ${cat}</td><td>${statsMap[cat]} نشاط</td>`;
+                tbody.appendChild(row);
+            });
+        }
+
+        function openStarsRankingModal() {
+            document.getElementById('stars-search-input').value = '';
+            renderStarsTable(servicesList);
+            toggleModal('starsRankingModal', true);
+        }
+
+        function filterStarsRankingTable() {
+            renderStarsTable(servicesList);
+        }
+
+        function sortItemsByCriteria(list) {
+            return [...list].sort((a, b) => {
+                let statsA = servicesStatsCache[a.id] || { views: 0, likes: 0 };
+                let statsB = servicesStatsCache[b.id] || { views: 0, likes: 0 };
+                
+                let starsA = getStarCount(statsA.views || 0);
+                let starsB = getStarCount(statsB.views || 0);
+
+                if (starsB !== starsA) {
+                    return starsB - starsA;
+                }
+                if ((statsB.views || 0) !== (statsA.views || 0)) {
+                    return (statsB.views || 0) - (statsA.views || 0);
+                }
+                return (statsB.likes || 0) - (statsA.likes || 0);
+            });
+        }
+
+        function renderStarsTable(listToRender) {
+            const tbody = document.getElementById('starsRankingTableBody');
+            tbody.innerHTML = "";
+            
+            let sortedFullList = sortItemsByCriteria(servicesList);
+            const query = document.getElementById('stars-search-input').value.toLowerCase().trim();
+
+            let listToDisplay = sortedFullList.filter(item => {
+                if (!query) return true;
+                let name = item.doctor ? item.doctor.toLowerCase() : "";
+                let type = item.type ? item.type.toLowerCase() : "";
+                return name.includes(query) || type.includes(query);
+            });
+
+            if (listToDisplay.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">لا توجد نتائج مطابقة للبحث</td></tr>`;
+            } else {
+                listToDisplay.forEach((item) => {
+                    let globalIndex = sortedFullList.findIndex(i => i.id === item.id);
+                    let stats = servicesStatsCache[item.id] || { views: 0, likes: 0 };
+                    let views = stats.views || 0;
+                    let likes = stats.likes || 0;
+                    
+                    let row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td><strong style="color:var(--primary);">#${globalIndex + 1}</strong></td>
+                        <td>
+                            <div style="font-weight:700; color:var(--text-main);">${item.doctor || 'بدون اسم'}</div>
+                        </td>
+                        <td><div class="rating-stars">${calculateStars(views)}</div></td>
+                        <td><i class="far fa-eye" style="color:var(--text-muted);"></i> ${views}</td>
+                        <td><i class="fas fa-heart" style="color:#e74c3c;"></i> ${likes}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            }
+        }
+
+        function toggleLike(itemId, event) {
+            if (event) event.stopPropagation();
+            let userLikedKey = 'user_liked_' + itemId;
+            const btn = document.getElementById('like-btn-' + itemId);
+            let isLiked = localStorage.getItem(userLikedKey) === 'true';
+
+            if (!isLiked) {
+                localStorage.setItem(userLikedKey, 'true');
+                if (btn) btn.classList.add('liked');
+                if (window.FB) window.FB.runTransaction(window.FB.ref(window.FB.db, 'items_stats/' + itemId + '/likes'), (curr) => (curr || 0) + 1);
+            } else {
+                localStorage.removeItem(userLikedKey);
+                if (btn) btn.classList.remove('liked');
+                if (window.FB) window.FB.runTransaction(window.FB.ref(window.FB.db, 'items_stats/' + itemId + '/likes'), (curr) => Math.max(0, (curr || 0) - 1));
+            }
+            if (onlyFavorites) filterAndDisplay();
+        }
+
+        function shareCard(itemId, itemTitle, itemType, event) {
+            if (event) event.stopPropagation();
+            let shareUrl = window.location.origin + window.location.pathname + "#" + encodeURIComponent(itemTitle);
+            let shareData = { title: itemTitle, text: `تعرف على نشاط ${itemTitle} (${itemType}) عبر منصة كفر شكر المجتمعية:`, url: shareUrl };
+
+            if (navigator.share) {
+                navigator.share(shareData).catch((error) => console.log('خطأ في المشاركة:', error));
+            } else {
+                navigator.clipboard.writeText(shareUrl).then(() => alert("تم نسخ رابط كارتك الشخصي بنجاح!"));
+            }
+        }
+
+        function listenToItemStats(itemId) {
+            if (!window.FB) return;
+            window.FB.onValue(window.FB.ref(window.FB.db, 'items_stats/' + itemId), (snapshot) => {
+                const data = snapshot.val() || { views: 0, likes: 0 };
+                const vEl = document.getElementById('views-' + itemId);
+                const lEl = document.getElementById('likes-' + itemId);
+                const starsEl = document.getElementById('stars-' + itemId);
+                if (vEl) vEl.innerText = data.views || 0;
+                if (lEl) lEl.innerText = data.likes || 0;
+                if (starsEl) starsEl.innerHTML = calculateStars(data.views || 0);
+
+                // تحديث كلاس البرواز الديناميكي عند تغير المشاهدات مباشرًة
+                const cardEl = document.getElementById('card-' + itemId);
+                if (cardEl) {
+                    cardEl.className = 'service-card';
+                    let starCount = getStarCount(data.views || 0);
+                    if (starCount > 0) {
+                        cardEl.classList.add('star-' + starCount);
+                    }
+                }
+            });
+        }
+
+        function handleActionClick(itemId, url, type) {
+            incrementItemView(itemId);
+            window.open(url, type === 'tel' ? '_self' : '_blank');
+        }
+
+        const adhkarList = ["سبحان الله وبحمده، سبحان الله العظيم", "استغفر الله العظيم واتوب إليه", "اللهم صل وسلم على نبينا محمد"];
+        function changeAdhkar() {
+            let randomIndex = Math.floor(Math.random() * adhkarList.length);
+            document.getElementById('adhkarText').innerText = adhkarList[randomIndex];
+        }
+
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+
+        function toggleTheme() {
+            let currentTheme = document.documentElement.getAttribute('data-theme');
+            let newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            document.getElementById('themeToggleBtn').innerHTML = newTheme === 'dark' ? '☀️ فاتح' : '🌙 غامق';
+        }
+
+        function toggleModal(modalId, show) {
+            let modal = document.getElementById(modalId);
+            if (show) {
+                if (modalId === 'qrModal') {
+                    document.getElementById('qrImage').src = "https://api.qrserver.com/v1/create-qr-code/?size=170x170&data=" + encodeURIComponent(window.location.href);
+                }
+                modal.style.display = "flex";
+            } else {
+                modal.style.display = "none";
+            }
+        }
+
+        function openImagePreview(imgUrl, title, itemId) {
+            incrementItemView(itemId);
+            document.getElementById('previewImage').src = imgUrl;
+            document.getElementById('modalTitle').innerText = title;
+            toggleModal('imageModal', true);
+        }
+
+        function formatDriveImage(url) {
+            if (!url) return "";
+            if (url.includes('drive.google.com')) {
+                let match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+                if (match && match[1]) {
+                    return `https://lh3.googleusercontent.com/d/${match[1]}`;
+                }
+            }
+            return url;
+        }
+
+        function togglePasswordVisibility() {
+            let passwordInput = document.getElementById('adminPassword');
+            let icon = document.getElementById('togglePasswordIcon');
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+                icon.classList.remove("fa-eye");
+                icon.classList.add("fa-eye-slash");
+            } else {
+                passwordInput.type = "password";
+                icon.classList.remove("fa-eye-slash");
+                icon.classList.add("fa-eye");
+            }
+        }
+
+        function openAdminPanel() {
+            if (sessionStorage.getItem('admin_logged_in') === 'true') {
+                document.getElementById('admin-search-input').value = '';
+                loadApprovedServicesForAdmin();
+                loadPendingRequestsForAdmin();
+                loadEditPendingRequestsForAdmin();
+                toggleModal('adminDashboardModal', true);
+            } else {
+                toggleModal('adminLoginModal', true);
+            }
+        }
+
+        function loginAdminWithPassword() {
+            let email = document.getElementById('adminEmail').value.trim();
+            let password = document.getElementById('adminPassword').value.trim();
+
+            if (!email || !password) {
+                alert("يرجى إدخال البريد الإلكتروني وكلمة المرور أولاً");
+                return;
+            }
+
+            window.FB.signInWithEmailAndPassword(window.FB.auth, email, password)
+                .then((userCredential) => {
+                    generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
+                    emailjs.send("service_k7ftnle", "template_60xuzhi", {
+                        email: email,
+                        passcode: generatedOTP
+                    }).then(() => {
+                        alert("تم التحقق من الحساب بنجاح، وتم إرسال كود التحقق (OTP) إلى بريدك الإلكتروني");
+                        toggleModal('adminLoginModal', false);
+                        toggleModal('otpModal', true);
+                    }, (err) => {
+                        alert("خطأ في إرسال الإيميل: " + (err.text || JSON.stringify(err)));
+                    });
+                })
+                .catch((error) => {
+                    alert("خطأ في بيانات الدخول: البريد الإلكتروني أو كلمة المرور غير صحيحة!");
+                });
+        }
+
+        function verifyOTP() {
+            let enteredOTP = document.getElementById('otpInput').value.trim();
+            if (enteredOTP === generatedOTP) {
+                sessionStorage.setItem('admin_logged_in', 'true');
+                alert("تم التحقق من الكود بنجاح! جارٍ فتح لوحة الإدارة...");
+                toggleModal('otpModal', false);
+                document.getElementById('admin-search-input').value = '';
+                loadApprovedServicesForAdmin();
+                loadPendingRequestsForAdmin();
+                loadEditPendingRequestsForAdmin();
+                toggleModal('adminDashboardModal', true);
+                document.getElementById('otpInput').value = '';
+                document.getElementById('adminPassword').value = '';
+            } else {
+                alert("كود التحقق غير صحيح، تأكد من الكود المدخل");
+            }
+        }
+
+        function switchAdminTab(tab) {
+            const tabPendingBtn = document.getElementById('tabPendingBtn');
+            const tabApprovedBtn = document.getElementById('tabApprovedBtn');
+            const tabEditPendingBtn = document.getElementById('tabEditPendingBtn');
+            const sectionPending = document.getElementById('adminSectionPending');
+            const sectionApproved = document.getElementById('adminSectionApproved');
+            const sectionEditPending = document.getElementById('adminSectionEditPending');
+
+            if (tab === 'approved') {
+                tabApprovedBtn.classList.add('active');
+                tabPendingBtn.classList.remove('active');
+                tabEditPendingBtn.classList.remove('active');
+                sectionApproved.style.display = 'block';
+                sectionPending.style.display = 'none';
+                sectionEditPending.style.display = 'none';
+                loadApprovedServicesForAdmin();
+            } else if (tab === 'pending') {
+                tabPendingBtn.classList.add('active');
+                tabApprovedBtn.classList.remove('active');
+                tabEditPendingBtn.classList.remove('active');
+                sectionPending.style.display = 'block';
+                sectionApproved.style.display = 'none';
+                sectionEditPending.style.display = 'none';
+                loadPendingRequestsForAdmin();
+            } else if (tab === 'editPending') {
+                tabEditPendingBtn.classList.add('active');
+                tabApprovedBtn.classList.remove('active');
+                tabPendingBtn.classList.remove('active');
+                sectionEditPending.style.display = 'block';
+                sectionApproved.style.display = 'none';
+                sectionPending.style.display = 'none';
+                loadEditPendingRequestsForAdmin();
+            }
+        }
+
+        function loadApprovedServicesForAdmin() {
+            const container = document.getElementById('approvedCardsContainer');
+            container.innerHTML = "جاري التحميل...";
+            
+            const searchQuery = document.getElementById('admin-search-input') ? document.getElementById('admin-search-input').value.toLowerCase().trim() : "";
+
+            let allApproved = servicesList.filter(item => {
+                if (!searchQuery) return true;
+                let name = item.doctor ? item.doctor.toLowerCase() : "";
+                let phone = item.phone ? item.phone.toLowerCase() : "";
+                let type = item.type ? item.type.toLowerCase() : "";
+                return name.includes(searchQuery) || phone.includes(searchQuery) || type.includes(searchQuery);
+            });
+
+            if (allApproved.length === 0) {
+                container.innerHTML = "<p style='text-align:center; color:var(--text-muted);'>لا توجد أنشطة مطابقة للبحث حالياً.</p>";
+                return;
+            }
+
+            container.innerHTML = "";
+            allApproved.forEach(item => {
+                let processedImgUrl = formatDriveImage(item.image);
+                let imageHTML = processedImgUrl ? `<img src="${processedImgUrl}" style="width:100%; height:120px; object-fit:cover; border-radius:8px; margin-bottom:8px;" alt="صورة">` : '';
+
+                let cardDiv = document.createElement('div');
+                cardDiv.className = 'admin-card';
+                cardDiv.innerHTML = `
+                    ${imageHTML}
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
+                        <div style="font-weight:900; font-size:16px; color:var(--primary);">${item.doctor || 'بدون اسم'} (${item.type || 'موقع'})</div>
+                        <div style="font-size:12px; background:rgba(56,189,248,0.1); padding:3px 8px; border-radius:6px; color:var(--primary); border:1px solid rgba(56,189,248,0.2);">
+                            📞 ${item.phone || '---'}
+                        </div>
+                    </div>
+                    <div style="font-size:12.5px; color:var(--text-muted); margin-bottom:10px;">العنوان: ${item.address || '---'} | الخريطة: ${item.mapUrl ? 'موجود' : 'غير متوفر'}</div>
+                    <div style="display:flex; gap:10px;">
+                        <button onclick="openEditModal('${item.id}')" style="background:#f59e0b; color:#fff; border:none; padding:6px 15px; border-radius:8px; cursor:pointer; font-weight:700;"><i class="fa-solid fa-pen"></i> تعديل</button>
+                        <button onclick="promptDelete('${item.id}', 'approved', '${item.doctor || 'موقع'}', '${item.phone}')" style="background:#ef4444; color:#fff; border:none; padding:6px 15px; border-radius:8px; cursor:pointer; font-weight:700;"><i class="fa-solid fa-trash"></i> حذف</button>
+                    </div>
+                `;
+                container.appendChild(cardDiv);
+            });
+        }
+
+        function loadPendingRequestsForAdmin() {
+            const container = document.getElementById('pendingCardsContainer');
+            container.innerHTML = "جاري التحميل...";
+            if (!window.FB) return;
+
+            window.FB.get(window.FB.ref(window.FB.db, 'pending_requests')).then((snapshot) => {
+                const data = snapshot.val();
+                container.innerHTML = "";
+                if (!data) {
+                    container.innerHTML = "<p style='text-align:center; color:var(--text-muted);'>لا توجد طلبات انتظار جديدة للأنشطة.</p>";
+                    return;
+                }
+
+                Object.keys(data).forEach(key => {
+                    let item = data[key];
+                    let cardDiv = document.createElement('div');
+                    cardDiv.className = 'admin-card';
+                    cardDiv.innerHTML = `
+                        <div style="font-weight:900; font-size:16px; color:var(--primary); margin-bottom:5px;">${item.doctor} (${item.type})</div>
+                        <div style="font-size:12.5px; color:var(--text-muted); margin-bottom:8px;">العنوان: ${item.address || '---'} | خريطة: ${item.mapUrl ? 'موجود' : 'لا'}</div>
+                        <div style="display:flex; gap:10px;">
+                            <button onclick="approveRequest('${key}')" style="background:#25d366; color:#fff; border:none; padding:6px 15px; border-radius:8px; cursor:pointer; font-weight:700;"><i class="fa-solid fa-check"></i> قبول</button>
+                            <button onclick="promptDelete('${key}', 'pending', '${item.doctor}', '${item.phone}')" style="background:#ef4444; color:#fff; border:none; padding:6px 15px; border-radius:8px; cursor:pointer; font-weight:700;"><i class="fa-solid fa-xmark"></i> رفض</button>
+                        </div>
+                    `;
+                    container.appendChild(cardDiv);
+                });
+            });
+        }
+
+        function loadEditPendingRequestsForAdmin() {
+            const container = document.getElementById('editPendingCardsContainer');
+            container.innerHTML = "جاري التحميل...";
+            if (!window.FB) return;
+
+            window.FB.get(window.FB.ref(window.FB.db, 'edit_pending_requests')).then((snapshot) => {
+                const data = snapshot.val();
+                container.innerHTML = "";
+                if (!data) {
+                    container.innerHTML = "<p style='text-align:center; color:var(--text-muted);'>لا توجد طلبات تعديل معلقة حالياً.</p>";
+                    return;
+                }
+
+                Object.keys(data).forEach(key => {
+                    let item = data[key];
+                    let isImageEdit = item.type === 'image';
+                    let titleText = isImageEdit ? 'طلب تحديث صورة' : 'طلب تحديث موقع';
+                    let contentDetail = isImageEdit ? `<strong>لينك الصورة الجديد:</strong> <a href="${item.image}" target="_blank" style="color:var(--primary);">${item.image}</a>` : `<strong>رابط الموقع الجديد:</strong> <a href="${item.mapUrl}" target="_blank" style="color:var(--primary);">${item.mapUrl}</a>`;
+
+                    let cardDiv = document.createElement('div');
+                    cardDiv.className = 'admin-card';
+                    cardDiv.innerHTML = `
+                        <div style="font-weight:900; font-size:16px; color:#f59e0b; margin-bottom:5px;"><i class="fa-solid fa-pen-to-square"></i> ${titleText}</div>
+                        <div style="font-size:12.5px; color:var(--text-main); margin-bottom:4px;"><strong>رقم التلفون:</strong> ${item.phone}</div>
+                        <div style="font-size:12.5px; color:var(--text-main); margin-bottom:10px;">${contentDetail}</div>
+                        <div style="display:flex; gap:10px;">
+                            <button onclick="approveEditRequest('${key}')" style="background:#25d366; color:#fff; border:none; padding:6px 15px; border-radius:8px; cursor:pointer; font-weight:700;"><i class="fa-solid fa-check"></i> موافق</button>
+                            <button onclick="rejectEditRequest('${key}')" style="background:#ef4444; color:#fff; border:none; padding:6px 15px; border-radius:8px; cursor:pointer; font-weight:700;"><i class="fa-solid fa-xmark"></i> رفض (حذف)</button>
+                        </div>
+                    `;
+                    container.appendChild(cardDiv);
+                });
+            });
+        }
+
+        function approveEditRequest(key) {
+            window.FB.get(window.FB.ref(window.FB.db, 'edit_pending_requests/' + key)).then((snapshot) => {
+                let req = snapshot.val();
+                if (req) {
+                    let targetId = req.itemId;
+                    window.FB.get(window.FB.ref(window.FB.db, 'approved_services/' + targetId)).then((itemSnap) => {
+                        let itemData = itemSnap.val();
+                        if (itemData) {
+                            let updatePayload = {};
+                            if (req.type === 'image') {
+                                updatePayload.image = req.image;
+                            } else if (req.type === 'location') {
+                                updatePayload.mapUrl = req.mapUrl;
+                            }
+                            window.FB.update(window.FB.ref(window.FB.db, 'approved_services/' + targetId), updatePayload).then(() => {
+                                window.FB.remove(window.FB.ref(window.FB.db, 'edit_pending_requests/' + key));
+                                alert("تم الموافقة وتحديث البيانات وإزالة القديم من Firebase بنجاح!");
+                                loadEditPendingRequestsForAdmin();
+                                loadApprovedServicesForAdmin();
+                                loadServicesData();
+                            });
+                        } else {
+                            alert("خطأ: لم يتم العثور على النشاط المراد تعديله.");
+                        }
+                    });
+                }
+            });
+        }
+
+        function rejectEditRequest(key) {
+            if (confirm("هل أنت متأكد من رفض هذا الطلب؟")) {
+                window.FB.remove(window.FB.ref(window.FB.db, 'edit_pending_requests/' + key)).then(() => {
+                    alert("تم رفض وحذف الطلب بنجاح!");
+                    loadEditPendingRequestsForAdmin();
+                });
+            }
+        }
+
+        function promptDelete(key, type, name, phone) {
+            document.getElementById('deleteTargetKey').value = key;
+            document.getElementById('deleteTargetType').value = type;
+            document.getElementById('deleteTargetName').value = name || 'غير محدد';
+            document.getElementById('deleteTargetPhone').value = phone || '';
+            toggleModal('confirmDeleteModal', true);
+        }
+
+        function executeFinalDelete() {
+            let key = document.getElementById('deleteTargetKey').value;
+            let type = document.getElementById('deleteTargetType').value;
+            let path = type === 'approved' ? 'approved_services/' + key : 'pending_requests/' + key;
+
+            if (window.FB) {
+                window.FB.remove(window.FB.ref(window.FB.db, path)).then(() => {
+                    toggleModal('confirmDeleteModal', false);
+                    alert("تم الحذف نهائياً بنجاح!");
+                    if (type === 'approved') loadApprovedServicesForAdmin();
+                    else loadPendingRequestsForAdmin();
+                    loadServicesData();
+                });
+            }
+        }
+
+        function approveRequest(key) {
+            window.FB.get(window.FB.ref(window.FB.db, 'pending_requests/' + key)).then((snapshot) => {
+                let val = snapshot.val();
+                if (val) {
+                    window.FB.push(window.FB.ref(window.FB.db, 'approved_services'), val);
+                    window.FB.remove(window.FB.ref(window.FB.db, 'pending_requests/' + key));
+                    alert("تم قبول الكارت بنجاح!");
+                    loadPendingRequestsForAdmin();
+                    loadApprovedServicesForAdmin();
+                    loadServicesData();
+                }
+            });
+        }
+
+        function openEditModal(key) {
+            if (!window.FB) return;
+            window.FB.get(window.FB.ref(window.FB.db, 'approved_services/' + key)).then((snapshot) => {
+                let item = snapshot.val();
+                if (item) {
+                    document.getElementById('editServiceKey').value = key;
+                    document.getElementById('editType').value = item.type || '';
+                    document.getElementById('editName').value = item.doctor || '';
+                    document.getElementById('editAddress').value = item.address || '';
+                    document.getElementById('editMapUrl').value = item.mapUrl || '';
+                    document.getElementById('editFirstPrice').value = item.firstPrice || '';
+                    document.getElementById('editFollowPrice').value = item.followPrice || '';
+                    document.getElementById('editDetails').value = item.details || '';
+                    document.getElementById('editWorkTime').value = item.workTime || '';
+                    document.getElementById('editPhone').value = item.phone || '';
+                    document.getElementById('editDriveUrl').value = item.image || '';
+                    toggleModal('editServiceModal', true);
+                }
+            });
+        }
+
+        function saveEditedService() {
+            let key = document.getElementById('editServiceKey').value;
+            let updatedData = {
+                type: document.getElementById('editType').value.trim(),
+                doctor: document.getElementById('editName').value.trim(),
+                address: document.getElementById('editAddress').value.trim(),
+                mapUrl: document.getElementById('editMapUrl').value.trim(),
+                firstPrice: document.getElementById('editFirstPrice').value.trim(),
+                followPrice: document.getElementById('editFollowPrice').value.trim(),
+                details: document.getElementById('editDetails').value.trim(),
+                workTime: document.getElementById('editWorkTime').value.trim(),
+                phone: document.getElementById('editPhone').value.trim(),
+                image: document.getElementById('editDriveUrl').value.trim()
+            };
+
+            if (window.FB) {
+                window.FB.update(window.FB.ref(window.FB.db, 'approved_services/' + key), updatedData)
+                    .then(() => {
+                        alert("تم تحديث النشاط بنجاح!");
+                        toggleModal('editServiceModal', false);
+                        loadApprovedServicesForAdmin();
+                        loadServicesData();
+                    });
+            }
+        }
+
+        function submitNewActivity() {
+            let type = document.getElementById('addType').value.trim();
+            let doctor = document.getElementById('addName').value.trim();
+            let address = document.getElementById('addAddress').value.trim();
+            let mapUrl = document.getElementById('addMapUrl').value.trim();
+            let firstPrice = document.getElementById('addFirstPrice').value.trim();
+            let followPrice = document.getElementById('addFollowPrice').value.trim();
+            let details = document.getElementById('addDetails').value.trim();
+            let workTime = document.getElementById('addWorkTime').value.trim();
+            let phone = document.getElementById('addPhone').value.trim().replace(/^0/, '');
+            let image = document.getElementById('addDriveUrl').value.trim();
+
+            if (!type || !doctor || !address || !phone) {
+                alert("برجاء إدخال الحقول الأساسية (النوع، الاسم، العنوان، ورقم الهاتف)");
+                return;
+            }
+
+            let phoneExists = servicesList.some(item => item.phone === phone);
+            if (phoneExists) {
+                alert("خطأ: الرقم موجود بالفعل!");
+                return;
+            }
+
+            let newEntry = { 
+                type: type, 
+                doctor: doctor, 
+                address: address,
+                mapUrl: mapUrl,
+                firstPrice: firstPrice, 
+                followPrice: followPrice, 
+                details: details, 
+                workTime: workTime, 
+                phone: phone, 
+                image: image, 
+                status: "قيد الانتظار", 
+                timestamp: Date.now() 
+            };
+
+            if (window.FB) {
+                window.FB.push(window.FB.ref(window.FB.db, 'pending_requests'), newEntry)
+                    .then(() => {
+                        let targetWhatsapp = "201023745774";
+                        let waMessage = encodeURIComponent(`طلب إضافة نشاط جديد (قيد الانتظار):\n- النوع: ${type}\n- الاسم: ${doctor}\n- العنوان: ${address}\n- الهاتف: ${phone}`);
+                        window.open(`https://wa.me/${targetWhatsapp}?text=${waMessage}`, '_blank');
+
+                        toggleModal('addModal', false);
+                        alert("تم إرسال نشاطك بنجاح إلى قائمة الانتظار، وتم فتح الواتساب لتأكيد البيانات مع الإدارة!");
+                    })
+                    .catch((error) => {
+                        alert("حدث خطأ أثناء حفظ الطلب: " + error.message);
+                    });
+            }
+        }
+
+        function parseCSV(text) {
+            let lines = text.split("\n");
+            let result = [];
+            for (let i = 1; i < lines.length; i++) {
+                if (!lines[i].trim()) continue;
+                let row = [], current = "", inQuotes = false;
+                for (let char of lines[i]) {
+                    if (char === '"') inQuotes = !inQuotes;
+                    else if (char === ',' && !inQuotes) { row.push(current.trim()); current = ""; }
+                    else current += char;
+                }
+                row.push(current.trim());
+                result.push(row);
+            }
+            return result;
+        }
+
+        function loadServicesData() {
+            const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRT04pzSV40ZNYSFbS9zvSdHkXjIV8SOs12Tki6TqncA1FtH6ug_qk64zqnGFMzkRV5On28Ya5iPRQ9/pub?gid=806428213&single=true&output=csv";
+
+            fetch(sheetUrl)
+                .then(res => res.text())
+                .then(csvText => {
+                    let rows = parseCSV(csvText);
+                    servicesList = [];
+                    rows.forEach((cols, index) => {
+                        let type = cols[0] ? cols[0].trim() : "";         
+                        let doctor = cols[1] ? cols[1].trim() : "";       
+                        let firstPrice = cols[2] ? cols[2].trim() : "";   
+                        let followPrice = cols[3] ? cols[3].trim() : ""; 
+                        let details = cols[4] ? cols[4].trim() : "";     
+                        let workTime = cols[5] ? cols[5].trim() : "";     
+                        let phone = cols[6] ? cols[6].trim().replace(/^0/, '') : "";         
+                        let image = cols[7] ? cols[7].trim() : "";         
+                        let mapUrl = cols[8] ? cols[8].trim() : "";
+
+                        if (type && type !== "نوع") {
+                            let cleanPhoneId = phone ? phone.replace(/\D/g, '') : ('doc_' + index);
+                            let uniqueId = "person_" + cleanPhoneId; 
+                            servicesList.push({ id: uniqueId, type, doctor, firstPrice, followPrice, details, workTime, phone, image, mapUrl });
+                        }
+                    });
+
+                    if (window.FB) {
+                        window.FB.get(window.FB.ref(window.FB.db, 'approved_services')).then((snapshot) => {
+                            const approvedData = snapshot.val();
+                            if (approvedData) {
+                                Object.keys(approvedData).forEach(k => {
+                                    let cleanApprovedPhone = approvedData[k].phone ? approvedData[k].phone.replace(/^0/, '') : "";
+                                    approvedData[k].phone = cleanApprovedPhone;
+                                    if (!servicesList.some(item => item.phone === cleanApprovedPhone && item.doctor === approvedData[k].doctor)) {
+                                        servicesList.push({ id: k, ...approvedData[k] });
+                                    }
+                                });
+                            }
+                            fetchStatsAndRender();
+                        });
+                    } else {
+                        fetchStatsAndRender();
+                    }
+                })
+                .catch(() => fetchStatsAndRender());
+        }
+
+        function fetchStatsAndRender() {
+            if (window.FB) {
+                window.FB.get(window.FB.ref(window.FB.db, 'items_stats')).then((snapshot) => {
+                    servicesStatsCache = snapshot.val() || {};
+                    buildCategories();
+                    checkUrlHashForSearch();
+                    filterAndDisplay();
+                });
+            } else {
+                buildCategories();
+                checkUrlHashForSearch();
+                filterAndDisplay();
+            }
+        }
+
+        function checkUrlHashForSearch() {
+            if (window.location.hash) {
+                let decodedHash = decodeURIComponent(window.location.hash.substring(1));
+                if (decodedHash) {
+                    document.getElementById('search-input').value = decodedHash;
+                    document.getElementById('clearSearchBtn').style.display = 'block';
+                }
+            }
+        }
+
+        function buildCategories() {
+            const container = document.getElementById('categories-container');
+            const categories = ["الكل", ...new Set(servicesList.map(item => item.type))];
+            container.innerHTML = "";
+            categories.forEach(cat => {
+                const btn = document.createElement('button');
+                btn.className = `cat-btn ${cat === currentCategory && !onlyFavorites ? 'active' : ''}`;
+                btn.innerText = cat;
+                btn.onclick = () => {
+                    currentCategory = cat;
+                    onlyFavorites = false;
+                    document.getElementById('favoritesFilterBtn').classList.remove('active');
+                    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    filterAndDisplay();
+                };
+                container.appendChild(btn);
+            });
+        }
+
+        function handleSearchInput() {
+            const inputVal = document.getElementById('search-input').value;
+            document.getElementById('clearSearchBtn').style.display = inputVal ? 'block' : 'none';
+            filterAndDisplay();
+        }
+
+        function clearSearchField() {
+            document.getElementById('search-input').value = '';
+            document.getElementById('clearSearchBtn').style.display = 'none';
+            window.location.hash = '';
+            filterAndDisplay();
+        }
+
+        function filterAndDisplay() {
+            const searchText = document.getElementById('search-input').value.toLowerCase().trim();
+            
+            let filtered = servicesList.filter(item => {
+                let isLiked = localStorage.getItem('user_liked_' + item.id) === 'true';
+                if (onlyFavorites && !isLiked) return false;
+
+                const matchCat = (currentCategory === "الكل" || item.type === currentCategory);
+                const docName = item.doctor ? item.doctor.toLowerCase() : "";
+                const itemAddr = item.address ? item.address.toLowerCase() : "";
+                const itemDet = item.details ? item.details.toLowerCase() : "";
+                const itemType = item.type ? item.type.toLowerCase() : "";
+
+                const matchSearch = docName.includes(searchText) || itemAddr.includes(searchText) || itemDet.includes(searchText) || itemType.includes(searchText);
+                return matchCat && matchSearch;
+            });
+
+            filteredCache = sortItemsByCriteria(filtered);
+            displayedCount = 10;
+            renderCardsSlice();
+        }
+
+        function renderCardsSlice() {
+            const grid = document.getElementById('cards-grid');
+            grid.innerHTML = "";
+
+            if (filteredCache.length === 0) {
+                let msg = onlyFavorites ? "لا توجد عناصر في قائمة المفضلة لديك حالياً." : "لا توجد نتائج مطابقة للبحث";
+                grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-muted); font-weight: 700;">${msg}</div>`;
+                return;
+            }
+
+            let currentSlice = filteredCache.slice(0, displayedCount);
+
+            currentSlice.forEach(item => {
+                const card = document.createElement('div');
+                
+                let stats = servicesStatsCache[item.id] || { views: 0, likes: 0 };
+                let starCount = getStarCount(stats.views || 0);
+                
+                // تعيين كلاس الإطار الخاص بعدد النجوم ديناميكياً
+                card.className = 'service-card' + (starCount > 0 ? (' star-' + starCount) : '');
+                card.id = 'card-' + item.id;
+
+                let actionBtnHTML = '';
+                if (item.phone) {
+                    let cleanPhone = "20" + item.phone.replace(/^0+/, '');
+                    let waMsg = encodeURIComponent(`السلام عليكم، اطلعت على إعلانكم في دليل كفر شكر وأرغب في التواصل للتفاصيل.`);
+                    actionBtnHTML = `
+                        <div style="display: flex; gap: 8px; margin-top: 8px; align-items: center;">
+                            <a onclick="handleActionClick('${item.id}', 'tel:0${item.phone}', 'tel')" class="action-link-btn"><i class="fa-solid fa-phone"></i> اتصال</a>
+                            <a onclick="handleActionClick('${item.id}', 'https://wa.me/${cleanPhone}?text=${waMsg}', 'whatsapp')" class="action-link-btn whatsapp"><i class="fa-brands fa-whatsapp"></i> واتساب</a>
+                            <button onclick="shareCard('${item.id}', '${item.doctor || 'نشاط'}', '${item.type}', event)" class="share-card-btn" title="مشاركة كارتي"><i class="fa-solid fa-share-nodes"></i></button>
+                        </div>
+                    `;
+                }
+
+                let processedImgUrl = formatDriveImage(item.image);
+                let imageHTML = processedImgUrl ? `
+                    <div class="card-img-container" onclick="openImagePreview('${processedImgUrl}', '${item.doctor}', '${item.id}')">
+                        <img src="${processedImgUrl}" class="card-img" alt="صورة">
+                        <div class="img-badge"><i class="fa-solid fa-magnifying-glass"></i> اضغط للمعاينة</div>
+                    </div>
+                ` : '';
+
+                let addressHTML = '';
+                if (item.address || item.mapUrl) {
+                    let finalMapLink = item.mapUrl ? item.mapUrl : `https://www.google.com/maps/search/?api=1&query=` + encodeURIComponent(item.address + " كفر شكر");
+                    addressHTML = `
+                        <div style="font-size: 13px; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+                            <a href="${finalMapLink}" target="_blank" title="افتح الموقع على خريطة جوجل" style="color: var(--primary); text-decoration: none; display: inline-flex; align-items: center; gap: 6px; font-weight: 700;">
+                                <i class="fa-solid fa-map-location-dot" style="font-size: 15px; color: #ef4444;"></i> ${item.address || 'عرض الموقع على الخريطة'} 
+                                <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 10px; opacity: 0.7;"></i>
+                            </a>
+                        </div>
+                    `;
+                }
+
+                let isLiked = localStorage.getItem('user_liked_' + item.id) === 'true';
+                let currentStarsHTML = calculateStars(stats.views || 0);
+
+                card.innerHTML = `
+                    ${imageHTML}
+                    <div class="card-body">
+                        <div>
+                            <span class="service-tag">${item.type}</span>
+                            <div class="service-title">${item.doctor || 'بدون اسم'}</div>
+                            <div class="rating-stars" id="stars-${item.id}">${currentStarsHTML}</div>
+                            ${addressHTML}
+                            ${item.details ? `<div class="service-details">${item.details}</div>` : ''}
+                        </div>
+                        <div style="margin-top: 15px;">
+                            ${(item.firstPrice || item.followPrice) ? `
+                                <div class="prices-box">
+                                    <div class="price-row">
+                                        <span>أول مرة:</span>
+                                        <strong style="color:var(--primary);">${item.firstPrice}</strong>
+                                    </div>
+                                    ${item.followPrice ? `
+                                        <div class="price-row">
+                                            <span>المتابعة:</span>
+                                            <span>${item.followPrice}</span>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            ` : ''}
+                            ${item.workTime ? `<div class="time-box" style="margin-top:8px;"><i class="fa-regular fa-clock"></i> <span>${item.workTime}</span></div>` : ''}
+                            
+                            <div class="interaction-bar">
+                                <span style="color: var(--text-muted);"><i class="far fa-eye"></i> المشاهدات: <span id="views-${item.id}">${stats.views || 0}</span></span>
+                                <button id="like-btn-${item.id}" class="like-btn ${isLiked ? 'liked' : ''}" onclick="toggleLike('${item.id}', event)">
+                                    <i class="fas fa-heart"></i> إعجاب: <span id="likes-${item.id}">${stats.likes === undefined ? 0 : stats.likes}</span>
+                                </button>
+                            </div>
+                            ${actionBtnHTML}
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+                setTimeout(() => listenToItemStats(item.id), 50);
+            });
+        }
+        let deferredPrompt;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    console.log('تم التقاط حدث التثبيت بنجاح');
+});
+
+const installBtn = document.getElementById('installAppBtn');
+
+if (installBtn) {
+    installBtn.addEventListener('click', async () => {
+        if (deferredPrompt) {
+            // إذا كان المتصفح جاهزاً للتثبيت
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            if (outcome === 'accepted') {
+                console.log('تم تثبيت التطبيق');
+            }
+            deferredPrompt = null;
+        } else {
+            // تنبيه احتياطي إذا كان المتصفح لا يدعم التثبيت المباشر أو لم يفعل الشروط بعد
+            alert('للتثبيت اليدوي: اضغط على القائمة الرئيسية للمتصفح (...) ثم اختر "إضافة إلى الشاشة الرئيسية" (Add to Home screen) أو "تثبيت التطبيق".');
+        }
+    });
+}
+
+window.addEventListener('appinstalled', () => {
+    if (installBtn) {
+        installBtn.style.display = 'none';
+    }
+    console.log('تم تثبيت التطبيق بنجاح');
+});
+    </script>
+    <script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js')
+        .then((reg) => console.log('تمام، الموقع بقى تطبيق!'))
+        .catch((err) => console.log('فيه مشكلة في تسجيل الـ Service Worker'));
+    });
+  }
+</script>
+</body>
+</html>

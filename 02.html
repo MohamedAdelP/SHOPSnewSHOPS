@@ -22,7 +22,7 @@
     <!-- مكتبات Firebase الإصدار المعياري (Modular SDKs) عبر CDN -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, onValue, get, push, update, remove, runTransaction } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getDatabase, ref, onValue, get, push, set, update, remove, runTransaction } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
         import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         
         const firebaseConfig = {
@@ -40,7 +40,7 @@
         const db = getDatabase(app);
         const auth = getAuth(app);
 
-        window.FB = { db, auth, ref, onValue, get, push, update, remove, runTransaction, signInWithEmailAndPassword };
+        window.FB = { db, auth, ref, onValue, get, push, set, update, remove, runTransaction, signInWithEmailAndPassword };
         
         if (typeof window.initApp === 'function') {
             window.initApp();
@@ -104,6 +104,132 @@
             flex-wrap: wrap;
         }
 
+        /* زر القائمة المجمّع (الأيقونة الواحدة التي تفتح باقي الأيقونات) */
+        .top-actions-wrapper {
+            position: relative;
+        }
+
+        .menu-toggle-btn {
+            background: rgba(56, 189, 248, 0.1);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        .menu-toggle-btn:hover { background: var(--primary); color: var(--btn-text); }
+        .menu-toggle-btn i { transition: transform 0.25s ease; }
+        .menu-toggle-btn.open i.fa-bars { transform: rotate(90deg); }
+
+        .top-actions-dropdown {
+            display: none;
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            flex-direction: column;
+            gap: 2px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 10px;
+            min-width: 230px;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.35);
+            z-index: 200;
+        }
+        .top-actions-dropdown.show {
+            display: flex;
+        }
+
+        .menu-section-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            padding: 8px 10px 4px;
+            letter-spacing: 0.3px;
+        }
+
+        .menu-divider {
+            height: 1px;
+            background: var(--border-color);
+            margin: 6px 4px;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: var(--text-main);
+            font-family: 'Cairo', sans-serif;
+            font-size: 13.5px;
+            font-weight: 700;
+            padding: 9px 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            text-align: right;
+            transition: background-color 0.15s ease;
+        }
+        .menu-item:hover { background: rgba(56, 189, 248, 0.08); }
+        .menu-item-admin:hover { background: rgba(239, 68, 68, 0.08); }
+
+        .menu-item-icon {
+            width: 28px;
+            height: 28px;
+            min-width: 28px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+        }
+
+        /* زر الواتساب العائم الثابت لإرسال استفسار/شكوى */
+        .floating-whatsapp-btn {
+            position: fixed;
+            bottom: 22px;
+            right: 22px;
+            width: 58px;
+            height: 58px;
+            background: #25d366;
+            color: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            text-decoration: none;
+            box-shadow: 0 6px 18px rgba(37, 211, 102, 0.45);
+            z-index: 500;
+            animation: pulseWaBtn 2.2s infinite;
+        }
+        .floating-whatsapp-btn:hover { background: #1ebe5b; }
+
+        @keyframes pulseWaBtn {
+            0%   { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.55); }
+            70%  { box-shadow: 0 0 0 16px rgba(37, 211, 102, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
+        }
+
+        .floating-wa-tooltip {
+            position: fixed;
+            bottom: 32px;
+            right: 88px;
+            background: var(--card-bg);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            padding: 8px 14px;
+            border-radius: 10px;
+            font-size: 12.5px;
+            font-weight: 700;
+            white-space: nowrap;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+            z-index: 500;
+            pointer-events: none;
+        }
+
+        @media (max-width: 480px) {
+            .floating-wa-tooltip { display: none; }
+        }
+
         .action-btn {
             background: rgba(56, 189, 248, 0.08);
             border: 1px solid var(--primary);
@@ -120,41 +246,6 @@
             text-decoration: none;
         }
         .action-btn:hover { background: var(--primary); color: var(--btn-text); }
-        
-        .whatsapp-add-btn {
-            background: rgba(37, 211, 102, 0.1);
-            border-color: #25d366;
-            color: #25d366;
-        }
-        .whatsapp-add-btn:hover { background: #25d366; color: #fff; }
-
-        .map-add-btn {
-            background: rgba(234, 67, 53, 0.1);
-            border-color: #ea4335;
-            color: #ea4335;
-        }
-        .map-add-btn:hover { background: #ea4335; color: #fff; }
-
-        .admin-nav-btn {
-            background: rgba(239, 68, 68, 0.1);
-            border-color: #ef4444;
-            color: #ef4444;
-        }
-        .admin-nav-btn:hover { background: #ef4444; color: #fff; }
-
-        .info-nav-btn {
-            background: rgba(245, 158, 11, 0.1);
-            border-color: #f59e0b;
-            color: #f59e0b;
-        }
-        .info-nav-btn:hover { background: #f59e0b; color: #fff; }
-
-        .stars-ranking-btn {
-            background: rgba(251, 191, 36, 0.1);
-            border-color: #fbbf24;
-            color: #fbbf24;
-        }
-        .stars-ranking-btn:hover { background: #fbbf24; color: #0f172a; }
 
         .adhkar-banner {
             background: rgba(56, 189, 248, 0.07);
@@ -330,145 +421,66 @@
     transform: translateY(-4px);
 }
 
-/* 1 نجمة: برونزي */
+/* 1 نجمة: برونزي هادئ */
 .service-card.star-1 {
-    border: 3px solid #b45309;
-    box-shadow: 0 0 15px rgba(180, 83, 9, 0.25);
+    border: 2px solid #b45309;
+    box-shadow: 0 0 10px rgba(180, 83, 9, 0.2);
 }
 
-/* 2 نجوم: أزرق */
+/* 2 نجوم: فضي */
 .service-card.star-2 {
-    border: 3px solid #2563eb;
-    box-shadow: 0 0 18px rgba(37, 99, 235, 0.3);
+    border: 2px solid #94a3b8;
+    box-shadow: 0 0 12px rgba(148, 163, 184, 0.25);
 }
 
 /* 3 نجوم: ذهبي كلاسيكي */
 .service-card.star-3 {
-    border: 3px solid #ca8a04;
-    box-shadow: 0 0 20px rgba(202, 138, 4, 0.35), inset 0 0 8px rgba(202, 138, 4, 0.2);
+    border: 2.5px solid #ca8a04;
+    box-shadow: 0 0 16px rgba(202, 138, 4, 0.3), inset 0 0 8px rgba(202, 138, 4, 0.15);
 }
 
-/* 4 نجوم: أزرق ملكي عميق */
+/* 4 نجوم: زمردي أخضر */
 .service-card.star-4 {
-    border: 3.5px solid #1d4ed8;
-    box-shadow: 0 0 22px rgba(29, 78, 216, 0.4), inset 0 0 10px rgba(29, 78, 216, 0.25);
+    border: 3px solid #059669;
+    box-shadow: 0 0 20px rgba(5, 150, 105, 0.35), inset 0 0 10px rgba(5, 150, 105, 0.2);
 }
 
-/* 5 نجوم: زمردي أخضر */
+/* 5 نجوم: أزرق ملكي متوهج */
 .service-card.star-5 {
-    border: 3.5px solid #059669;
-    box-shadow: 0 0 25px rgba(5, 150, 105, 0.45), inset 0 0 12px rgba(5, 150, 105, 0.3);
-    animation: glow5 3s infinite alternate;
+    border: 3px solid #2563eb;
+    box-shadow: 0 0 24px rgba(37, 99, 235, 0.45), inset 0 0 12px rgba(37, 99, 235, 0.25);
+    animation: glowStar5 3s infinite alternate;
 }
-@keyframes glow5 {
-    0% { box-shadow: 0 0 20px rgba(5, 150, 105, 0.35); }
-    100% { box-shadow: 0 0 30px rgba(5, 150, 105, 0.6); }
+@keyframes glowStar5 {
+    0%   { box-shadow: 0 0 18px rgba(37, 99, 235, 0.35), inset 0 0 8px rgba(37, 99, 235, 0.18); }
+    100% { box-shadow: 0 0 30px rgba(37, 99, 235, 0.6), inset 0 0 14px rgba(37, 99, 235, 0.3); }
 }
 
-/* 6 نجوم: بنفسجي كريستالي */
+/* 6 نجوم: بنفسجي كريستالي نادر */
 .service-card.star-6 {
-    border: 4px solid #c026d3;
-    box-shadow: 0 0 28px rgba(192, 38, 211, 0.45), inset 0 0 14px rgba(192, 38, 211, 0.3);
-    animation: glow6 3s infinite alternate;
+    border: 3.5px solid #c026d3;
+    box-shadow: 0 0 28px rgba(192, 38, 211, 0.5), inset 0 0 14px rgba(192, 38, 211, 0.3);
+    animation: glowStar6 2.6s infinite alternate;
 }
-@keyframes glow6 {
-    0% { box-shadow: 0 0 22px rgba(192, 38, 211, 0.35); }
-    100% { box-shadow: 0 0 35px rgba(192, 38, 211, 0.65); }
+@keyframes glowStar6 {
+    0%   { box-shadow: 0 0 20px rgba(192, 38, 211, 0.4), inset 0 0 10px rgba(192, 38, 211, 0.22); }
+    100% { box-shadow: 0 0 38px rgba(192, 38, 211, 0.7), inset 0 0 18px rgba(192, 38, 211, 0.4); }
 }
 
-/* 7 نجوم: التدرج الملكي الأسطوري */
+/* 7 نجوم: أسطوري - تدرج ملكي فاخر ومتوهج (أعلى فئة) */
 .service-card.star-7 {
     border: 4px solid transparent;
-    background-image: linear-gradient(var(--card-bg, #0f172a), var(--card-bg, #0f172a)), linear-gradient(135deg, #e11d48, #9333ea, #2563eb);
-    background-origin: border-box;
-    background-clip: padding-box, border-box;
-    box-shadow: 0 0 32px rgba(147, 51, 234, 0.5), inset 0 0 15px rgba(225, 29, 72, 0.35);
-    animation: glow7 3s infinite alternate;
-}
-@keyframes glow7 {
-    0% { box-shadow: 0 0 25px rgba(147, 51, 234, 0.4); }
-    100% { box-shadow: 0 0 40px rgba(225, 29, 72, 0.7); }
-}
-
-/* 7 نجوم: التوهج الأسطوري الملكي الفاخر (أقصى فخامة بدون إزعاج) */
-.service-card.star-7 {
-    border: 3px solid transparent;
     background-image: linear-gradient(var(--card-bg, #0f172a), var(--card-bg, #0f172a)), linear-gradient(135deg, #f43f5e, #a855f7, #3b82f6);
     background-origin: border-box;
     background-clip: padding-box, border-box;
-    box-shadow: 0 0 38px rgba(168, 85, 247, 0.6), inset 0 0 16px rgba(244, 63, 94, 0.4);
-    animation: ultimateGlow7 2.2s infinite alternate;
+    box-shadow: 0 0 34px rgba(168, 85, 247, 0.55), inset 0 0 16px rgba(244, 63, 94, 0.3);
+    animation: glowStar7 2.2s infinite alternate;
 }
-@keyframes ultimateGlow7 {
-    0% { box-shadow: 0 0 25px rgba(168, 85, 247, 0.45), inset 0 0 10px rgba(244, 63, 94, 0.25); }
-    100% { box-shadow: 0 0 48px rgba(244, 63, 94, 0.75), inset 0 0 22px rgba(59, 130, 246, 0.5); }
-}
-
-/* 7 نجوم: Mythic Glory (الأيقونة والقمة - تدرج لوني ملكي متناسق وفاخر) */
-.service-card.star-7 {
-    border: 3.5px solid transparent;
-    background-image: linear-gradient(var(--card-bg, #0f172a), var(--card-bg, #0f172a)), linear-gradient(135deg, rgba(244, 63, 94, 0.8), rgba(168, 85, 247, 0.8), rgba(59, 130, 246, 0.8));
-    background-origin: border-box;
-    background-clip: padding-box, border-box;
-    box-shadow: 0 8px 26px rgba(168, 85, 247, 0.3);
-    animation: pulseMythic 4s infinite alternate;
-}
-@keyframes pulseMythic {
-    0% { box-shadow: 0 4px 16px rgba(168, 85, 247, 0.25); }
-    100% { box-shadow: 0 10px 30px rgba(244, 63, 94, 0.4); }
+@keyframes glowStar7 {
+    0%   { box-shadow: 0 0 24px rgba(168, 85, 247, 0.45), inset 0 0 10px rgba(244, 63, 94, 0.22); }
+    100% { box-shadow: 0 0 46px rgba(244, 63, 94, 0.75), inset 0 0 22px rgba(59, 130, 246, 0.45); }
 }
 
-/* 6 نجوم: Legend Crystal Style */
-.service-card.star-6 {
-    border: 3.5px solid rgba(217, 70, 239, 0.7);
-    box-shadow: 0 5px 20px rgba(217, 70, 239, 0.25);
-    animation: flameEffect6 3s infinite alternate;
-}
-@keyframes flameEffect6 {
-    0% { box-shadow: 0 4px 14px rgba(217, 70, 239, 0.15); }
-    100% { box-shadow: 0 6px 24px rgba(236, 72, 153, 0.35); }
-}
-
-/* 7 نجوم: Mythic Glory */
-.service-card.star-7 {
-    border: 3.5px solid transparent;
-    background-image: linear-gradient(var(--card-bg), var(--card-bg)), linear-gradient(135deg, rgba(244, 63, 94, 0.8), rgba(168, 85, 247, 0.8), rgba(59, 130, 246, 0.8));
-    background-origin: border-box;
-    background-clip: padding-box, border-box;
-    box-shadow: 0 6px 22px rgba(168, 85, 247, 0.3);
-    position: relative;
-    animation: ultimateGlow 3s infinite alternate;
-}
-@keyframes ultimateGlow {
-    0% { box-shadow: 0 4px 16px rgba(168, 85, 247, 0.25); }
-    100% { box-shadow: 0 6px 28px rgba(244, 63, 94, 0.4); }
-}
-
-/* 6 نجوم: Legend Crystal Style (بنفسجي ناعم ومتوازن) */
-.service-card.star-6 {
-    border: 2px solid rgba(217, 70, 239, 0.5);
-    box-shadow: 0 4px 18px rgba(217, 70, 239, 0.2);
-    animation: flameEffect6 3s infinite alternate;
-}
-@keyframes flameEffect6 {
-    0% { box-shadow: 0 4px 14px rgba(217, 70, 239, 0.15); }
-    100% { box-shadow: 0 6px 22px rgba(236, 72, 153, 0.3); }
-}
-
-/* 7 نجوم: Mythic Glory (تدرج لوني شيك جداً وبدون إضاءات مبالغ فيها) */
-.service-card.star-7 {
-    border: 2px solid transparent;
-    background-image: linear-gradient(var(--card-bg), var(--card-bg)), linear-gradient(135deg, rgba(244, 63, 94, 0.6), rgba(168, 85, 247, 0.6), rgba(59, 130, 246, 0.6));
-    background-origin: border-box;
-    background-clip: padding-box, border-box;
-    box-shadow: 0 5px 20px rgba(168, 85, 247, 0.25);
-    position: relative;
-    animation: ultimateGlow 3s infinite alternate;
-}
-@keyframes ultimateGlow {
-    0% { box-shadow: 0 4px 15px rgba(168, 85, 247, 0.2); }
-    100% { box-shadow: 0 6px 25px rgba(244, 63, 94, 0.35); }
-}
         .card-img-container {
             position: relative;
             width: 100%;
@@ -653,14 +665,14 @@
         }
         
         .modal-close-icon {
-            position: absolute;
-            top: 18px;
-            left: 18px;
+            position: fixed;
+            top: 22px;
+            left: 22px;
             background: var(--bg-color);
             border: 1px solid var(--border-color);
             color: var(--text-muted);
-            width: 32px;
-            height: 32px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -668,6 +680,8 @@
             cursor: pointer;
             font-size: 14px;
             transition: all 0.2s ease;
+            z-index: 1100;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.35);
         }
         .modal-close-icon:hover {
             background: #ef4444;
@@ -847,38 +861,64 @@
     <div class="container">
         <div class="top-nav">
             <a href="index.html" class="back-link"><i class="fa-solid fa-arrow-right"></i> العودة للرئيسية</a>
-            <div class="top-actions">
-                <button class="action-btn" id="installAppBtn" style="background: rgba(34, 197, 94, 0.1); border-color: #22c55e; color: #22c55e;">
-                    <i class="fa-solid fa-download"></i> تثبيت التطبيق
+            <div class="top-actions-wrapper" id="topActionsWrapper">
+                <button class="action-btn menu-toggle-btn" id="menuToggleBtn" onclick="toggleActionsMenu()">
+                    <i class="fa-solid fa-bars"></i> القائمة
                 </button>
-                <button class="action-btn stars-ranking-btn" onclick="openStarsRankingModal()">
-                    <i class="fa-solid fa-ranking-star"></i> أبرز النجوم
-                </button>
-                <button class="action-btn info-nav-btn" onclick="toggleModal('infoModal', true)">
-                    <i class="fa-solid fa-circle-info"></i> كيف يعمل النظام؟
-                </button>
-                <button class="action-btn whatsapp-add-btn" onclick="toggleModal('addModal', true)">
-                    <i class="fa-brands fa-whatsapp"></i> اضف مجالك
-                </button>
-                <button class="action-btn map-add-btn" onclick="openEditActivityChoiceModal()">
-                    <i class="fa-solid fa-pen-to-square"></i> تعديل نشاط
-                </button>
-                <button class="action-btn admin-nav-btn" onclick="openAdminPanel()">
-                    <i class="fa-solid fa-lock"></i> الإدارة
-                </button>
-                <button class="action-btn" onclick="toggleTheme()" id="themeToggleBtn">☀️ فاتح</button>
-                <button class="action-btn" onclick="toggleModal('qrModal', true)"><i class="fa-solid fa-qrcode"></i> باركود الصفحة</button>
+                <div class="top-actions-dropdown" id="topActionsDropdown">
+                    <div class="menu-section-label">الإعدادات العامة</div>
+                    <button class="menu-item" id="installAppBtn">
+                        <span class="menu-item-icon" style="background: rgba(34,197,94,0.14); color:#22c55e;"><i class="fa-solid fa-download"></i></span>
+                        تثبيت التطبيق
+                    </button>
+                    <button class="menu-item" onclick="toggleTheme()" id="themeToggleBtn">
+                        <span class="menu-item-icon" style="background: rgba(56,189,248,0.14); color:var(--primary);"><i class="fa-solid fa-circle-half-stroke"></i></span>
+                        <span class="theme-label">☀️ فاتح</span>
+                    </button>
+                    <button class="menu-item" onclick="toggleModal('qrModal', true)">
+                        <span class="menu-item-icon" style="background: rgba(148,163,184,0.16); color:var(--text-muted);"><i class="fa-solid fa-qrcode"></i></span>
+                        باركود الصفحة
+                    </button>
+
+                    <div class="menu-divider"></div>
+                    <div class="menu-section-label">معلومات وتفاعل</div>
+                    <button class="menu-item" onclick="toggleModal('infoModal', true)">
+                        <span class="menu-item-icon" style="background: rgba(245,158,11,0.14); color:#f59e0b;"><i class="fa-solid fa-circle-info"></i></span>
+                        كيف يعمل النظام؟
+                    </button>
+                    <button class="menu-item" onclick="openStarsRankingModal()">
+                        <span class="menu-item-icon" style="background: rgba(251,191,36,0.16); color:#fbbf24;"><i class="fa-solid fa-ranking-star"></i></span>
+                        أبرز النجوم
+                    </button>
+
+                    <div class="menu-divider"></div>
+                    <div class="menu-section-label">إدارة نشاطك</div>
+                    <button class="menu-item" onclick="toggleModal('addModal', true)">
+                        <span class="menu-item-icon" style="background: rgba(37,211,102,0.14); color:#25d366;"><i class="fa-brands fa-whatsapp"></i></span>
+                        اضف مجالك
+                    </button>
+                    <button class="menu-item" onclick="openEditActivityChoiceModal()">
+                        <span class="menu-item-icon" style="background: rgba(56,189,248,0.14); color:var(--primary);"><i class="fa-solid fa-pen-to-square"></i></span>
+                        تعديل نشاط
+                    </button>
+
+                    <div class="menu-divider"></div>
+                    <button class="menu-item menu-item-admin" onclick="openAdminPanel()">
+                        <span class="menu-item-icon" style="background: rgba(239,68,68,0.14); color:#ef4444;"><i class="fa-solid fa-lock"></i></span>
+                        لوحة الإدارة
+                    </button>
+                </div>
             </div>
+        </div>
+
+        <div class="hero-banner">
+            <h1>🌐 منصة كفر شكر</h1>
+            <p>منصتك المجتمعية للوصول السريع إلى كافة الأنشطة الخدمية، التجارية، والمهنية بكفر شكر في مكان واحد.</p>
         </div>
 
         <div class="adhkar-banner" onclick="changeAdhkar()" title="اضغط لتغيير الذكر">
             <i class="fa-solid fa-heart-pulse" style="color: #38bdf8;"></i>
             <span id="adhkarText">سبحان الله وبحمده، سبحان الله العظيم</span>
-        </div>
-        
-        <div class="hero-banner">
-            <h1>🌐 منصة كفر شكر</h1>
-            <p>منصتك المجتمعية للوصول السريع إلى كافة الأنشطة الخدمية، التجارية، والمهنية بكفر شكر في مكان واحد.</p>
         </div>
 
         <div class="controls-section">
@@ -1035,8 +1075,13 @@
             
             <div class="form-group">
                 <label>📍 رابط موقع Google Maps (اختياري):</label>
-                <input type="text" id="addMapUrl" placeholder="الصق رابط موقعك من Google Maps هنا">
-                <small>افتح خريطة جوجل، اضغط مشاركة (Share)، وانسخ رابط الموقع هنا لكي يفتح للعملاء مباشرة.</small>
+                <div class="location-input-group">
+                    <input type="text" id="addMapUrl" placeholder="الصق رابط موقعك أو اضغط الزر لجلب موقعك">
+                    <button type="button" class="current-loc-btn" onclick="getCurrentLocationForAdd()" title="الحصول على موقعي الحالي">
+                        <i class="fa-solid fa-location-crosshairs"></i> موقعي الحالي
+                    </button>
+                </div>
+                <small>اضغط "موقعي الحالي" وسيتم تحديد موقعك تلقائياً، أو افتح خريطة جوجل واضغط مشاركة (Share) والصق الرابط هنا.</small>
             </div>
 
             <div class="form-group"><label>4- سعر أول مرة:</label><input type="text" id="addFirstPrice" placeholder="مثال: 1500"></div>
@@ -1181,10 +1226,18 @@
             </div>
 
             <div id="adminSectionPending" style="display: none;">
+                <div class="search-box" style="margin-bottom: 15px;">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    <input type="text" id="pending-search-input" placeholder="ابحث باسم الشخص أو رقمه أو النشاط للوصول السريع..." oninput="loadPendingRequestsForAdmin()">
+                </div>
                 <div id="pendingCardsContainer">جاري التحميل...</div>
             </div>
 
             <div id="adminSectionEditPending" style="display: none;">
+                <div class="search-box" style="margin-bottom: 15px;">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    <input type="text" id="editPending-search-input" placeholder="ابحث برقم الهاتف أو نوع الطلب للوصول السريع..." oninput="loadEditPendingRequestsForAdmin()">
+                </div>
                 <div id="editPendingCardsContainer">جاري التحميل...</div>
             </div>
         </div>
@@ -1251,6 +1304,12 @@
         </div>
     </div>
 
+    <!-- زر واتساب عائم لإرسال استفسار أو شكوى مباشرة للإدارة -->
+    <a href="#" id="floatingWaBtn" class="floating-whatsapp-btn" title="إرسال استفسار أو شكوى عبر واتساب">
+        <i class="fa-brands fa-whatsapp"></i>
+    </a>
+    <div class="floating-wa-tooltip">استفسار أو شكوى؟ راسلنا 💬</div>
+
     <script>
         let servicesStatsCache = {};
         let servicesList = [];
@@ -1260,6 +1319,21 @@
         
         let displayedCount = 10;
         let filteredCache = [];
+
+        // ===== توليد مفتاح Firebase مقروء باسم صاحب النشاط بدل الكود العشوائي =====
+        // بيسهل على الإدارة الوصول للعميل بسرعة بدل الأكواد الغريبة (مثل -OzlDJZ8T3_uLolnS13V)
+        function makeReadableKey(name, phone) {
+            let base = (name || 'بدون_اسم').toString().trim();
+            // إزالة الرموز الممنوعة في مفاتيح Firebase وتحويل المسافات لشرطة سفلية
+            base = base.replace(/[.#$\[\]\/]/g, '_').replace(/\s+/g, '_');
+            base = base.substring(0, 50) || 'بدون_اسم';
+
+            let phoneSuffix = phone ? String(phone).replace(/\D/g, '').slice(-4) : '';
+            let uniqueSuffix = Date.now().toString(36).slice(-4);
+
+            let key = base + (phoneSuffix ? ('_' + phoneSuffix) : '') + '_' + uniqueSuffix;
+            return key;
+        }
 
         window.initApp = function() {
             const slider = document.getElementById('categories-container');
@@ -1346,6 +1420,30 @@
             }
         }
 
+        function getCurrentLocationForAdd() {
+            if (navigator.geolocation) {
+                const mapInput = document.getElementById('addMapUrl');
+                mapInput.placeholder = "جاري تحديد موقعك الحالي... برجاء السماح للمتصفح";
+
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const lat = position.coords.latitude;
+                        const lng = position.coords.longitude;
+                        const mapsUrl = `https://www.google.com/maps?q=${lat},${lng}`;
+                        mapInput.value = mapsUrl;
+                        alert("تم تحديد موقعك الحالي بنجاح! 📍");
+                    },
+                    (error) => {
+                        mapInput.placeholder = "الصق رابط موقعك أو اضغط الزر لجلب موقعك";
+                        alert("تعذر جلب الموقع الحالي، تأكد من إذن المتصفح.");
+                    },
+                    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+                );
+            } else {
+                alert("متصفحك لا يدعم خاصية تحديد الموقع.");
+            }
+        }
+
         function checkPhoneExistsForLocation() {
             let phoneInput = document.getElementById('updateLocPhone');
             let rawPhone = phoneInput.value.trim();
@@ -1419,11 +1517,13 @@
                 phone: phone,
                 mapUrl: mapUrl,
                 itemId: existingItem.id,
+                name: existingItem.doctor || '',
                 timestamp: Date.now()
             };
 
             if (window.FB) {
-                window.FB.push(window.FB.ref(window.FB.db, 'edit_pending_requests'), editRequest).then(() => {
+                let newKey = makeReadableKey(existingItem.doctor, phone);
+                window.FB.set(window.FB.ref(window.FB.db, 'edit_pending_requests/' + newKey), editRequest).then(() => {
                     let adminWhatsapp = "201023745774";
                     let msg = encodeURIComponent(`يريد يغير موقعه\nرقم صاحبه: ${phone}\nالموقع الجديد: ${mapUrl}`);
                     window.open(`https://wa.me/${adminWhatsapp}?text=${msg}`, '_blank');
@@ -1455,11 +1555,13 @@
                 phone: phone,
                 image: imageUrl,
                 itemId: existingItem.id,
+                name: existingItem.doctor || '',
                 timestamp: Date.now()
             };
 
             if (window.FB) {
-                window.FB.push(window.FB.ref(window.FB.db, 'edit_pending_requests'), editRequest).then(() => {
+                let newKey = makeReadableKey(existingItem.doctor, phone);
+                window.FB.set(window.FB.ref(window.FB.db, 'edit_pending_requests/' + newKey), editRequest).then(() => {
                     let adminWhatsapp = "201023745774";
                     let msg = encodeURIComponent(`يريد يغير صورته\nرقم صاحبه: ${phone}\nلينك الصورة الجديد: ${imageUrl}`);
                     window.open(`https://wa.me/${adminWhatsapp}?text=${msg}`, '_blank');
@@ -1695,7 +1797,8 @@
             let newTheme = currentTheme === 'dark' ? 'light' : 'dark';
             document.documentElement.setAttribute('data-theme', newTheme);
             localStorage.setItem('theme', newTheme);
-            document.getElementById('themeToggleBtn').innerHTML = newTheme === 'dark' ? '☀️ فاتح' : '🌙 غامق';
+            const themeLabel = document.querySelector('#themeToggleBtn .theme-label');
+            if (themeLabel) themeLabel.innerHTML = newTheme === 'dark' ? '☀️ فاتح' : '🌙 غامق';
         }
 
         function toggleModal(modalId, show) {
@@ -1884,6 +1987,8 @@
             container.innerHTML = "جاري التحميل...";
             if (!window.FB) return;
 
+            const searchQuery = document.getElementById('pending-search-input') ? document.getElementById('pending-search-input').value.toLowerCase().trim() : "";
+
             window.FB.get(window.FB.ref(window.FB.db, 'pending_requests')).then((snapshot) => {
                 const data = snapshot.val();
                 container.innerHTML = "";
@@ -1892,7 +1997,24 @@
                     return;
                 }
 
-                Object.keys(data).forEach(key => {
+                let keys = Object.keys(data);
+                if (searchQuery) {
+                    keys = keys.filter(key => {
+                        let item = data[key];
+                        let name = item.doctor ? item.doctor.toLowerCase() : "";
+                        let phone = item.phone ? item.phone.toLowerCase() : "";
+                        let type = item.type ? item.type.toLowerCase() : "";
+                        let address = item.address ? item.address.toLowerCase() : "";
+                        return name.includes(searchQuery) || phone.includes(searchQuery) || type.includes(searchQuery) || address.includes(searchQuery);
+                    });
+                }
+
+                if (keys.length === 0) {
+                    container.innerHTML = "<p style='text-align:center; color:var(--text-muted);'>لا توجد طلبات مطابقة للبحث.</p>";
+                    return;
+                }
+
+                keys.forEach(key => {
                     let item = data[key];
                     let cardDiv = document.createElement('div');
                     cardDiv.className = 'admin-card';
@@ -1914,6 +2036,8 @@
             container.innerHTML = "جاري التحميل...";
             if (!window.FB) return;
 
+            const searchQuery = document.getElementById('editPending-search-input') ? document.getElementById('editPending-search-input').value.toLowerCase().trim() : "";
+
             window.FB.get(window.FB.ref(window.FB.db, 'edit_pending_requests')).then((snapshot) => {
                 const data = snapshot.val();
                 container.innerHTML = "";
@@ -1922,7 +2046,25 @@
                     return;
                 }
 
-                Object.keys(data).forEach(key => {
+                let keys = Object.keys(data);
+                if (searchQuery) {
+                    keys = keys.filter(key => {
+                        let item = data[key];
+                        let phone = item.phone ? String(item.phone).toLowerCase() : "";
+                        let type = item.type ? item.type.toLowerCase() : "";
+                        let image = item.image ? item.image.toLowerCase() : "";
+                        let mapUrl = item.mapUrl ? item.mapUrl.toLowerCase() : "";
+                        let name = item.name ? item.name.toLowerCase() : "";
+                        return name.includes(searchQuery) || phone.includes(searchQuery) || type.includes(searchQuery) || image.includes(searchQuery) || mapUrl.includes(searchQuery);
+                    });
+                }
+
+                if (keys.length === 0) {
+                    container.innerHTML = "<p style='text-align:center; color:var(--text-muted);'>لا توجد طلبات مطابقة للبحث.</p>";
+                    return;
+                }
+
+                keys.forEach(key => {
                     let item = data[key];
                     let isImageEdit = item.type === 'image';
                     let titleText = isImageEdit ? 'طلب تحديث صورة' : 'طلب تحديث موقع';
@@ -1931,7 +2073,7 @@
                     let cardDiv = document.createElement('div');
                     cardDiv.className = 'admin-card';
                     cardDiv.innerHTML = `
-                        <div style="font-weight:900; font-size:16px; color:#f59e0b; margin-bottom:5px;"><i class="fa-solid fa-pen-to-square"></i> ${titleText}</div>
+                        <div style="font-weight:900; font-size:16px; color:#f59e0b; margin-bottom:5px;"><i class="fa-solid fa-pen-to-square"></i> ${titleText}${item.name ? ' - ' + item.name : ''}</div>
                         <div style="font-size:12.5px; color:var(--text-main); margin-bottom:4px;"><strong>رقم التلفون:</strong> ${item.phone}</div>
                         <div style="font-size:12.5px; color:var(--text-main); margin-bottom:10px;">${contentDetail}</div>
                         <div style="display:flex; gap:10px;">
@@ -2010,7 +2152,9 @@
             window.FB.get(window.FB.ref(window.FB.db, 'pending_requests/' + key)).then((snapshot) => {
                 let val = snapshot.val();
                 if (val) {
-                    window.FB.push(window.FB.ref(window.FB.db, 'approved_services'), val);
+                    // نستخدم اسم النشاط ورقم الهاتف لتوليد مفتاح مقروء وسهل بدل الكود العشوائي
+                    let newKey = makeReadableKey(val.doctor, val.phone);
+                    window.FB.set(window.FB.ref(window.FB.db, 'approved_services/' + newKey), val);
                     window.FB.remove(window.FB.ref(window.FB.db, 'pending_requests/' + key));
                     alert("تم قبول الكارت بنجاح!");
                     loadPendingRequestsForAdmin();
@@ -2106,7 +2250,8 @@
             };
 
             if (window.FB) {
-                window.FB.push(window.FB.ref(window.FB.db, 'pending_requests'), newEntry)
+                let newKey = makeReadableKey(doctor, phone);
+                window.FB.set(window.FB.ref(window.FB.db, 'pending_requests/' + newKey), newEntry)
                     .then(() => {
                         let targetWhatsapp = "201023745774";
                         let waMessage = encodeURIComponent(`طلب إضافة نشاط جديد (قيد الانتظار):\n- النوع: ${type}\n- الاسم: ${doctor}\n- العنوان: ${address}\n- الهاتف: ${phone}`);
@@ -2365,6 +2510,48 @@
                 setTimeout(() => listenToItemStats(item.id), 50);
             });
         }
+
+        // ===== قائمة الأيقونات المجمّعة أعلى الصفحة =====
+        function toggleActionsMenu() {
+            const dropdown = document.getElementById('topActionsDropdown');
+            const btn = document.getElementById('menuToggleBtn');
+            dropdown.classList.toggle('show');
+            btn.classList.toggle('open');
+        }
+
+        document.addEventListener('click', function (e) {
+            const wrapper = document.getElementById('topActionsWrapper');
+            const dropdown = document.getElementById('topActionsDropdown');
+            const btn = document.getElementById('menuToggleBtn');
+            if (wrapper && !wrapper.contains(e.target)) {
+                dropdown.classList.remove('show');
+                btn.classList.remove('open');
+            }
+        });
+
+        // إغلاق القائمة تلقائياً بعد اختيار أي أمر منها
+        document.getElementById('topActionsDropdown').addEventListener('click', function (e) {
+            const clickedBtn = e.target.closest('button');
+            if (clickedBtn) {
+                setTimeout(() => {
+                    document.getElementById('topActionsDropdown').classList.remove('show');
+                    document.getElementById('menuToggleBtn').classList.remove('open');
+                }, 150);
+            }
+        });
+
+        // ===== زر واتساب العائم لإرسال استفسار/شكوى =====
+        (function setupFloatingWhatsApp() {
+            const waPhone = "201023745774"; // 01023745774 بصيغة دولية بدون صفر وبدون +
+            const waMessage = encodeURIComponent("السلام عليكم، أرغب في تقديم استفسار / شكوى بخصوص منصة كفر شكر:");
+            const waBtn = document.getElementById('floatingWaBtn');
+            if (waBtn) {
+                waBtn.href = `https://wa.me/${waPhone}?text=${waMessage}`;
+                waBtn.target = "_blank";
+                waBtn.rel = "noopener";
+            }
+        })();
+
         let deferredPrompt;
 
 window.addEventListener('beforeinstallprompt', (e) => {

@@ -1947,7 +1947,7 @@
             let allApproved = servicesList.filter(item => {
                 if (!searchQuery) return true;
                 let name = item.doctor ? item.doctor.toLowerCase() : "";
-                let phone = item.phone ? item.phone.toLowerCase() : "";
+                let phone = item.phone ? String(item.phone).toLowerCase() : "";
                 let type = item.type ? item.type.toLowerCase() : "";
                 return name.includes(searchQuery) || phone.includes(searchQuery) || type.includes(searchQuery);
             });
@@ -2002,7 +2002,7 @@
                     keys = keys.filter(key => {
                         let item = data[key];
                         let name = item.doctor ? item.doctor.toLowerCase() : "";
-                        let phone = item.phone ? item.phone.toLowerCase() : "";
+                        let phone = item.phone ? String(item.phone).toLowerCase() : "";
                         let type = item.type ? item.type.toLowerCase() : "";
                         let address = item.address ? item.address.toLowerCase() : "";
                         return name.includes(searchQuery) || phone.includes(searchQuery) || type.includes(searchQuery) || address.includes(searchQuery);
@@ -2254,7 +2254,7 @@
                 window.FB.set(window.FB.ref(window.FB.db, 'pending_requests/' + newKey), newEntry)
                     .then(() => {
                         let targetWhatsapp = "201023745774";
-                        let waMessage = encodeURIComponent(`طلب إضافة نشاط جديد (قيد الانتظار):\n- النوع: ${type}\n- الاسم: ${doctor}\n- العنوان: ${address}\n- الهاتف: ${phone}`);
+                        let waMessage = encodeURIComponent(`طلب إضافة نشاط جديد (قيد الانتظار):\n- النوع: ${type}\n- الاسم: ${doctor}\n- العنوان: ${address}\n- رابط الموقع: ${mapUrl || 'غير مضاف'}\n- سعر الكشف: ${firstPrice || 'غير محدد'}\n- سعر المتابعة: ${followPrice || 'غير محدد'}\n- التفاصيل: ${details || 'لا يوجد'}\n- مواعيد العمل: ${workTime || 'غير محدد'}\n- الهاتف: ${phone}\n- رابط الصورة: ${image || 'غير مضاف'}`);
                         window.open(`https://wa.me/${targetWhatsapp}?text=${waMessage}`, '_blank');
 
                         toggleModal('addModal', false);
@@ -2314,7 +2314,7 @@
                             const approvedData = snapshot.val();
                             if (approvedData) {
                                 Object.keys(approvedData).forEach(k => {
-                                    let cleanApprovedPhone = approvedData[k].phone ? approvedData[k].phone.replace(/^0/, '') : "";
+                                    let cleanApprovedPhone = approvedData[k].phone ? String(approvedData[k].phone).replace(/^0+/, '') : "";
                                     approvedData[k].phone = cleanApprovedPhone;
                                     if (!servicesList.some(item => item.phone === cleanApprovedPhone && item.doctor === approvedData[k].doctor)) {
                                         servicesList.push({ id: k, ...approvedData[k] });
@@ -2434,11 +2434,14 @@
 
                 let actionBtnHTML = '';
                 if (item.phone) {
-                    let cleanPhone = "20" + item.phone.replace(/^0+/, '');
+                    let rawPhoneDigits = String(item.phone).replace(/\D/g, '');
+                    let localPhoneDigits = rawPhoneDigits.replace(/^20/, '').replace(/^0+/, '');
+                    let cleanPhone = "20" + localPhoneDigits;
+                    let telPhone = "0" + localPhoneDigits;
                     let waMsg = encodeURIComponent(`السلام عليكم، اطلعت على إعلانكم في دليل كفر شكر وأرغب في التواصل للتفاصيل.`);
                     actionBtnHTML = `
                         <div style="display: flex; gap: 8px; margin-top: 8px; align-items: center;">
-                            <a onclick="handleActionClick('${item.id}', 'tel:0${item.phone}', 'tel')" class="action-link-btn"><i class="fa-solid fa-phone"></i> اتصال</a>
+                            <a onclick="handleActionClick('${item.id}', 'tel:${telPhone}', 'tel')" class="action-link-btn"><i class="fa-solid fa-phone"></i> اتصال</a>
                             <a onclick="handleActionClick('${item.id}', 'https://wa.me/${cleanPhone}?text=${waMsg}', 'whatsapp')" class="action-link-btn whatsapp"><i class="fa-brands fa-whatsapp"></i> واتساب</a>
                             <button onclick="shareCard('${item.id}', '${item.doctor || 'نشاط'}', '${item.type}', event)" class="share-card-btn" title="مشاركة كارتي"><i class="fa-solid fa-share-nodes"></i></button>
                         </div>
